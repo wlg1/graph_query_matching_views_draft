@@ -84,7 +84,6 @@ public class PoolEntry implements Comparable<PoolEntry> {
 		return mFwdEntries.get(qid);
 	}
 	
-	
 	public RoaringBitmap getFwdBits(int qid) {
 
 		return mFwdBits.get(qid);
@@ -99,7 +98,6 @@ public class PoolEntry implements Comparable<PoolEntry> {
 
 		return mBwdEntries.get(qid);
 	}
-
 	
 	public void addChild(PoolEntry c) {
 

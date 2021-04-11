@@ -104,10 +104,9 @@ public class ansgraphExclViews3 {
 							}
 							if (newNodeFlag) {
 								PoolEntry actEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
-										newNode.getQNode() );
-								
-								
-								Qnodeset.addEntry(newNode); 
+										newNode.mFwdEntries, newNode.mBwdEntries, newNode.mFwdBits, newNode.mBwdBits,
+										newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
+								Qnodeset.addEntry(actEntry); 
 							}
 						}
 						break;
