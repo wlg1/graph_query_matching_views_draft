@@ -79,11 +79,8 @@ public class ansgraphExclViews3 {
 						//for each node to add, if its graphID not in Qnodeset, add it
 						//else, intersect its adj lists w/ existing poolentry
 						for (PoolEntry newNode: nodesToAdd) {
-							
-							//create new poolentry object
-							
 							boolean newNodeFlag = true;
-							for (PoolEntry oldNode: Qnodeset.elist()) {
+							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
 								if (oldNode.mValue == newNode.mValue) {
 									newNodeFlag = false;
 									
@@ -106,7 +103,8 @@ public class ansgraphExclViews3 {
 								}
 							}
 							if (newNodeFlag) {
-								PoolEntry actEntry = new PoolEntry(newNode.getPos(), newNode.mQNode, newNode.mValue);
+								PoolEntry actEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
+										newNode.getQNode() );
 								
 								
 								Qnodeset.addEntry(newNode); 
