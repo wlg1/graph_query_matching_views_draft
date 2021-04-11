@@ -106,8 +106,7 @@ public class ansgraphExclViews3 {
 								}
 							}
 							if (newNodeFlag) {
-								PoolEntry actEntry = new PoolEntry(newNode.getPos(), newNode.mQNode, newNode.mValue);
-								
+								PoolEntry actEntry = new PoolEntry(newNode.mPos, newNode.mQNode, newNode.mValue);
 								
 								Qnodeset.addEntry(newNode); 
 							}

@@ -45,17 +45,13 @@ public class PoolEntry implements Comparable<PoolEntry> {
 	
 	public PoolEntry(int pos, QNode q, GraphNode val, HashMap<Integer, ArrayList<PoolEntry>> FwdEntries, 
 			HashMap<Integer, ArrayList<PoolEntry>> BwdEntries, HashMap<Integer, RoaringBitmap> FwdBits, 
-			HashMap<Integer, RoaringBitmap> BwdBits, double INnumChildren, double INnumParents, double INsize) {
+			HashMap<Integer, RoaringBitmap> mBwdBits, double numChildren, double numParents, double size) {
 		mPos = pos; 
 		mQNode = q;
 		mValue = val;
 		mFwdEntries = FwdEntries;
 		mBwdEntries = BwdEntries;
 		mFwdBits = FwdBits;
-		mBwdBits = BwdBits;
-		numChildren = INnumChildren;
-		numParents = INnumParents;
-		size = INsize;
 	}
 
 	
