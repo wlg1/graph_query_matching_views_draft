@@ -1,8 +1,8 @@
-q # 0 1 edges
+q # 0 1 edge
 v 0 1
 v 1 2
 e 0 1 0
-q # 0 1 edges
-v 1 2
-v 2 3
-e 1 2 0
+q # 1 1 edge
+v 0 2
+v 1 3
+e 0 1 0

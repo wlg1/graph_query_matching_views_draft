@@ -84,22 +84,38 @@ public class ansgraphExclViews3 {
 								if (oldNode.mValue == newNode.mValue) {
 									newNodeFlag = false;
 									
-									for (Integer key : oldNode.mBwdEntries.keySet()) {
-										ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
-										nodeBwd.retainAll(newNode.mBwdEntries.get(key) );
+									if (newNode.mBwdEntries != null) {
+										if (oldNode.mBwdEntries == null) {
+											oldNode.mBwdEntries = newNode.mBwdEntries;
+											oldNode.mBwdBits = newNode.mBwdBits;
+										} else {
+											for (Integer key : oldNode.mBwdEntries.keySet()) {
+												ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
+												nodeBwd.retainAll(newNode.mBwdEntries.get(key) );
+											}
+											for (Integer key : oldNode.mBwdBits.keySet()) {
+												RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
+												nodeBwdbits.and(newNode.mBwdBits.get(key) );
+											}
+										}
 									}
-									for (Integer key : oldNode.mFwdEntries.keySet()) {
-										ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
-										nodeFwd.retainAll(newNode.mFwdEntries.get(key) );
-									}			
-									for (Integer key : oldNode.mBwdBits.keySet()) {
-										RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
-										nodeBwdbits.and(newNode.mBwdBits.get(key) );
+									
+									if (newNode.mFwdEntries != null) {
+										if (oldNode.mFwdEntries == null) {
+											oldNode.mFwdEntries = newNode.mFwdEntries;
+											oldNode.mFwdBits = newNode.mFwdBits;
+										} else {
+											for (Integer key : oldNode.mFwdEntries.keySet()) {
+												ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
+												nodeFwd.retainAll(newNode.mFwdEntries.get(key) );
+											}			
+											
+											for (Integer key : oldNode.mFwdEntries.keySet()) {
+												RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
+												nodeFwdbits.and(newNode.mFwdBits.get(key) );
+											}	
+										}
 									}
-									for (Integer key : oldNode.mFwdEntries.keySet()) {
-										RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
-										nodeFwdbits.and(newNode.mFwdBits.get(key) );
-									}		
 								}
 							}
 							if (newNodeFlag) {

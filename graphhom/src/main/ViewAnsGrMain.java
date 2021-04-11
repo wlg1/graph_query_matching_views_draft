@@ -55,7 +55,7 @@ public class ViewAnsGrMain {
 		String suffix = ".csv";
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
-		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgr" + suffix;
+		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS" + suffix;
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 
 	}
