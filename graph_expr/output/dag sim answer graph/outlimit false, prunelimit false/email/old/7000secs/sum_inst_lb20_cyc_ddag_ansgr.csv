@@ -1,0 +1,53 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\inst_lb20_cyc_d.qry
+Algorithm:DagEval_ansgr
+id status preTime planTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln numPlans sizeOfAG
+0 success 1.70 .00 55.10 .03 56.83 39,591 10,195 343,046 0 987,802
+1 timeout 4.11 .00 .00 .00 4.11 53,054 0 8,709,903,920 0 0
+2 timeout .18 .00 .00 .00 .18 52,805 0 8,980,365,751 0 0
+3 timeout .20 .00 .00 .00 .20 53,146 0 8,609,467,275 0 0
+4 timeout .26 .00 .00 .00 .26 53,148 0 8,704,237,124 0 0
+5 timeout 1.77 .00 .00 .00 1.77 53,065 0 9,050,147,273 0 0
+6 timeout .16 .00 .00 .00 .16 66,552 0 10,104,328,631 0 0
+7 timeout .61 .00 .00 .00 .61 66,338 0 11,123,938,246 0 0
+8 timeout .21 .00 .00 .00 .21 79,778 0 11,290,687,625 0 0
+9 timeout .20 .00 .00 .00 .20 79,747 0 16,694,411,440 0 0
+10 timeout .17 .00 .00 .00 .17 79,740 0 12,632,766,330 0 0
+11 timeout .46 .00 .00 .00 .46 79,239 0 17,040,047,391 0 0
+12 timeout .87 .00 .00 .00 .87 79,778 0 11,477,375,701 0 0
+13 timeout .56 .00 .00 .00 .56 93,368 0 17,430,783,104 0 0
+Average running time: 
+id status preTime planTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples numPlans sizeOfAG
+0 success 1.70 .00 55.10 .03 56.83 39,591 10,195 343,046 0 987,802
+1 timeout 4.11 .00 .00 .00 4.11 53,054 0 8,709,903,920 0 0
+2 timeout .18 .00 .00 .00 .18 52,805 0 8,980,365,751 0 0
+3 timeout .20 .00 .00 .00 .20 53,146 0 8,609,467,275 0 0
+4 timeout .26 .00 .00 .00 .26 53,148 0 8,704,237,124 0 0
+5 timeout 1.77 .00 .00 .00 1.77 53,065 0 9,050,147,273 0 0
+6 timeout .16 .00 .00 .00 .16 66,552 0 10,104,328,631 0 0
+7 timeout .61 .00 .00 .00 .61 66,338 0 11,123,938,246 0 0
+8 timeout .21 .00 .00 .00 .21 79,778 0 11,290,687,625 0 0
+9 timeout .20 .00 .00 .00 .20 79,747 0 16,694,411,440 0 0
+10 timeout .17 .00 .00 .00 .17 79,740 0 12,632,766,330 0 0
+11 timeout .46 .00 .00 .00 .46 79,239 0 17,040,047,391 0 0
+12 timeout .87 .00 .00 .00 .87 79,778 0 11,477,375,701 0 0
+13 timeout .56 .00 .00 .00 .56 93,368 0 17,430,783,104 0 0
+Data loading Time:1.37
+Index building Time:.39
+Average Eval Time per run:66.59
+Average Eval Time per query:4.76
+Average pruning Time per run:.00
+Average pruning Time per query:.00
+Average Plan Time per run:.00
+Average Plan Time per query:.00
+Average Matching Time per run:55.10
+Average Matching Time per query:3.94
+Average Enumeration Time per run:.03
+Average Enumeration Time per query:.00
+Average Nodes before per query:66382.07
+Average Nodes after per query:728.21
+Average number of solution tuples per query:10846343061.21
+Max Used Memory:1550.00 MB
+*****************************************************

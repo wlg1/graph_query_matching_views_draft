@@ -1,0 +1,30 @@
+q # 0 3 edges
+v 0 a1
+v 1 a2
+v 2 a3
+v 3 a4
+e 0 1 0
+e 1 2 0
+e 2 3 0
+q # 1 4 edges
+v 0 a1
+v 1 a2
+v 2 a3
+v 3 a4
+v 4 a5
+e 0 1 0
+e 1 2 0
+e 2 3 0
+e 3 4 0
+q # 2 5 edges
+v 0 a1
+v 1 a2
+v 2 a3
+v 3 a4
+v 4 a5
+v 5 a6
+e 0 1 0
+e 1 2 0
+e 2 3 0
+e 3 4 0
+e 4 5 0

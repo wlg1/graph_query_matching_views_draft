@@ -1,0 +1,53 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\inst_lb20_cyc_d.qry
+Algorithm:DagEval_IEfltsim
+id status preTime planTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln numPlans sizeOfAG
+0 exceedLimit 1.65 .00 2.41 .00 5.07 39,591 10,195 10,000,000 0 1,262,958
+1 exceedLimit 3.09 .00 5.08 .00 8.97 53,054 10,313 10,000,000 0 3,154,917
+2 exceedLimit .17 .00 2.15 .00 2.65 52,805 10,248 10,000,000 0 1,466,817
+3 exceedLimit .16 .00 .90 .00 1.38 53,146 10,228 10,000,000 0 1,205,532
+4 exceedLimit .40 .00 1.67 .00 2.50 53,148 10,142 10,000,000 0 1,350,823
+5 exceedLimit 1.45 .00 2.24 .00 4.24 53,065 10,198 10,000,000 0 1,364,274
+6 exceedLimit .17 .00 .99 .00 1.75 66,552 10,337 10,000,000 0 1,255,435
+7 exceedLimit .61 .00 1.00 .00 2.16 66,338 10,177 10,000,000 0 1,310,341
+8 exceedLimit .21 .00 4.03 .00 4.72 79,778 24,814 10,000,000 0 4,960,784
+9 exceedLimit .26 .00 4.19 .00 5.03 79,747 10,626 10,000,000 0 1,662,578
+10 exceedLimit .21 .00 1.64 .00 2.25 79,740 10,725 10,000,000 0 2,503,927
+11 exceedLimit .46 .00 2.15 .00 2.94 79,239 10,604 10,000,000 0 1,460,515
+12 exceedLimit .82 .00 3.26 .00 4.50 79,778 12,939 10,000,000 0 2,674,828
+13 exceedLimit .60 .00 1.90 .00 2.86 93,368 10,714 10,000,000 0 1,258,642
+Average running time: 
+id status preTime planTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples numPlans sizeOfAG
+0 exceedLimit 1.65 .00 2.41 .00 5.07 39,591 10,195 10,000,000 0 1,262,958
+1 exceedLimit 3.09 .00 5.08 .00 8.97 53,054 10,313 10,000,000 0 3,154,917
+2 exceedLimit .17 .00 2.15 .00 2.65 52,805 10,248 10,000,000 0 1,466,817
+3 exceedLimit .16 .00 .90 .00 1.38 53,146 10,228 10,000,000 0 1,205,532
+4 exceedLimit .40 .00 1.67 .00 2.50 53,148 10,142 10,000,000 0 1,350,823
+5 exceedLimit 1.45 .00 2.24 .00 4.24 53,065 10,198 10,000,000 0 1,364,274
+6 exceedLimit .17 .00 .99 .00 1.75 66,552 10,337 10,000,000 0 1,255,435
+7 exceedLimit .61 .00 1.00 .00 2.16 66,338 10,177 10,000,000 0 1,310,341
+8 exceedLimit .21 .00 4.03 .00 4.72 79,778 24,814 10,000,000 0 4,960,784
+9 exceedLimit .26 .00 4.19 .00 5.03 79,747 10,626 10,000,000 0 1,662,578
+10 exceedLimit .21 .00 1.64 .00 2.25 79,740 10,725 10,000,000 0 2,503,927
+11 exceedLimit .46 .00 2.15 .00 2.94 79,239 10,604 10,000,000 0 1,460,515
+12 exceedLimit .82 .00 3.26 .00 4.50 79,778 12,939 10,000,000 0 2,674,828
+13 exceedLimit .60 .00 1.90 .00 2.86 93,368 10,714 10,000,000 0 1,258,642
+Data loading Time:1.11
+Index building Time:.46
+Average Eval Time per run:51.00
+Average Eval Time per query:3.64
+Average pruning Time per run:.00
+Average pruning Time per query:.00
+Average Plan Time per run:.00
+Average Plan Time per query:.00
+Average Matching Time per run:33.61
+Average Matching Time per query:2.40
+Average Enumeration Time per run:.00
+Average Enumeration Time per query:.00
+Average Nodes before per query:66382.07
+Average Nodes after per query:11590.00
+Average number of solution tuples per query:10000000.00
+Max Used Memory:1198.00 MB
+*****************************************************

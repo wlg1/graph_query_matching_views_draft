@@ -1,0 +1,196 @@
+package views;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
+
+import dao.BFLIndex;
+import dao.DaoController;
+import dao.Pool;
+import dao.PoolEntry;
+import evaluator.DagHomIEFltSim;
+import global.Consts;
+import global.Consts.AxisType;
+import global.Consts.status_vals;
+import global.Flags;
+import graph.Digraph;
+import graph.GraphNode;
+import helper.LimitExceededException;
+import helper.QueryEvalStat;
+import helper.QueryEvalStats;
+import helper.TimeTracker;
+import prefilter.FilterBuilder;
+import query.graph.QEdge;
+import query.graph.QNode;
+import query.graph.Query;
+import query.graph.QueryDirectedCycle;
+import query.graph.QueryParser;
+import query.graph.TransitiveReduction;
+import views.HybAnsGraphBuilder2;
+
+public class ansgraphExclViews3 {
+
+	Query query;
+	ArrayList<Query> viewsOfQuery;
+	Map<Integer, ArrayList<Pool>> qid_Ansgr;
+	
+	TimeTracker tt;
+
+	public ansgraphExclViews3(Query query_in, ArrayList<Query> viewsOfQuery_in, Map<Integer, ArrayList<Pool>> qid_Ansgr_in) {
+		query = query_in;
+		viewsOfQuery = viewsOfQuery_in;
+		qid_Ansgr = qid_Ansgr_in;
+	}
+
+	public ArrayList<ArrayList<PoolEntry>> getAnsGr() {
+		tt = new TimeTracker();
+		tt.Start();
+		
+		//1) Take intersection of all views
+		//for each node set n_q, intersect the node set covering n_q for all views
+		//then for each graph node, intersect adj list
+		ArrayList<ArrayList<PoolEntry>> allQNodeSets = new ArrayList<ArrayList<PoolEntry>>();
+		for (int i = 0; i < query.V; i++) {
+			ArrayList<PoolEntry> Qnodeset = new ArrayList<PoolEntry>(); 
+			for (Query view : viewsOfQuery) {
+				int[] hom = getHom(view, query);  //pos is view node ID, value is query node ID
+				
+				for (int j = 0; j < hom.length; j++) {
+					if (hom[j] == i) {
+						ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //Arraylist of node set Pools
+						ArrayList<PoolEntry> nodesToAdd = viewAnsgr.get(j).elist();
+						Qnodeset.retainAll(nodesToAdd);
+						break;
+					}
+				}
+			}
+			allQNodeSets.add(Qnodeset);
+		}
+		//go to node set of ans gr and find a key To target vertex. if this key exists, that edge is covered.
+		
+		//2) for each query edge, check if covered by any view. if not, compute occ set of closure
+		
+		//
+		
+		//if edge uncovered
+		if (Qnodeset.isEmpty() ){
+			// Convert view into graph and get Closure
+			TransitiveReduction tr = new TransitiveReduction(view);
+			AxisType[][] Vclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
+			
+			//convert Vclosure into query form, viewClosure
+//			Query viewClosure = view;
+			
+//			//find if there's a match. if so, get 1 covering edge from view
+//			int[] hom1 = getHom(viewClosure, query);
+			
+		}
+		
+		//convert allQNodeSets into an Arraylist of Pools
+		
+		return allQNodeSets;
+		
+//		double ltm = tt.Stop() / 1000;
+//		System.out.println("\nTotal time: " + ltm + "sec.");
+//		System.exit(0);
+	}
+	
+	private int[] getHom(Query view, Query query) { 		//this is exhaustive, iterative
+		//1. For each view node, get all query nodes with same labels 
+		ArrayList<ArrayList<Integer>> nodeMatch = new ArrayList<ArrayList<Integer>>();
+		for (int i = 0; i < view.V; i++) {
+			  ArrayList<Integer> vMatches = new ArrayList<Integer>(); 
+			  for (int j = 0; j < query.V; j++) {
+				  //check if same label as query
+				  if (view.nodes[i].lb == query.nodes[j].lb) {
+					  vMatches.add(query.nodes[j].id);
+				  }
+			  }  //end check qry candmatches for viewnode i
+
+			  nodeMatch.add(vMatches); 
+		} // end checking candmatches for all view nodes
+
+		// 2. Convert query into graph and get Closure
+		TransitiveReduction tr = new TransitiveReduction(query);
+		AxisType[][] Qclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
+		
+		//3. Given a node mapping h: for each view child edge, check if (h(x), h(y)) is a child edge
+		// Try an initial mapping. 
+		int[] candHom = new int[nodeMatch.size()]; 
+		for (int i = 0; i < nodeMatch.size(); i++) {
+			candHom[i] = nodeMatch.get(i).get(0);
+		}
+		
+		//NOTE: ENSURE that 2 view nodes don't map to same query node. If they do, try next mapping.
+		
+		//keep row and col pointers on which match to change in candHom for next mapping.
+		//if fail, move the col pointer right. if col pointer > col size, set cols of all rows below row pointer 
+		//to 0 and move row pointer up (-1) and its col pointer right. then, set row pointer back to lowest row
+		int rowChangeNext = nodeMatch.size() - 1;  //row pointer
+		int colChangeToNext = 0; //col pointer
+		
+		while (true) {
+			for (QEdge edge : view.edges) {
+				String vEdgeType = edge.axis.toString();
+				int viewHnode = edge.from; //head node of view
+				int viewTnode = edge.to; //tail node of view
+				int qryHnode = candHom[viewHnode]; // h(head node)
+				int qryTnode = candHom[viewTnode]; // h(tail node)
+				String qEdgeType = Qclosure[qryHnode][qryTnode].toString();
+				
+				if (!vEdgeType.equals(qEdgeType)) {
+					//mapping failed,  so try another
+					++colChangeToNext;
+					
+					//make sure there is next match for curr col. if not, go to row above to move it right
+					if (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1) {
+						while (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1){
+							//move row pointer up (-1) and its col pointer right
+							--rowChangeNext;
+							
+							//get curr col pointer of new row pointer
+							colChangeToNext = nodeMatch.get(rowChangeNext).indexOf(candHom[rowChangeNext]);
+							++colChangeToNext;
+							
+							//check if col has another match to the right
+							if (colChangeToNext <= nodeMatch.get(rowChangeNext).size() - 1) {
+								
+								//set cols of all rows below row pointer to 0. only do this if -1 to row pointer
+								for (int i = nodeMatch.size() - 1; i > rowChangeNext; i--) {
+									candHom[i] = nodeMatch.get(i).get(0);
+								} //end for: reseting col indices
+								
+								candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
+								rowChangeNext = nodeMatch.size() - 1; //reset col pointer and row pointer
+								colChangeToNext = 0; 
+							} // end if: check col has another match to the right
+						} //end while: checking if col reached end
+						
+					} else {
+						candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
+					}
+					break; //break out 'end of check each edge' and try new candHom mapping
+				} //end if (!vEdgeType.equals(qEdgeType)): check edge consistency
+			} // end for (QEdge edge : view.edges): check each edge consistency
+			// Found mapping with all edges consistent -> use view for query, add to list of query's views
+			return candHom; //all edges passed, so use this mapping
+		} // end of while loop
+	} //end of getHom()
+	
+	public static void main(String[] args) {
+
+	}
+
+}
+
