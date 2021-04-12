@@ -85,24 +85,36 @@ public class ansgraphExclViews3 {
 							
 							//change all view node IDs in adj lists into query node IDs using Hom
 //							j - > i. for each adj list in hashmap, change its old key to hom[old key]
-							HashMap<Integer, ArrayList<PoolEntry>> newFwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
-							for (Integer key : newNode.mFwdEntries.keySet()) {
-								newFwdEntries.put(hom[key], newNode.mFwdEntries.get(key) );
+							HashMap<Integer, ArrayList<PoolEntry>> newFwdEntries = (HashMap<Integer, ArrayList<PoolEntry>>) null;
+							if (newNode.mFwdEntries != null) {
+								newFwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
+								for (Integer key : newNode.mFwdEntries.keySet()) {
+									newFwdEntries.put(hom[key], newNode.mFwdEntries.get(key) );
+								}
 							}
-							
-							HashMap<Integer, ArrayList<PoolEntry>> newBwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
-							for (Integer key : newNode.mBwdEntries.keySet()) {
-								newBwdEntries.put(hom[key], newNode.mBwdEntries.get(key) );
+								
+							HashMap<Integer, ArrayList<PoolEntry>> newBwdEntries = (HashMap<Integer, ArrayList<PoolEntry>>) null;
+							if (newNode.mBwdEntries != null) {
+								newBwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
+								for (Integer key : newNode.mBwdEntries.keySet()) {
+									newBwdEntries.put(hom[key], newNode.mBwdEntries.get(key) );
+								}
+							} 
+
+							HashMap<Integer, RoaringBitmap> newFwdBits = (HashMap<Integer, RoaringBitmap>) null;
+							if (newNode.mFwdBits != null) {
+								newFwdBits = new HashMap<Integer, RoaringBitmap>();
+								for (Integer key : newNode.mFwdBits.keySet()) {
+									newFwdBits.put(hom[key], newNode.mFwdBits.get(key) );
+								}
 							}
-							
-							HashMap<Integer, RoaringBitmap> newFwdBits = new HashMap<Integer, RoaringBitmap>();
-							for (Integer key : newNode.mFwdBits.keySet()) {
-								newFwdBits.put(hom[key], newNode.mFwdBits.get(key) );
-							}
-							
-							HashMap<Integer, RoaringBitmap> newBwdBits = new HashMap<Integer, RoaringBitmap>();
-							for (Integer key : newNode.mBwdBits.keySet()) {
-								newBwdBits.put(hom[key], newNode.mBwdBits.get(key) );
+
+							HashMap<Integer, RoaringBitmap> newBwdBits = (HashMap<Integer, RoaringBitmap>) null;
+							if (newNode.mBwdBits != null) {
+								newBwdBits = new HashMap<Integer, RoaringBitmap>();
+								for (Integer key : newNode.mBwdBits.keySet()) {
+									newBwdBits.put(hom[key], newNode.mBwdBits.get(key) );
+								}
 							}
 							
 							PoolEntry newEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
