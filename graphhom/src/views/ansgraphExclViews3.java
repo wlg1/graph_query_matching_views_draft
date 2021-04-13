@@ -66,63 +66,91 @@ public class ansgraphExclViews3 {
 		//1) Take intersection of all views
 		//for each node set n_q, intersect the node set covering n_q for all views
 		//then for each graph node, intersect adj list
-		for (int i = 0; i < query.V; i++) {
+		for (int i = 0; i < query.V; i++) { // i is query node ID. for each node in query
 			Pool Qnodeset = new Pool(); 
 			for (Query view : viewsOfQuery) {
 				int[] hom = getHom(view, query);  //pos is view node ID, value is query node ID
 				
-				for (int j = 0; j < hom.length; j++) {
+				for (int j = 0; j < hom.length; j++) { //j is view node ID
 					if (hom[j] == i) {  //found covering node set
 						ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
 						ArrayList<PoolEntry> nodesToAdd = viewAnsgr.get(j).elist(); //the covering node set
-//						Qnodeset.retainAll(nodesToAdd);
 						//for each node to add, if its graphID not in Qnodeset, add it
 						//else, intersect its adj lists w/ existing poolentry
+						
+						
+						
 						for (PoolEntry newNode: nodesToAdd) {
 							boolean newNodeFlag = true;
+							
+							//change all view node IDs in adj lists into query node IDs using Hom
+//							j - > i. for each adj list in hashmap, change its old key to hom[old key]
+							HashMap<Integer, ArrayList<PoolEntry>> newFwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
+							for (Integer key : newNode.mFwdEntries.keySet()) {
+								newFwdEntries.put(hom[key], newNode.mFwdEntries.get(key) );
+							}
+							
+							HashMap<Integer, ArrayList<PoolEntry>> newBwdEntries = new HashMap<Integer, ArrayList<PoolEntry>>();
+							for (Integer key : newNode.mBwdEntries.keySet()) {
+								newBwdEntries.put(hom[key], newNode.mBwdEntries.get(key) );
+							}
+							
+							HashMap<Integer, RoaringBitmap> newFwdBits = new HashMap<Integer, RoaringBitmap>();
+							for (Integer key : newNode.mFwdBits.keySet()) {
+								newFwdBits.put(hom[key], newNode.mFwdBits.get(key) );
+							}
+							
+							HashMap<Integer, RoaringBitmap> newBwdBits = new HashMap<Integer, RoaringBitmap>();
+							for (Integer key : newNode.mBwdBits.keySet()) {
+								newBwdBits.put(hom[key], newNode.mBwdBits.get(key) );
+							}
+							
+							PoolEntry newEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
+									newNode.mFwdEntries, newBwdEntries, newNode.mFwdBits, newNode.mBwdBits,
+									newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
+							
 							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
-								if (oldNode.mValue == newNode.mValue) {
+								if (oldNode.mValue == newEntry.mValue) {
 									newNodeFlag = false;
 									
-									if (newNode.mBwdEntries != null) {
+									//remember entries is hashmap, so need to go thru each node it points to
+									
+									if (newEntry.mBwdEntries != null) {
 										if (oldNode.mBwdEntries == null) {
-											oldNode.mBwdEntries = newNode.mBwdEntries;
-											oldNode.mBwdBits = newNode.mBwdBits;
+											oldNode.mBwdEntries = newEntry.mBwdEntries;
+											oldNode.mBwdBits = newEntry.mBwdBits;
 										} else {
 											for (Integer key : oldNode.mBwdEntries.keySet()) {
 												ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
-												nodeBwd.retainAll(newNode.mBwdEntries.get(key) );
+												nodeBwd.retainAll(newEntry.mBwdEntries.get(key) );
 											}
 											for (Integer key : oldNode.mBwdBits.keySet()) {
 												RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
-												nodeBwdbits.and(newNode.mBwdBits.get(key) );
+												nodeBwdbits.and(newEntry.mBwdBits.get(key) );
 											}
 										}
 									}
 									
-									if (newNode.mFwdEntries != null) {
+									if (newEntry.mFwdEntries != null) {
 										if (oldNode.mFwdEntries == null) {
-											oldNode.mFwdEntries = newNode.mFwdEntries;
-											oldNode.mFwdBits = newNode.mFwdBits;
+											oldNode.mFwdEntries = newEntry.mFwdEntries;
+											oldNode.mFwdBits = newEntry.mFwdBits;
 										} else {
 											for (Integer key : oldNode.mFwdEntries.keySet()) {
 												ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
-												nodeFwd.retainAll(newNode.mFwdEntries.get(key) );
+												nodeFwd.retainAll(newEntry.mFwdEntries.get(key) );
 											}			
 											
 											for (Integer key : oldNode.mFwdEntries.keySet()) {
 												RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
-												nodeFwdbits.and(newNode.mFwdBits.get(key) );
+												nodeFwdbits.and(newEntry.mFwdBits.get(key) );
 											}	
 										}
 									}
 								}
 							}
 							if (newNodeFlag) {
-								PoolEntry actEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
-										newNode.mFwdEntries, newNode.mBwdEntries, newNode.mFwdBits, newNode.mBwdBits,
-										newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
-								Qnodeset.addEntry(actEntry); 
+								Qnodeset.addEntry(newEntry); 
 							}
 						}
 						break;

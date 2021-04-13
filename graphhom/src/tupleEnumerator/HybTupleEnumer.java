@@ -264,6 +264,10 @@ public class HybTupleEnumer {
 				curbits = bm.mBwdBits.get(cur_vertex);
 			}
 
+			System.out.println(curbits);
+			if (curbits == null) {
+				System.out.println(curbits);
+			}
 			if (i == 0)
 				bits.or(curbits);
 			else
