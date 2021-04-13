@@ -175,17 +175,44 @@ public class ansgraphExclViews3 {
 			mPool2.add(new Pool() );
 		}
 		
-		for (QEdge qEdge : query.edges ) {
-			ArrayList<PoolEntry> headNodeSet = mPool.get(qEdge.from).elist();
-			for (PoolEntry Hpe : headNodeSet) {
-				if (Hpe.mFwdEntries.containsKey(qEdge.to) && Hpe.mFwdEntries != null ) {
-					mPool2.get(qEdge.from).addEntry(Hpe);
-				}
-			}
-			ArrayList<PoolEntry> tailNodeSet = mPool.get(qEdge.to).elist();
-			for (PoolEntry Tpe : tailNodeSet) {
-				if (Tpe.mBwdEntries.containsKey(qEdge.from) && Tpe.mBwdEntries != null ) {
-					mPool2.get(qEdge.to).addEntry(Tpe);
+		//only add if the poolentry satisfies ALL edges. so dont loop thru edges; loop thru poolentries.
+//		for (QEdge qEdge : query.edges ) {
+//			ArrayList<PoolEntry> headNodeSet = mPool.get(qEdge.from).elist();
+//			for (PoolEntry Hpe : headNodeSet) {
+//				if (qEdge.from == 1 && qEdge.to == 2 && Hpe.mFwdEntries == null) {
+//					System.out.println("debug here");
+//				}
+//				
+//				if (Hpe.mFwdEntries != null ) {
+//					if (Hpe.mFwdEntries.containsKey(qEdge.to) && !mPool2.get(qEdge.from).elist().contains(Hpe)) { //containsKey only works if !null
+//						mPool2.get(qEdge.from).addEntry(Hpe);
+//					}
+//				}
+//				if (Hpe.mValue.id == 8) { //why is this added even tho its fwd lst is null
+//					System.out.println(Hpe.mFwdEntries != null );
+//					System.out.println("debug here");
+//				}
+//			}
+//			ArrayList<PoolEntry> tailNodeSet = mPool.get(qEdge.to).elist();
+//			for (PoolEntry Tpe : tailNodeSet) {
+//				if (Tpe.mBwdEntries != null) {
+//					if (Tpe.mBwdEntries.containsKey(qEdge.from) && !mPool2.get(qEdge.to).elist().contains(Tpe) ) {
+//						mPool2.get(qEdge.to).addEntry(Tpe);
+//					}
+//				}
+//			}
+//		}
+		
+		//only keep graph nodes w/ edges on them, and must satisfy all edges their matched query node has
+		for ( int i = 0; i < query.V; i++ ) {
+			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
+			for (PoolEntry pe : currNodeSet) {
+				for (QEdge qEdge : query.edges ) {
+					if (pe.mBwdEntries != null && pe.mFwdEntries != null){
+						if (pe.mBwdEntries.containsKey(qEdge.from) && pe.mFwdEntries.containsKey(qEdge.to) ) {
+							mPool2.get(i).addEntry(pe);
+						}
+					}
 				}
 			}
 		}
@@ -211,14 +238,14 @@ public class ansgraphExclViews3 {
 		
 		double buildtm = tt.Stop() / 1000;
 		stat.setMatchTime(buildtm);
-		stat.calAnsGraphSize(mPool);
+		stat.calAnsGraphSize(mPool2);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		System.out.println("Answer graph build time:" + buildtm + " sec.");
 		
 		//run MIjoin using occurrence lists to get answer again
 		double numOutTuples;
 		tt.Start();
-		tenum = new HybTupleEnumer(query, mPool);
+		tenum = new HybTupleEnumer(query, mPool2);
 		numOutTuples = tenum.enumTuples();
 		
 		double enumtm = tt.Stop() / 1000;
