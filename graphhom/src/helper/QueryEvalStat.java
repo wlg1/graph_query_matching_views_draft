@@ -9,7 +9,7 @@ import global.Consts.status_vals;
 public class QueryEvalStat {
 
 	public double sizeOfAnsGraph = 0.0, numSolns = 0.0, totNodesBefore = 0.0, totNodesAfter = 0.0, totSolnNodes = 0.0;
-	public double preTime = 0.0, planTime = 0.0, matchTime = 0.0, enumTime = 0.0,  totTime = 0.0;
+	public double preTime = 0.0, planTime = 0.0, matchTime = 0.0, enumTime,  totTime = 0.0;
     public status_vals status = status_vals.success;
 	public double numPlans = 0.0;
 	

@@ -70,10 +70,9 @@ public class ansgraphExclViews3 {
 			Pool Qnodeset = new Pool(); 
 			for (Query view : viewsOfQuery) {
 				int[] hom = getHom(view, query);  //pos is view node ID, value is query node ID
-				
+				ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
 				for (int j = 0; j < hom.length; j++) { //j is view node ID
 					if (hom[j] == i) {  //found covering node set
-						ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
 						ArrayList<PoolEntry> nodesToAdd = viewAnsgr.get(j).elist(); //the covering node set
 						//for each node to add, if its graphID not in Qnodeset, add it
 						//else, intersect its adj lists w/ existing poolentry
@@ -120,7 +119,7 @@ public class ansgraphExclViews3 {
 									newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
 							
 							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
-								if (oldNode.mValue == newEntry.mValue) {
+								if (oldNode.mValue.id == newEntry.mValue.id) {
 									newNodeFlag = false;
 									
 									//remember entries is hashmap, so need to go thru each node it points to
@@ -157,6 +156,7 @@ public class ansgraphExclViews3 {
 											}	
 										}
 									}
+								break;
 								}
 							}
 							if (newNodeFlag) {
@@ -169,6 +169,28 @@ public class ansgraphExclViews3 {
 			}
 			mPool.add(Qnodeset);
 		}
+		//for each edge, if a poolentry does not have that edge, remove it
+		ArrayList<Pool> mPool2 = new ArrayList<Pool>();
+		for ( int i = 0; i < query.V; i++ ) {
+			mPool2.add(new Pool() );
+		}
+		
+		for (QEdge qEdge : query.edges ) {
+			ArrayList<PoolEntry> headNodeSet = mPool.get(qEdge.from).elist();
+			for (PoolEntry Hpe : headNodeSet) {
+				if (Hpe.mFwdEntries.containsKey(qEdge.to) && Hpe.mFwdEntries != null ) {
+					mPool2.get(qEdge.from).addEntry(Hpe);
+				}
+			}
+			ArrayList<PoolEntry> tailNodeSet = mPool.get(qEdge.to).elist();
+			for (PoolEntry Tpe : tailNodeSet) {
+				if (Tpe.mBwdEntries.containsKey(qEdge.from) && Tpe.mBwdEntries != null ) {
+					mPool2.get(qEdge.to).addEntry(Tpe);
+				}
+			}
+		}
+		
+		
 		//2) for each query edge, check if covered by at least one view. if not, compute occ set of closure
 		
 		//go to node set of ans gr and find a key To target vertex. if this key exists, that edge is covered.
@@ -187,7 +209,11 @@ public class ansgraphExclViews3 {
 			
 //		}
 		
-//		return allQNodeSets;
+		double buildtm = tt.Stop() / 1000;
+		stat.setMatchTime(buildtm);
+		stat.calAnsGraphSize(mPool);
+		stat.setTotNodesAfter(calTotCandSolnNodes());
+		System.out.println("Answer graph build time:" + buildtm + " sec.");
 		
 		//run MIjoin using occurrence lists to get answer again
 		double numOutTuples;

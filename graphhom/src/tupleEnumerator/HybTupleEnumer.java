@@ -99,18 +99,18 @@ public class HybTupleEnumer {
 		int cur_vertex = order[depth]; //query vertex to match
 
 		//fwd adj intersection
-		RoaringBitmap candBits = getCandBits(cur_vertex);
+		RoaringBitmap candBits = getCandBits(cur_vertex); //S: graph nodes to use for this query vertex
 		if (candBits.isEmpty()) {
 
 			return;
 		}
 
-		Pool pl = pool.get(cur_vertex);  //the pool at query node
+		Pool pl = pool.get(cur_vertex);  //the node set of this query vertex
 		ArrayList<PoolEntry> elist = pl.elist();
 
-		for (int i : candBits) {
-			PoolEntry e = elist.get(i);
-			match[cur_vertex] = e;
+		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
+			PoolEntry e = elist.get(i); //the graph node at i's bit
+			match[cur_vertex] = e;  //try this graph node as a match to this query vertex
 		    
 			if (depth == max_depth - 1) {
 				tupleCount++;
@@ -234,13 +234,13 @@ public class HybTupleEnumer {
 		return rs;
 	}
 
-	//in transition(): number of cands to consider?
+	//in transition(): get S, which are neighbors to previously matched graph node
 	private RoaringBitmap getCandBits(int cur_vertex) {
 
 		RoaringBitmap bits = new RoaringBitmap();
-		int num = bn_count[cur_vertex];
+		int num = bn_count[cur_vertex]; //number of backward neighbors
 
-		if (num == 0) {
+		if (num == 0) {  //no neighbors b/c it's the first query vertex to match
 
 			for (PoolEntry e : pool.get(cur_vertex).elist()) {
 				bits.add(e.getPos());
@@ -251,11 +251,17 @@ public class HybTupleEnumer {
 
 		int[] bns = bn[cur_vertex];
 
-		for (int i = 0; i < num; i++) {
+		for (int i = 0; i < num; i++) {  //for each neighbor, intersect their occ list
 			int bn_vertex = bns[i];
 			DirType dir = query.dir(bn_vertex, cur_vertex);
 			RoaringBitmap curbits;
 			PoolEntry bm = match[bn_vertex];
+			if (bm.mFwdBits != null && dir == DirType.FWD) {
+				System.out.println();
+			} else {
+				System.out.println();
+			}
+			
 			if (dir == DirType.FWD) {
 
 				curbits = bm.mFwdBits.get(cur_vertex);
@@ -264,7 +270,6 @@ public class HybTupleEnumer {
 				curbits = bm.mBwdBits.get(cur_vertex);
 			}
 
-			System.out.println(curbits);
 			if (curbits == null) {
 				System.out.println(curbits);
 			}
