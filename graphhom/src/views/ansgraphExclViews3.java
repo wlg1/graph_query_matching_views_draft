@@ -206,6 +206,8 @@ public class ansgraphExclViews3 {
 //			}
 //		}
 		
+		//issue: rmv nodes doesnt rmv them from adj list of other nodes
+		
 		//This is the 'intersection' of edges b/w node sets. Above is for indiv poolentries, which is union
 		//only keep graph nodes w/ edges on them, and must satisfy all edges their matched query node has
 		for ( int i = 0; i < query.V; i++ ) {
