@@ -131,11 +131,13 @@ public class ansgraphExclViews3 {
 										} else {
 											for (Integer key : oldNode.mBwdEntries.keySet()) {
 												ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
-												nodeBwd.retainAll(newEntry.mBwdEntries.get(key) );
+//												nodeBwd.retainAll(newEntry.mBwdEntries.get(key) );
+												nodeBwd.addAll(newEntry.mBwdEntries.get(key) );
 											}
 											for (Integer key : oldNode.mBwdBits.keySet()) {
 												RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
-												nodeBwdbits.and(newEntry.mBwdBits.get(key) );
+//												nodeBwdbits.and(newEntry.mBwdBits.get(key) );
+												nodeBwdbits.or(newEntry.mBwdBits.get(key) );
 											}
 										}
 									}
@@ -147,16 +149,17 @@ public class ansgraphExclViews3 {
 										} else {
 											for (Integer key : oldNode.mFwdEntries.keySet()) {
 												ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
-												nodeFwd.retainAll(newEntry.mFwdEntries.get(key) );
+//												nodeFwd.retainAll(newEntry.mFwdEntries.get(key) );
+												nodeFwd.addAll(newEntry.mFwdEntries.get(key) );
 											}			
 											
 											for (Integer key : oldNode.mFwdEntries.keySet()) {
 												RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
-												nodeFwdbits.and(newEntry.mFwdBits.get(key) );
+//												nodeFwdbits.and(newEntry.mFwdBits.get(key) );
+												nodeFwdbits.or(newEntry.mFwdBits.get(key) );
 											}	
 										}
 									}
-								break;
 								}
 							}
 							if (newNodeFlag) {
@@ -203,20 +206,36 @@ public class ansgraphExclViews3 {
 //			}
 //		}
 		
+		//This is the 'intersection' of edges b/w node sets. Above is for indiv poolentries, which is union
 		//only keep graph nodes w/ edges on them, and must satisfy all edges their matched query node has
 		for ( int i = 0; i < query.V; i++ ) {
 			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
 			for (PoolEntry pe : currNodeSet) {
-				for (QEdge qEdge : query.edges ) {
-					if (pe.mBwdEntries != null && pe.mFwdEntries != null){
-						if (pe.mBwdEntries.containsKey(qEdge.from) && pe.mFwdEntries.containsKey(qEdge.to) ) {
-							mPool2.get(i).addEntry(pe);
+				boolean addNode = true;
+				for (QEdge qEdge : query.edges ) { // if just one edge fails, don't add node 
+					if (qEdge.from == i ) {  //edge uses this node set as head
+						if (pe.mFwdEntries == null ) {
+							addNode = false;
+							break;
+						} else if (!pe.mFwdEntries.containsKey(qEdge.to) ) {
+							addNode = false;
+							break;
+						}
+					} else if (qEdge.to == i ) {  //edge uses this node set as head
+						if (pe.mBwdEntries == null ) {
+							addNode = false;
+							break;
+						} else if (!pe.mBwdEntries.containsKey(qEdge.from) ) {
+							addNode = false;
+							break;
 						}
 					}
 				}
+				if (addNode && !mPool2.get(i).elist().contains(pe)) {
+					mPool2.get(i).addEntry(pe);
+				}
 			}
 		}
-		
 		
 		//2) for each query edge, check if covered by at least one view. if not, compute occ set of closure
 		

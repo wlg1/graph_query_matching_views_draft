@@ -109,6 +109,11 @@ public class HybTupleEnumer {
 		ArrayList<PoolEntry> elist = pl.elist();
 
 		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
+			if (elist.size() == 4630 && i == 4634){
+				System.out.println(i);
+			}
+			
+			
 			PoolEntry e = elist.get(i); //the graph node at i's bit
 			match[cur_vertex] = e;  //try this graph node as a match to this query vertex
 		    
