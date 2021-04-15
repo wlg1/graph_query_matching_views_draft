@@ -98,7 +98,6 @@ public class HybTupleEnumer {
 
 		int cur_vertex = order[depth]; //query vertex to match
 
-		//fwd adj intersection
 		RoaringBitmap candBits = getCandBits(cur_vertex); //S: graph nodes to use for this query vertex
 		if (candBits.isEmpty()) {
 
@@ -108,7 +107,12 @@ public class HybTupleEnumer {
 		Pool pl = pool.get(cur_vertex);  //the node set of this query vertex
 		ArrayList<PoolEntry> elist = pl.elist();
 
+		//fwd adj intersection
 		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
+			System.out.println(candBits);
+			System.out.println(cur_vertex);
+			System.out.println(elist.size());
+			System.out.println(i);
 			if (elist.size() == 4630 && i == 4634){
 				System.out.println(i);
 			}
@@ -254,6 +258,7 @@ public class HybTupleEnumer {
 			return bits;
 		}
 
+		//prev matches which are neighbors to the curr node set to match
 		int[] bns = bn[cur_vertex];
 
 		for (int i = 0; i < num; i++) {  //for each neighbor, intersect their occ list
@@ -351,7 +356,7 @@ public class HybTupleEnumer {
 		return false;
 	}
 
-	// backward neighbor
+	// matched neighbors for each vertex
 	private void generateBN(Query query_graph, int[] order) {
 		int query_vertices_num = query_graph.V;
 		bn_count = new int[query_vertices_num];

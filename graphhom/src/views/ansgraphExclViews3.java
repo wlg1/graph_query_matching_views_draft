@@ -44,7 +44,6 @@ import tupleEnumerator.HybTupleEnumer;
 import views.HybAnsGraphBuilder2;
 
 public class ansgraphExclViews3 {
-
 	Query query;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<Pool>> qid_Ansgr;
@@ -65,20 +64,34 @@ public class ansgraphExclViews3 {
 		
 		//1) Take intersection of all views
 		//for each node set n_q, intersect the node set covering n_q for all views
-		//then for each graph node, intersect adj list
+		//DO NOT TAKE UNION OF VIEW'S NODE SETS, TAKE INTERSECTION.
+		//if a node isn't in the query node set already, don't add it
+		//if node is in the query node set, take UNION of its adj list w/ prev node's adj list
+		//if qnodeset is empty, initialize it with the nodeset of the first view
+		
+		//bc we take intersection of adj list, store view nodes as list of its query IDs, instead of 
+		//needing to loop thru existing list to check if it exists.
 		for (int i = 0; i < query.V; i++) { // i is query node ID. for each node in query
 			Pool Qnodeset = new Pool(); 
+			
 			for (Query view : viewsOfQuery) {
 				int[] hom = getHom(view, query);  //pos is view node ID, value is query node ID
 				ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
-				for (int j = 0; j < hom.length; j++) { //j is view node ID
+				for (int j = 0; j < hom.length; j++) { //j is view node ID. find which j matches i
 					if (hom[j] == i) {  //found covering node set
 						ArrayList<PoolEntry> nodesToAdd = viewAnsgr.get(j).elist(); //the covering node set
-						//for each node to add, if its graphID not in Qnodeset, add it
-						//else, intersect its adj lists w/ existing poolentry
+
+						//if qnodeset is empty, initialize it with the nodeset of the first view
+						if (Qnodeset.isEmpty()){
+							ArrayList<PoolEntry> initlist = Qnodeset.elist();
+							initlist = nodesToAdd;
+						}
 						
+						//this is the intersection
+						//for each node to add, if its graphID not in Qnodeset,
+						// if it is, union its adj lists w/ existing poolentry
 						for (PoolEntry newNode: nodesToAdd) {
-							boolean newNodeFlag = true;
+//							boolean newNodeFlag = true;
 							
 							//change all view node IDs in adj lists into query node IDs using Hom
 //							j - > i. for each adj list in hashmap, change its old key to hom[old key]
@@ -120,7 +133,7 @@ public class ansgraphExclViews3 {
 							
 							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
 								if (oldNode.mValue.id == newEntry.mValue.id) {
-									newNodeFlag = false;
+//									newNodeFlag = false;
 									
 									//remember entries is hashmap, so need to go thru each node it points to
 									
@@ -162,9 +175,9 @@ public class ansgraphExclViews3 {
 									}
 								}
 							}
-							if (newNodeFlag) {
-								Qnodeset.addEntry(newEntry); 
-							}
+//							if (newNodeFlag) {
+//								Qnodeset.addEntry(newEntry); 
+//							}
 						}
 						break;
 					}
@@ -173,10 +186,10 @@ public class ansgraphExclViews3 {
 			mPool.add(Qnodeset);
 		}
 		//for each edge, if a poolentry does not have that edge, remove it
-		ArrayList<Pool> mPool2 = new ArrayList<Pool>();
-		for ( int i = 0; i < query.V; i++ ) {
-			mPool2.add(new Pool() );
-		}
+//		ArrayList<Pool> mPool2 = new ArrayList<Pool>();
+//		for ( int i = 0; i < query.V; i++ ) {
+//			mPool2.add(new Pool() );
+//		}
 		
 		//only add if the poolentry satisfies ALL edges. so dont loop thru edges; loop thru poolentries.
 //		for (QEdge qEdge : query.edges ) {
@@ -210,34 +223,34 @@ public class ansgraphExclViews3 {
 		
 		//This is the 'intersection' of edges b/w node sets. Above is for indiv poolentries, which is union
 		//only keep graph nodes w/ edges on them, and must satisfy all edges their matched query node has
-		for ( int i = 0; i < query.V; i++ ) {
-			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
-			for (PoolEntry pe : currNodeSet) {
-				boolean addNode = true;
-				for (QEdge qEdge : query.edges ) { // if just one edge fails, don't add node 
-					if (qEdge.from == i ) {  //edge uses this node set as head
-						if (pe.mFwdEntries == null ) {
-							addNode = false;
-							break;
-						} else if (!pe.mFwdEntries.containsKey(qEdge.to) ) {
-							addNode = false;
-							break;
-						}
-					} else if (qEdge.to == i ) {  //edge uses this node set as head
-						if (pe.mBwdEntries == null ) {
-							addNode = false;
-							break;
-						} else if (!pe.mBwdEntries.containsKey(qEdge.from) ) {
-							addNode = false;
-							break;
-						}
-					}
-				}
-				if (addNode && !mPool2.get(i).elist().contains(pe)) {
-					mPool2.get(i).addEntry(pe);
-				}
-			}
-		}
+//		for ( int i = 0; i < query.V; i++ ) {
+//			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
+//			for (PoolEntry pe : currNodeSet) {
+//				boolean addNode = true;
+//				for (QEdge qEdge : query.edges ) { // if just one edge fails, don't add node 
+//					if (qEdge.from == i ) {  //edge uses this node set as head
+//						if (pe.mFwdEntries == null ) {
+//							addNode = false;
+//							break;
+//						} else if (!pe.mFwdEntries.containsKey(qEdge.to) ) {
+//							addNode = false;
+//							break;
+//						}
+//					} else if (qEdge.to == i ) {  //edge uses this node set as head
+//						if (pe.mBwdEntries == null ) {
+//							addNode = false;
+//							break;
+//						} else if (!pe.mBwdEntries.containsKey(qEdge.from) ) {
+//							addNode = false;
+//							break;
+//						}
+//					}
+//				}
+//				if (addNode && !mPool2.get(i).elist().contains(pe)) {
+//					mPool2.get(i).addEntry(pe);
+//				}
+//			}
+//		}
 		
 		//2) for each query edge, check if covered by at least one view. if not, compute occ set of closure
 		
@@ -259,14 +272,14 @@ public class ansgraphExclViews3 {
 		
 		double buildtm = tt.Stop() / 1000;
 		stat.setMatchTime(buildtm);
-		stat.calAnsGraphSize(mPool2);
+		stat.calAnsGraphSize(mPool);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		System.out.println("Answer graph build time:" + buildtm + " sec.");
 		
 		//run MIjoin using occurrence lists to get answer again
 		double numOutTuples;
 		tt.Start();
-		tenum = new HybTupleEnumer(query, mPool2);
+		tenum = new HybTupleEnumer(query, mPool);
 		numOutTuples = tenum.enumTuples();
 		
 		double enumtm = tt.Stop() / 1000;
