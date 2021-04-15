@@ -74,29 +74,29 @@ public class ansgraphExclViews3 {
 		
 		for (int i = 0; i < query.V; i++) { // i is query node ID. for each node in query
 			Pool Qnodeset = new Pool(); 
-			
-			for (Query view : viewsOfQuery) {
+			boolean initNodeSet = true;
+			for (int v = 0; v < viewsOfQuery.size(); v++) {
+				Query view = viewsOfQuery.get(v);
 				int[] hom = getHom(view, query);  //pos is view node ID, value is query node ID
 				ArrayList<Pool> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
 				for (int j = 0; j < hom.length; j++) { //j is view node ID. find which j matches i
 					if (hom[j] == i) {  //found covering node set
 						ArrayList<PoolEntry> nodesToAdd = viewAnsgr.get(j).elist(); //the covering node set
 
-						//if qnodeset is empty, initialize it with the nodeset of the first view
-						if (Qnodeset.isEmpty()){
-							Qnodeset.setList(nodesToAdd);
-							break;
-						}
-						
 						//create functions to take union of adj lists
 						//the issue w/ union of adj lists is that it may refer to a node that's no longer there
 						
 						//this is the intersection
 						//for each node to add, if its graphID not in Qnodeset,
 						// if it is, union its adj lists w/ existing poolentry
+						
+						//if qnodeset is empty, initialize it with the nodeset of the first view
+//						if (Qnodeset.isEmpty()){
+//							Qnodeset.setList(nodesToAdd);
+//							break;
+//						}
+						
 						for (PoolEntry newNode: nodesToAdd) {
-//							boolean newNodeFlag = true;
-							
 							//change all view node IDs in adj lists into query node IDs using Hom
 //							j - > i. for each adj list in hashmap, change its old key to hom[old key]
 							HashMap<Integer, ArrayList<PoolEntry>> newFwdEntries = (HashMap<Integer, ArrayList<PoolEntry>>) null;
@@ -131,69 +131,66 @@ public class ansgraphExclViews3 {
 								}
 							}
 							
-							PoolEntry newEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
-									newFwdEntries, newBwdEntries, newFwdBits, newBwdBits,
-									newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
-							
-							Pool newQnodeset = new Pool(); 
-							//remove nodes from prev node set which are not in current view's node set
-							//loop through old nodeset and if no match to any newval, don't add it
-							//keep track of what has a match so far. only add if there's a match.
-							
-							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
-								if (oldNode.mValue.id == newEntry.mValue.id) {
-//									newNodeFlag = false;
-									
-									//remember entries is hashmap, so need to go thru each node it points to
-									
-									if (newEntry.mBwdEntries != null) {
-										if (oldNode.mBwdEntries == null) {
-											oldNode.mBwdEntries = newEntry.mBwdEntries;
-											oldNode.mBwdBits = newEntry.mBwdBits;
-										} else {
-											for (Integer key : oldNode.mBwdEntries.keySet()) {
-												ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
-//												nodeBwd.retainAll(newEntry.mBwdEntries.get(key) );
-												nodeBwd.addAll(newEntry.mBwdEntries.get(key) );
-											}
-											for (Integer key : oldNode.mBwdBits.keySet()) {
-												RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
-//												nodeBwdbits.and(newEntry.mBwdBits.get(key) );
-												nodeBwdbits.or(newEntry.mBwdBits.get(key) );
+							if (initNodeSet){
+								PoolEntry newEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
+										newFwdEntries, newBwdEntries, newFwdBits, newBwdBits,
+										newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
+								Qnodeset.addEntry(newEntry);
+							} else {
+								//remove nodes from prev node set which are not in current view's node set
+								//loop through old nodeset and if no match to any newval, don't add it
+								//keep track of what has a match so far. only add if there's a match.
+								
+								for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
+									if (oldNode.mValue.id == newNode.mValue.id) {
+										//remember entries is hashmap, so need to go thru each node it points to
+										
+										if (newBwdEntries != null) {
+											if (oldNode.mBwdEntries == null) {
+												oldNode.mBwdEntries = newBwdEntries;
+												oldNode.mBwdBits = newBwdBits;
+											} else {
+												for (Integer key : oldNode.mBwdEntries.keySet()) {
+													ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
+//													nodeBwd.retainAll(newBwdEntries.get(key) );
+													nodeBwd.addAll(newBwdEntries.get(key) );
+												}
+												for (Integer key : oldNode.mBwdBits.keySet()) {
+													RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
+//													nodeBwdbits.and(newBwdBits.get(key) );
+													nodeBwdbits.or(newBwdBits.get(key) );
+												}
 											}
 										}
-									}
-									
-									if (newEntry.mFwdEntries != null) {
-										if (oldNode.mFwdEntries == null) {
-											oldNode.mFwdEntries = newEntry.mFwdEntries;
-											oldNode.mFwdBits = newEntry.mFwdBits;
-										} else {
-											for (Integer key : oldNode.mFwdEntries.keySet()) {
-												ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
-//												nodeFwd.retainAll(newEntry.mFwdEntries.get(key) );
-												nodeFwd.addAll(newEntry.mFwdEntries.get(key) );
-											}			
-											
-											for (Integer key : oldNode.mFwdEntries.keySet()) {
-												RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
-//												nodeFwdbits.and(newEntry.mFwdBits.get(key) );
-												nodeFwdbits.or(newEntry.mFwdBits.get(key) );
-											}	
+										
+										if (newFwdEntries != null) {
+											if (oldNode.mFwdEntries == null) {
+												oldNode.mFwdEntries = newFwdEntries;
+												oldNode.mFwdBits = newFwdBits;
+											} else {
+												for (Integer key : oldNode.mFwdEntries.keySet()) {
+													ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
+//													nodeFwd.retainAll(newFwdEntries.get(key) );
+													nodeFwd.addAll(newFwdEntries.get(key) );
+												}			
+												
+												for (Integer key : oldNode.mFwdEntries.keySet()) {
+													RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
+//													nodeFwdbits.and(newFwdBits.get(key) );
+													nodeFwdbits.or(newFwdBits.get(key) );
+												}	
+											}
 										}
-									}
-								newQnodeset.addEntry(oldNode);
-								Qnodeset = newQnodeset;
-								}
-							}
-//							if (newNodeFlag) {
-//								Qnodeset.addEntry(newEntry); 
-//							}
-						}
+									break; //found matching graph ID so break loop
+									} //end check graph node id
+								} //end check old nodes
+							} //end else [if-else v==0]
+						} //end go thru each new node to add to query node set
+						initNodeSet = false;
 						break;
-					}
-				}
-			}
+					} // end if-else found covering node set
+				} //end finding covering node set
+			} //end check node set of every view
 			mPool.add(Qnodeset);
 		}
 		//for each edge, if a poolentry does not have that edge, remove it
