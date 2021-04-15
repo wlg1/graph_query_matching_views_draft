@@ -71,6 +71,7 @@ public class ansgraphExclViews3 {
 		
 		//bc we take intersection of adj list, store view nodes as list of its query IDs, instead of 
 		//needing to loop thru existing list to check if it exists.
+		
 		for (int i = 0; i < query.V; i++) { // i is query node ID. for each node in query
 			Pool Qnodeset = new Pool(); 
 			
@@ -83,9 +84,12 @@ public class ansgraphExclViews3 {
 
 						//if qnodeset is empty, initialize it with the nodeset of the first view
 						if (Qnodeset.isEmpty()){
-							ArrayList<PoolEntry> initlist = Qnodeset.elist();
-							initlist = nodesToAdd;
+							Qnodeset.setList(nodesToAdd);
+							break;
 						}
+						
+						//create functions to take union of adj lists
+						//the issue w/ union of adj lists is that it may refer to a node that's no longer there
 						
 						//this is the intersection
 						//for each node to add, if its graphID not in Qnodeset,
@@ -131,6 +135,11 @@ public class ansgraphExclViews3 {
 									newFwdEntries, newBwdEntries, newFwdBits, newBwdBits,
 									newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
 							
+							Pool newQnodeset = new Pool(); 
+							//remove nodes from prev node set which are not in current view's node set
+							//loop through old nodeset and if no match to any newval, don't add it
+							//keep track of what has a match so far. only add if there's a match.
+							
 							for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
 								if (oldNode.mValue.id == newEntry.mValue.id) {
 //									newNodeFlag = false;
@@ -173,6 +182,8 @@ public class ansgraphExclViews3 {
 											}	
 										}
 									}
+								newQnodeset.addEntry(oldNode);
+								Qnodeset = newQnodeset;
 								}
 							}
 //							if (newNodeFlag) {
