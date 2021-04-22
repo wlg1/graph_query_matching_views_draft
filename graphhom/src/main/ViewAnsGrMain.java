@@ -34,6 +34,7 @@ import query.graph.QueryDirectedCycle;
 import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
 import views.ansgraphExclViews3;
+import views.ansgraphExclViews4;
 import views.getAnsGr;
 
 public class ViewAnsGrMain {
@@ -166,7 +167,7 @@ public class ViewAnsGrMain {
 				}
 				viewsOfQueries.add(viewsOfQuery);
 				
-				ansgraphExclViews3 eva = new ansgraphExclViews3(query, viewsOfQuery, qid_Ansgr);
+				ansgraphExclViews4 eva = new ansgraphExclViews4(query, viewsOfQuery, qid_Ansgr);
 //				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
 //				queryAnsGraphs.add(qryAnsGr);
 				

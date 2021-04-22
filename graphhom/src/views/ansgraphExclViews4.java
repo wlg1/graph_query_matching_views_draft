@@ -43,7 +43,7 @@ import query.graph.TransitiveReduction;
 import tupleEnumerator.HybTupleEnumer;
 import views.HybAnsGraphBuilder2;
 
-public class ansgraphExclViews3 {
+public class ansgraphExclViews4 {
 	Query query;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<Pool>> qid_Ansgr;
@@ -51,7 +51,7 @@ public class ansgraphExclViews3 {
 	ArrayList<Pool> mPool = new ArrayList<Pool>();
 	TimeTracker tt;
 
-	public ansgraphExclViews3(Query query_in, ArrayList<Query> viewsOfQuery_in, Map<Integer, ArrayList<Pool>> qid_Ansgr_in) {
+	public ansgraphExclViews4(Query query_in, ArrayList<Query> viewsOfQuery_in, Map<Integer, ArrayList<Pool>> qid_Ansgr_in) {
 		query = query_in;
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
@@ -135,10 +135,27 @@ public class ansgraphExclViews3 {
 								}
 							}
 							
+							HashMap<Integer, ArrayList<GraphNode>> newGNbwd = (HashMap<Integer, ArrayList<GraphNode>>) null;
+							if (newNode.GNbwd != null) {
+								newGNbwd = new HashMap<Integer, ArrayList<GraphNode>>();
+								for (Integer key : newNode.GNbwd.keySet()) {
+									newGNbwd.put(hom[key], newNode.GNbwd.get(key) );
+								}
+							}
+							
+							HashMap<Integer, ArrayList<GraphNode>> newGNfwd = (HashMap<Integer, ArrayList<GraphNode>>) null;
+							if (newNode.GNfwd != null) {
+								newGNfwd = new HashMap<Integer, ArrayList<GraphNode>>();
+								for (Integer key : newNode.GNfwd.keySet()) {
+									newGNfwd.put(hom[key], newNode.GNfwd.get(key) );
+								}
+							}
+							
 							if (initNodeSet){
 								PoolEntry newEntry = new PoolEntry(newNode.getPos(), newNode.getQNode(), newNode.mValue,
 										newFwdEntries, newBwdEntries, newFwdBits, newBwdBits,
-										newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size() );
+										newNode.getNumChildEnties(), newNode.getNumParEnties(), newNode.size(),
+										newGNbwd, newGNfwd);
 								newQnodeset.addEntry(newEntry);
 							} else {
 								//remove nodes from prev node set which are not in current view's node set
@@ -146,52 +163,31 @@ public class ansgraphExclViews3 {
 								//keep track of what has a match so far. only add if there's a match.
 								
 								for (PoolEntry oldNode: Qnodeset.elist()) {  //check if already exists as oldNode
-//									if (newNode.mValue.id == 8 ){
-//										System.out.println();
-//									}
 									if (oldNode.mValue.id == newNode.mValue.id) {
-										//remember entries is hashmap, so need to go thru each node it points to
-										if (newBwdEntries != null) {
-											if (oldNode.mBwdEntries == null) {
-//												System.out.println(oldNode.mBwdEntries);
+										if (newGNbwd != null) {
+											if (oldNode.GNbwd == null) {
+												oldNode.GNbwd = newGNbwd;
 												oldNode.mBwdEntries = newBwdEntries;
 												oldNode.mBwdBits = newBwdBits;
-//												System.out.println(newBwdEntries);
-//												System.out.println();
 											} else {
-												for (Integer key : oldNode.mBwdEntries.keySet()) {
-													System.out.println(oldNode.mBwdEntries.get(key));
-													ArrayList<PoolEntry> nodeBwd = oldNode.mBwdEntries.get(key);
-													nodeBwd.retainAll(newBwdEntries.get(key) );
-//													nodeBwd.addAll(newBwdEntries.get(key) );
-													System.out.println(newBwdEntries.get(key));
-													System.out.println();
+												for (Integer key : oldNode.GNbwd.keySet()) {
+													ArrayList<GraphNode> nodeGNbwd = oldNode.GNbwd.get(key);
+													nodeGNbwd.retainAll(newGNbwd.get(key) );
 
-												}
-												for (Integer key : oldNode.mBwdBits.keySet()) {
-													RoaringBitmap nodeBwdbits = oldNode.mBwdBits.get(key);
-													nodeBwdbits.and(newBwdBits.get(key) );
-//													nodeBwdbits.or(newBwdBits.get(key) );
 												}
 											}
 										}
 										
-										if (newFwdEntries != null) {
-											if (oldNode.mFwdEntries == null) {
+										if (newGNfwd != null) {
+											if (oldNode.GNfwd == null) {
+												oldNode.GNfwd = newGNfwd;
 												oldNode.mFwdEntries = newFwdEntries;
 												oldNode.mFwdBits = newFwdBits;
 											} else {
-												for (Integer key : oldNode.mFwdEntries.keySet()) {
-													ArrayList<PoolEntry> nodeFwd = oldNode.mFwdEntries.get(key);
-													nodeFwd.retainAll(newFwdEntries.get(key) );
-//													nodeFwd.addAll(newFwdEntries.get(key) );
-												}			
-												
-												for (Integer key : oldNode.mFwdEntries.keySet()) {
-													RoaringBitmap nodeFwdbits = oldNode.mFwdBits.get(key);
-													nodeFwdbits.and(newFwdBits.get(key) );
-//													nodeFwdbits.or(newFwdBits.get(key) );
-												}	
+												for (Integer key : oldNode.GNfwd.keySet()) {
+													ArrayList<GraphNode> nodeGNfwd = oldNode.GNfwd.get(key);
+													nodeGNfwd.retainAll(newGNfwd.get(key) );
+												}		
 											}
 										}
 									newQnodeset.addEntry(oldNode);
@@ -209,43 +205,95 @@ public class ansgraphExclViews3 {
 			mPool.add(Qnodeset);
 		}
 		
-		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[query.V];
-		for (int i = 0; i < query.V; i++) {
-			RoaringBitmap t_bits = new RoaringBitmap();
-			tBitsIdxArr[i] = t_bits;
-			ArrayList<PoolEntry> elist = mPool.get(i).elist();
-			for (PoolEntry actEntry : elist) {
-				t_bits.add(actEntry.getValue().L_interval.mStart);
-			}
-		}
-		
-		//for each poolentry, intersect its adj lists with the node set it's pointing to
+		//for each poolentry, convert its GN adj list into its poolentry AL and bitmaps
 		for ( int i = 0; i < query.V; i++ ) {
 			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
 			for (PoolEntry pe : currNodeSet) {
-				if (pe.mBwdEntries != null) {
-					for (Integer key : pe.mBwdEntries.keySet()) {
-						ArrayList<PoolEntry> nodeBwd = pe.mBwdEntries.get(key);
-						nodeBwd.retainAll(mPool.get(key).elist() );
-					}
-					for (Integer key : pe.mBwdBits.keySet()) {
-						RoaringBitmap nodeBwdbits = pe.mBwdBits.get(key);
-						nodeBwdbits.and(tBitsIdxArr[key] );
+				if (pe.GNbwd != null) {
+					for (Integer key : pe.GNbwd.keySet()) {
+						ArrayList<PoolEntry> newBwdEntries = new ArrayList<PoolEntry>();
+						RoaringBitmap newBwdbits = new RoaringBitmap();
+						for (GraphNode gn : pe.GNbwd.get(key)) {
+							//find the poolentry in the answer graph that corresponds to this graph node
+							for (PoolEntry adjPE : mPool.get(key).elist()) {
+								if (adjPE.mValue == gn) {
+									newBwdEntries.add(adjPE);
+									newBwdbits.add(adjPE.mPos);
+//									newBwdbits.add(adjPE.getValue().L_interval.mStart);
+//									pe.addParent(adjPE);
+									break;
+								}
+							}
+						}
+						ArrayList<PoolEntry> peNSBwdEntries = pe.mBwdEntries.get(key);
+						peNSBwdEntries = newBwdEntries;
+						RoaringBitmap peNSBwdbits = pe.mBwdBits.get(key);
+						peNSBwdbits = newBwdbits;
 					}
 				}
-				
-				if (pe.mFwdEntries != null) {
-					for (Integer key : pe.mFwdEntries.keySet()) {
-						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
-						nodeFwd.retainAll(mPool.get(key).elist() );
-					}
-					for (Integer key : pe.mFwdBits.keySet()) {
-						RoaringBitmap nodeFwdbits = pe.mFwdBits.get(key);
-						nodeFwdbits.and(tBitsIdxArr[key] );
+
+				if (pe.GNfwd != null) {
+					for (Integer key : pe.GNfwd.keySet()) {
+						ArrayList<PoolEntry> newFwdEntries = new ArrayList<PoolEntry>();
+						RoaringBitmap newFwdbits = new RoaringBitmap();
+						for (GraphNode gn : pe.GNfwd.get(key)) {
+							//find the poolentry in the answer graph that corresponds to this graph node
+							for (PoolEntry adjPE : mPool.get(key).elist()) {
+								if (adjPE.mValue == gn) {
+									newFwdEntries.add(adjPE);
+									newFwdbits.add(adjPE.mPos);
+//									newFwdbits.add(adjPE.getValue().L_interval.mStart);
+//									pe.addChild(adjPE);
+									break;
+								}
+							}
+						}
+						ArrayList<PoolEntry> peNSFwdEntries = pe.mFwdEntries.get(key);
+						peNSFwdEntries = newFwdEntries;
+						RoaringBitmap peNSFwdbits = pe.mFwdBits.get(key);
+						peNSFwdbits = newFwdbits;
 					}
 				}
 			}
 		}
+		
+//		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[query.V];
+//		for (int i = 0; i < query.V; i++) {
+//			RoaringBitmap t_bits = new RoaringBitmap();
+//			tBitsIdxArr[i] = t_bits;
+//			ArrayList<PoolEntry> elist = mPool.get(i).elist();
+//			for (PoolEntry actEntry : elist) {
+//				t_bits.add(actEntry.getValue().L_interval.mStart);
+//			}
+//		}
+//		
+//		//for each poolentry, intersect its adj lists with the node set it's pointing to
+//		for ( int i = 0; i < query.V; i++ ) {
+//			ArrayList<PoolEntry> currNodeSet = mPool.get(i).elist();
+//			for (PoolEntry pe : currNodeSet) {
+//				if (pe.mBwdEntries != null) {
+//					for (Integer key : pe.mBwdEntries.keySet()) {
+//						ArrayList<PoolEntry> nodeBwd = pe.mBwdEntries.get(key);
+//						nodeBwd.retainAll(mPool.get(key).elist() );
+//					}
+//					for (Integer key : pe.mBwdBits.keySet()) {
+//						RoaringBitmap nodeBwdbits = pe.mBwdBits.get(key);
+//						nodeBwdbits.and(tBitsIdxArr[key] );
+//					}
+//				}
+//				
+//				if (pe.mFwdEntries != null) {
+//					for (Integer key : pe.mFwdEntries.keySet()) {
+//						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
+//						nodeFwd.retainAll(mPool.get(key).elist() );
+//					}
+//					for (Integer key : pe.mFwdBits.keySet()) {
+//						RoaringBitmap nodeFwdbits = pe.mFwdBits.get(key);
+//						nodeFwdbits.and(tBitsIdxArr[key] );
+//					}
+//				}
+//			}
+//		}
 		
 		//for each edge, if a poolentry does not have that edge, remove it
 //		ArrayList<Pool> mPool2 = new ArrayList<Pool>();

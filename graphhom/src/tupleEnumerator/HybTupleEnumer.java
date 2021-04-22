@@ -109,11 +109,13 @@ public class HybTupleEnumer {
 
 		//fwd adj intersection
 		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
-//			System.out.println(candBits);
-//			System.out.println(cur_vertex);
-//			System.out.println(elist.size());
-//			System.out.println(i);
-			if (elist.size() == 4630 && i == 4634){
+			System.out.println(candBits);
+			System.out.println(cur_vertex);
+			System.out.println(elist.size());
+			System.out.println(i);
+			//this is bc adj list contains more than node set. getCandBits() uses adj list of prev matched neighbor
+			//and gets all cand graph nodes adj to it. it takes inters of all neighbor adj lists
+			if (elist.size() == 4630 && i == 4634){ 
 				System.out.println(i);
 			}
 			
@@ -266,11 +268,9 @@ public class HybTupleEnumer {
 			DirType dir = query.dir(bn_vertex, cur_vertex);
 			RoaringBitmap curbits;
 			PoolEntry bm = match[bn_vertex];
-			if (bm.mFwdBits != null && dir == DirType.FWD) {
-				System.out.println();
-			} else {
-				System.out.println();
-			}
+//			if (bm.mFwdBits == null && dir == DirType.FWD) {
+//				System.out.println();
+//			}
 			
 			if (dir == DirType.FWD) {
 
@@ -280,9 +280,9 @@ public class HybTupleEnumer {
 				curbits = bm.mBwdBits.get(cur_vertex);
 			}
 
-			if (curbits == null) {
-				System.out.println(curbits);
-			}
+//			if (curbits == null) {
+//				System.out.println(curbits);
+//			}
 			if (i == 0)
 				bits.or(curbits);
 			else

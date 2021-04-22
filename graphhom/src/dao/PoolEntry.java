@@ -18,7 +18,7 @@ import query.graph.QNode;
  */
 public class PoolEntry implements Comparable<PoolEntry> {
 
-	int mPos;  // position in the pool
+	public int mPos;  // position in the pool
 	QNode mQNode; // the corresponding query node it matches
 	public GraphNode mValue;
 	public HashMap<Integer, ArrayList<PoolEntry>> mFwdEntries, mBwdEntries;
@@ -29,11 +29,15 @@ public class PoolEntry implements Comparable<PoolEntry> {
     
 	double size = 0; // total number of solution tuples for the subquery rooted
 						// at mQNode
+	
+	public HashMap<Integer, ArrayList<GraphNode>> GNbwd, GNfwd;
 
 	public PoolEntry(QNode q, GraphNode val) {
 		mQNode = q;
 		mValue = val;
 		initFBEntries();
+		GNbwd = new HashMap<Integer, ArrayList<GraphNode>>();
+		GNfwd = new HashMap<Integer, ArrayList<GraphNode>>();
 	}
 
 	public PoolEntry(int pos, QNode q, GraphNode val) {
@@ -41,11 +45,14 @@ public class PoolEntry implements Comparable<PoolEntry> {
 		mQNode = q;
 		mValue = val;
 		initFBEntries();
+		GNbwd = new HashMap<Integer, ArrayList<GraphNode>>();
+		GNfwd = new HashMap<Integer, ArrayList<GraphNode>>();
 	}
 	
 	public PoolEntry(int pos, QNode q, GraphNode val, HashMap<Integer, ArrayList<PoolEntry>> FwdEntries, 
 			HashMap<Integer, ArrayList<PoolEntry>> BwdEntries, HashMap<Integer, RoaringBitmap> FwdBits, 
-			HashMap<Integer, RoaringBitmap> BwdBits, double INnumChildren, double INnumParents, double INsize) {
+			HashMap<Integer, RoaringBitmap> BwdBits, double INnumChildren, double INnumParents, double INsize,
+			HashMap<Integer, ArrayList<GraphNode>> inGNbwd, HashMap<Integer, ArrayList<GraphNode>> inGNfwd) {
 		mPos = pos; 
 		mQNode = q;
 		mValue = val;
@@ -56,6 +63,8 @@ public class PoolEntry implements Comparable<PoolEntry> {
 		numChildren = INnumChildren;
 		numParents = INnumParents;
 		size = INsize;
+		GNbwd = inGNbwd;
+		GNfwd = inGNfwd;
 	}
 
 	

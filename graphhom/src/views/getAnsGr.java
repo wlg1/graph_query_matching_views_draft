@@ -1,6 +1,7 @@
 package views;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.roaringbitmap.RoaringBitmap;
 
@@ -48,6 +49,7 @@ public class getAnsGr {
 	}
 
 	public ArrayList<Pool> run() throws LimitExceededException {
+//	public ArrayList<nodeset> run() throws LimitExceededException {
 
 		mFB.oneRun();
 		mCandLists = null; 
@@ -84,7 +86,56 @@ public class getAnsGr {
 //		
 //		clear();
 //		return mPool_ansgr;
+		
+		//return as adj lists. hash table where key is graph node ID, value is obj of 2 adj lists
+		//for each pool entry, get their graph node ID
+		//for each entry in poolentry's adj list, get its graph ID
+		//put graph ID into adj list of graph node ID obj
+		
+		//create new attribute inside poolentry that stores the graphnode lists
+		
+		//an arraylist of nodesets, each with its own fwdadjlists and bwdadjlists for each graphnode in it
+//		ArrayList<nodeset> matView = new ArrayList<nodeset>();
+		for (Pool pl : mPool) {
+//			nodeset ns = new nodeset();
+			for (PoolEntry pe : pl.elist()) {
+				GraphNode gn = pe.mValue;
+				if (pe.mBwdEntries != null){
+//					HashMap<Integer, ArrayList<GraphNode>> bal = new HashMap<Integer, ArrayList<GraphNode>>();
+					for (Integer key : pe.mBwdEntries.keySet()) {
+						ArrayList<GraphNode> x = new ArrayList<GraphNode>();
+						ArrayList<PoolEntry> nodeBwd = pe.mBwdEntries.get(key);
+						for (PoolEntry peFrom : nodeBwd) {
+							x.add(peFrom.mValue);
+						}
+//						bal.put(key, x);
+						pe.GNbwd.put(key, x);
+					}
+//					ns.bwdAdjLists.put(gn, bal);
+				} else {
+					pe.GNbwd = (HashMap<Integer, ArrayList<GraphNode>>) null;
+				}
+				if (pe.mFwdEntries != null){
+//					HashMap<Integer, ArrayList<GraphNode>> fal = new HashMap<Integer, ArrayList<GraphNode>>();
+					for (Integer key : pe.mFwdEntries.keySet()) {
+						ArrayList<GraphNode> x = new ArrayList<GraphNode>();
+						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
+						for (PoolEntry peTo : nodeFwd) {
+							x.add(peTo.mValue);
+						}
+//						fal.put(key, x);
+						pe.GNfwd.put(key, x);
+					}
+//					ns.fwdAdjLists.put(gn, fal);
+				} else {
+					pe.GNfwd = (HashMap<Integer, ArrayList<GraphNode>>) null;
+				}
+			}
+//			matView.add(ns);
+		}
+		
 		return mPool;
+//		return matView;
 
 	}
 	
