@@ -53,6 +53,7 @@ public class HybAnsGraphBuilderViews {
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V]; //each nodeset has its own bitmap of GN in it
 		initPool(tBitsIdxArr);
+		initEdges();
 
 		for(QEdge edge: mQuery.edges){
 			
@@ -62,49 +63,6 @@ public class HybAnsGraphBuilderViews {
 		return mPool;
 
 	}
-	
-	
-	// for tree/dag
-	public ArrayList<Pool> runBUP(){
-		
-		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
-		initPool(tBitsIdxArr);
-		
-		int[] order = PlanGenerator.generateTopoQueryPlan(mQuery);
-		
-		for(int i=mQuery.V-1; i>=0; i--){
-			QNode q = mQuery.getNode(order[i]);
-		    ArrayList<QEdge> edges = q.E_I;
-		    if(edges!=null)
-		    for(QEdge edge: edges){
-				
-				linkOneStep(edge,tBitsIdxArr);
-			}
-		}
-		
-		return mPool;
-	}
-
-	public ArrayList<Pool> runTDW(){
-		
-		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
-		initPool(tBitsIdxArr);
-		
-		int[] order = PlanGenerator.generateTopoQueryPlan(mQuery);
-		
-		for(int i=0; i<mQuery.V; i++){
-			QNode q = mQuery.getNode(order[i]);
-		    ArrayList<QEdge> edges = q.E_I;
-		    if(edges!=null)
-		    for(QEdge edge: edges){
-				
-				linkOneStep(edge,tBitsIdxArr);
-			}
-		}
-		
-		return mPool;
-	}
-
 	
 	private void initPool(RoaringBitmap[] tBitsIdxArr) {
 		
@@ -134,28 +92,22 @@ public class HybAnsGraphBuilderViews {
 					intersectedNS.gnodes.retainAll(coveringNS);
 				}
 				
-				//for every query edge, find its view covering edge using vhead = hom.get(head) and vTail = hom.get(tail)
-				//the fwdadjlist of the head should only keep those that exist in other views
-				//but graph node may not point to some node set of curr view, so add it on if not in node set
-				
 				//get intersection of edges of all views
 				//for every graph node in the nodeset's fwdadjlist, intersect it with a graph node
-				for (GraphNode n : intersectedNS.gnodes) { 
-//					HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
-					
-					if (intersectedNS.fwdAdjLists == null || intersectedNS.fwdAdjLists.isEmpty()) {
-						intersectedNS.fwdAdjLists = viewAnsgr.get(viewNodesetID).fwdAdjLists;
-					} else {
-						HashMap<Integer, ArrayList<GraphNode>> GNfwdAdjLists = intersectedNS.fwdAdjLists.get(n);
-						for (Integer key2 : GNfwdAdjLists.keySet()) {
-							if (!intersectedNS.fwdAdjLists.get(n).containsKey(key2)) {
-								intersectedNS.fwdAdjLists.get(n).put(key2, viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
-							} else {
-								intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
-							}
-						}
-					}
-				}
+//				for (GraphNode n : intersectedNS.gnodes) {
+//					if (intersectedNS.fwdAdjLists == null || intersectedNS.fwdAdjLists.isEmpty()) {
+//						intersectedNS.fwdAdjLists = viewAnsgr.get(viewNodesetID).fwdAdjLists;
+//					} else {
+//						HashMap<Integer, ArrayList<GraphNode>> GNfwdAdjLists = intersectedNS.fwdAdjLists.get(n);
+//						for (Integer key2 : GNfwdAdjLists.keySet()) {
+//							if (!intersectedNS.fwdAdjLists.get(n).containsKey(key2)) {
+//								intersectedNS.fwdAdjLists.get(n).put(key2, viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+//							} else {
+//								intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+//							}
+//						}
+//					}
+//				}
 			}
 			intersectedAnsGr.add(intersectedNS);
 			
@@ -171,6 +123,42 @@ public class HybAnsGraphBuilderViews {
 
 		}
 
+	}
+	
+	//for every query edge, find its view covering edge using vhead = hom.get(head) and vTail = hom.get(tail)
+	//the fwdadjlist of the head should only keep those that exist in other views
+	//but graph node may not point to some node set of curr view, so add it on if not in node set
+	private void initEdges() {
+		for (QEdge qEdge : mQuery.edges ) {
+			for (Query view : viewsOfQuery) {
+				ArrayList<QEdge> coveringEdges = new ArrayList<QEdge>(); //U: edges b/w 2 node sets
+				
+				HashMap<Integer, Integer> hom = viewHoms.get(view.Qid);
+				int from = qEdge.from, to = qEdge.to;
+				Integer vHead = hom.get(from), vTail = hom.get(to);
+
+				if (vHead == null || vTail == null){
+					continue; //view has no covering edge for this qedge
+				}
+				
+				ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
+				Integer viewHeadNodesetID = hom.get(from);
+				nodeset viewHeadNS = viewAnsgr.get(viewHeadNodesetID);
+				
+				//intersectedAnsGr's nodesets contain candCoveringEdges, or cos
+				//intersectedAnsGr.get(vHead) is nodeset of head graph nodes
+				//HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists : key is head graph node
+				//HashMap<Integer, ArrayList<GraphNode>> : key is to nodeset, value is toNS's graph nodes
+				nodeset queryHeadNS = intersectedAnsGr.get(vHead);
+				for (GraphNode gn : viewHeadNS.gnodes) {
+					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail);
+					ArrayList<GraphNode> queryToGNs = queryHeadNS.fwdAdjLists.get(gn).get(vTail);
+					queryToGNs.retainAll(viewToGNs);
+				}
+				
+			}
+		}
+		
 	}
 
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
@@ -199,59 +187,6 @@ public class HybAnsGraphBuilderViews {
 			}
 		}
 	}	
-	
-//	private void linkOneStep(int from, int to, AxisType axis, RoaringBitmap[] tBitsIdxArr) {
-//		
-//		Pool pl_f = mPool.get(from), pl_t = mPool.get(to);
-//
-//		
-//		for (PoolEntry e_f : pl_f.elist()) {
-//			if (axis == AxisType.child) 
-//				linkOneStep(e_f, tBitsIdxArr[to], pl_t.elist());
-//			else {
-//				
-//				GraphNode n_f = e_f.getValue();
-//				for (PoolEntry e_t : pl_t.elist()) {
-//
-//					GraphNode n_t = e_t.getValue();
-//					if (n_f.id == n_t.id)
-//						continue;
-//					if (n_f.L_interval.mEnd < n_t.L_interval.mStart)
-//						break;
-//					if (mBFL.reach(n_f, n_t) == 1) {
-//
-//						e_f.addChild(e_t);
-//						e_t.addParent(e_f);
-//
-//					}
-//
-//				}
-//			}
-//
-//		}
-//
-//		
-//	}
-
-//	private boolean linkOneStep(PoolEntry r, RoaringBitmap t_bits, ArrayList<PoolEntry> list) {
-//
-//		GraphNode s = r.getValue();
-//		
-//		//intersect bitmaps of nodes neighboring head and nodes in tail nodeset 
-//		RoaringBitmap rs_and = RoaringBitmap.and(s.adj_bits_o, t_bits); 
-//
-//		if (rs_and.isEmpty())
-//			return false; //there are no poss edges from head to this nodeset
-//
-//		for (int ti : rs_and) { //create edges (in bwd and fwd adj lists) b/w head and tail poolentries
-//			PoolEntry e = list.get(t_bits.rank(ti) - 1);
-//			r.addChild(e);
-//			e.addParent(r);
-//		}
-//
-//		return true;
-//
-//	}
 
 	private HashMap<Integer, Integer> getHom(Query view, Query query) { 		//this is exhaustive, iterative
 		//1. For each view node, get all query nodes with same labels 
