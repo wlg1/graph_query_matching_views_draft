@@ -143,8 +143,11 @@ public class HybAnsGraphBuilderViews {
 				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
 				qAct.addEntry(actEntry);
 				t_bits.add(actEntry.getValue().L_interval.mStart);
+				
+				//map intersectedAnsGr to mPool
+				//create hashmap of graphnode to poolentry
+				intersectedAnsGr.get(i).GNtoPE.put(n, actEntry);
 			}
-
 		}
 
 	}
@@ -210,20 +213,20 @@ public class HybAnsGraphBuilderViews {
 		//pl_t.elist() is poolentries of nodeset that's tail to query edge 
 		
 		//nodeset: HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
+		
+		//instead of looping thru ALL tail nodes, only loop thru adj list of that poolentry
 		for (PoolEntry e_f : pl_f.elist()) {
 			GraphNode headGN = e_f.getValue();
-			for (PoolEntry e_t : pl_t.elist()) {
-				GraphNode tailGN = e_t.getValue();
-				
-				nodeset headNS = intersectedAnsGr.get(from);
-				HashMap<Integer, ArrayList<GraphNode>> ToAdjLists = headNS.fwdAdjLists.get(headGN);
-				if (ToAdjLists.get(to).contains(tailGN) ) {
-					e_f.addChild(e_t);
-					e_t.addParent(e_f);
-				}
+			nodeset headNS = intersectedAnsGr.get(from);
+			ArrayList<GraphNode> ToAdjList = headNS.fwdAdjLists.get(headGN).get(to);
+			
+			for (GraphNode tailGN : ToAdjList ) {
+				PoolEntry e_t = intersectedAnsGr.get(to).GNtoPE.get(tailGN);
+				e_f.addChild(e_t);
+				e_t.addParent(e_f);
 			}
 		}
-	}	
+	}
 
 	private HashMap<Integer, Integer> getHom(Query view, Query query) { 		//this is exhaustive, iterative
 		//1. For each view node, get all query nodes with same labels 
