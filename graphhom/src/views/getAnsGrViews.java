@@ -69,22 +69,21 @@ public class getAnsGrViews {
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
 		mPool = agBuilder.run();
 
-//		//run MIjoin to get answer
-//		double numOutTuples_0;
-//		tenum = new HybTupleEnumer(mQuery, mPool);
-//		numOutTuples_0 = tenum.enumTuples();
-//		
-//		//then get unique values in answer to get occ sets
-//		ArrayList<MatArray> mOcc;
-//		mOcc = tenum.getAnswer();
-//		
-//		//get answer graph using algo that outputs simulation graph
-//		tt.Start();
-//		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
-//		mPool_ansgr = agBuilder_2.run();
-//		
+		//run MIjoin to get answer
+		double numOutTuples_0;
+		tenum = new HybTupleEnumer(mQuery, mPool);
+		numOutTuples_0 = tenum.enumTuples();
+		
+		//then get unique values in answer to get occ sets
+		ArrayList<MatArray> mOcc;
+		mOcc = tenum.getAnswer();
+		
+		//get answer graph using algo that outputs simulation graph
+		tt.Start();
+		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
+		mPool_ansgr = agBuilder_2.run();
+		
 //		clear();
-//		return mPool_ansgr;
 		
 		//return as adj lists. hash table where key is graph node ID, value is obj of 2 adj lists
 		//for each pool entry, get their graph node ID
@@ -95,7 +94,7 @@ public class getAnsGrViews {
 		
 		//an arraylist of nodesets, each with its own fwdadjlists for each graphnode in it
 		ArrayList<nodeset> matView = new ArrayList<nodeset>();
-		for (Pool pl : mPool) {
+		for (Pool pl : mPool_ansgr) {
 			nodeset ns = new nodeset();
 			for (PoolEntry pe : pl.elist()) {
 				GraphNode gn = pe.mValue;
@@ -165,33 +164,6 @@ public class getAnsGrViews {
 		}
 
 		return true;
-
-	}
-
-	private double calTotCandSolnNodes() {
-
-		double totNodes = 0.0;
-		for (Pool pool : mPool_ansgr) {
-			ArrayList<PoolEntry> elist = pool.elist();
-			totNodes += elist.size();
-
-		}
-		return totNodes;
-	}
-
-	private double calTotTreeSolns() {
-
-		QNode root = mQuery.getSources().get(0);
-		Pool rPool = mPool.get(root.id);
-		double totTuples = 0;
-		ArrayList<PoolEntry> elist = rPool.elist();
-		for (PoolEntry r : elist) {
-
-			totTuples += r.size();
-
-		}
-		System.out.println("total number of solution tuples: " + totTuples);
-		return totTuples;
 
 	}
 

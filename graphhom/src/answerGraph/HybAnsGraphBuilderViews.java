@@ -12,6 +12,8 @@ import dao.Pool;
 import dao.PoolEntry;
 import global.Consts.AxisType;
 import graph.GraphNode;
+import helper.QueryEvalStat;
+import helper.TimeTracker;
 import query.graph.QEdge;
 import query.graph.QNode;
 import query.graph.Query;
@@ -29,6 +31,7 @@ public class HybAnsGraphBuilderViews {
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
 	HashMap<Integer, HashMap<Integer, Integer>> viewHoms;
 	ArrayList<nodeset> intersectedAnsGr;
+	TimeTracker tt;
 	
 	public HybAnsGraphBuilderViews(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in) {
@@ -38,7 +41,10 @@ public class HybAnsGraphBuilderViews {
 		qid_Ansgr = qid_Ansgr_in;
 	}
 
-	public ArrayList<Pool> run() {	
+	public ArrayList<Pool> run(QueryEvalStat stat) {	
+		tt = new TimeTracker();
+		tt.Start();
+		
 		viewHoms = new HashMap<Integer, HashMap<Integer, Integer>>();
 		//store hom for every view used in this query
 		//key is view ID, value is hom HashMap<Integer, Integer>
@@ -60,8 +66,21 @@ public class HybAnsGraphBuilderViews {
 			linkOneStep(edge,tBitsIdxArr);
 		}
 		
+		double buildtm = tt.Stop() / 1000;
+		stat.setMatchTime(buildtm);
+		stat.calAnsGraphSize(mPool);
+		stat.setTotNodesAfter(calTotCandSolnNodes());
+		System.out.println("Answer graph build time:" + buildtm + " sec.");
 		return mPool;
-
+	}
+	
+	private double calTotCandSolnNodes() {
+		double totNodes = 0.0;
+		for (Pool pool : mPool) {
+			ArrayList<PoolEntry> elist = pool.elist();
+			totNodes += elist.size();
+		}
+		return totNodes;
 	}
 	
 	private void initPool(RoaringBitmap[] tBitsIdxArr) {

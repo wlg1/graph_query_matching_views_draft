@@ -170,17 +170,18 @@ public class ViewAnsGrMain2 {
 				}
 				viewsOfQueries.add(viewsOfQuery);
 				
-				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run();
-				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
-//				queryAnsGraphs.add(qryAnsGr);
-				
 				//compare to result using algo. They will not be equal due to having diff objs
 				//try using small data graph as example
 				
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
+				
+				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run(s);
+				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
+//				queryAnsGraphs.add(qryAnsGr);
+				
 				try {
 					tt.Start();
 					timeout.callWithTimeout(new Callable<Boolean>() {
