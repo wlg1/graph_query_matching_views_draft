@@ -1,6 +1,9 @@
 package answerGraph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.roaringbitmap.RoaringBitmap;
 
 import dao.BFLIndex;
@@ -12,7 +15,9 @@ import graph.GraphNode;
 import query.graph.QEdge;
 import query.graph.QNode;
 import query.graph.Query;
+import query.graph.TransitiveReduction;
 import queryPlan.PlanGenerator;
+import views.nodeset;
 
 //only add edge to nodes if covering edge has it
 
@@ -20,18 +25,31 @@ public class HybAnsGraphBuilderViews {
 
 	Query mQuery;
 	ArrayList<Pool> mPool;
-	BFLIndex mBFL;
-	ArrayList<MatArray> mCandLists;
+	ArrayList<Query> viewsOfQuery;
+	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
+	HashMap<Integer, HashMap<Integer, Integer>> viewHoms;
+	ArrayList<nodeset> intersectedAnsGr;
 	
-	public HybAnsGraphBuilderViews(Query query, BFLIndex bfl,
-			ArrayList<MatArray> candLsts) {
-
+	public HybAnsGraphBuilderViews(Query query, ArrayList<Query> viewsOfQuery_in,
+			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in) {
+		
 		mQuery = query;
-		mBFL = bfl;
-		mCandLists = candLsts;
+		viewsOfQuery = viewsOfQuery_in;
+		qid_Ansgr = qid_Ansgr_in;
 	}
 
-	public ArrayList<Pool> run() {
+	public ArrayList<Pool> run() {	
+		viewHoms = new HashMap<Integer, HashMap<Integer, Integer>>();
+		//store hom for every view used in this query
+		//key is view ID, value is hom HashMap<Integer, Integer>
+		//hom: key is query node #, value is view node # 
+		for (int i = 0; i < mQuery.V; i++) { // i is query node ID. for each node in query
+			for (int v = 0; v < viewsOfQuery.size(); v++) {
+				Query view = viewsOfQuery.get(v);
+				HashMap<Integer, Integer> hom = getHom(view, mQuery);  //key is view node ID, value is query node ID
+				viewHoms.put(view.Qid, hom);
+			}
+		}
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V]; //each nodeset has its own bitmap of GN in it
 		initPool(tBitsIdxArr);
@@ -95,16 +113,46 @@ public class HybAnsGraphBuilderViews {
 
 		mPool = new ArrayList<Pool>(mQuery.V);
 		QNode[] qnodes = mQuery.nodes;
-		for (int i = 0; i < mQuery.V; i++) {
+		intersectedAnsGr = new ArrayList<nodeset>();
+		for (int i = 0; i < mQuery.V; i++) { // i is nodeset ID of query
 			Pool qAct = new Pool();
 			mPool.add(qAct);
-			MatArray mli = mCandLists.get(i);
-			ArrayList<GraphNode> elist = mli.elist();
+			
+			//get intersection of all covering nodesets of this nodeset
+			nodeset intersectedNS = (nodeset) null;
+			for (Integer key : viewHoms.keySet()) {
+				HashMap<Integer, Integer> hom = viewHoms.get(key);
+				Integer viewNodesetID = hom.get(i);
+				ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
+				ArrayList<GraphNode> coveringNS = viewAnsgr.get(viewNodesetID).gnodes;
+				if (intersectedNS == null) {
+					intersectedNS.gnodes = coveringNS;
+				} else {
+					intersectedNS.gnodes.retainAll(coveringNS);
+				}
+				
+				//get intersection of edges of all views
+				//for every graph node in the nodeset's fwdadjlist, intersect it with a graph node
+				for (GraphNode n : intersectedNS.gnodes) { 
+//					HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
+					
+					if (intersectedNS.fwdAdjLists == null) {
+						intersectedNS.fwdAdjLists = viewAnsgr.get(viewNodesetID).fwdAdjLists;
+					} else {
+						HashMap<Integer, ArrayList<GraphNode>> GNfwdAdjLists = intersectedNS.fwdAdjLists.get(n);
+						for (Integer key2 : GNfwdAdjLists.keySet()) {
+							intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+						}
+					}
+				}
+			}
+			intersectedAnsGr.add(intersectedNS);
+			
 			QNode qn = qnodes[i];
 			RoaringBitmap t_bits = new RoaringBitmap();
 			tBitsIdxArr[i] = t_bits;
 			int pos = 0; 
-			for (GraphNode n : elist) { 
+			for (GraphNode n : intersectedNS.gnodes) { 
 				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
 				qAct.addEntry(actEntry);
 				t_bits.add(actEntry.getValue().L_interval.mStart);
@@ -127,88 +175,163 @@ public class HybAnsGraphBuilderViews {
 		//for every e_f, poolentry in nodeset that's head to query edge
 		//tBitsIdxArr[to] is bitmap of nodeset that's tail to query edge 
 		//pl_t.elist() is poolentries of nodeset that's tail to query edge 
+		
+		//nodeset: HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
 		for (PoolEntry e_f : pl_f.elist()) {
-			if (axis == AxisType.child) 
-				linkOneStep(e_f, tBitsIdxArr[to], pl_t.elist());
-			else { //check path reachability b/w graphnodes
-				
-				GraphNode n_f = e_f.getValue();
-				for (PoolEntry e_t : pl_t.elist()) {
-
-					GraphNode n_t = e_t.getValue();
-					if (n_f.id == n_t.id)
-						continue;
-					if (n_f.L_interval.mEnd < n_t.L_interval.mStart)
-						break;
-					if (mBFL.reach(n_f, n_t) == 1) {
-
-						e_f.addChild(e_t);
-						e_t.addParent(e_f);
-
-					}
-
+			GraphNode headGN = e_f.getValue();
+			for (PoolEntry e_t : pl_t.elist()) {
+				GraphNode tailGN = e_t.getValue();
+				if (intersectedAnsGr.get(from).fwdAdjLists.get(headGN).get(to).contains(tailGN) ) {
+					e_f.addChild(e_t);
+					e_t.addParent(e_f);
 				}
 			}
-
 		}
-
-		
-	}
+	}	
 	
-	
-	private void linkOneStep(int from, int to, AxisType axis, RoaringBitmap[] tBitsIdxArr) {
-		
-		Pool pl_f = mPool.get(from), pl_t = mPool.get(to);
+//	private void linkOneStep(int from, int to, AxisType axis, RoaringBitmap[] tBitsIdxArr) {
+//		
+//		Pool pl_f = mPool.get(from), pl_t = mPool.get(to);
+//
+//		
+//		for (PoolEntry e_f : pl_f.elist()) {
+//			if (axis == AxisType.child) 
+//				linkOneStep(e_f, tBitsIdxArr[to], pl_t.elist());
+//			else {
+//				
+//				GraphNode n_f = e_f.getValue();
+//				for (PoolEntry e_t : pl_t.elist()) {
+//
+//					GraphNode n_t = e_t.getValue();
+//					if (n_f.id == n_t.id)
+//						continue;
+//					if (n_f.L_interval.mEnd < n_t.L_interval.mStart)
+//						break;
+//					if (mBFL.reach(n_f, n_t) == 1) {
+//
+//						e_f.addChild(e_t);
+//						e_t.addParent(e_f);
+//
+//					}
+//
+//				}
+//			}
+//
+//		}
+//
+//		
+//	}
 
+//	private boolean linkOneStep(PoolEntry r, RoaringBitmap t_bits, ArrayList<PoolEntry> list) {
+//
+//		GraphNode s = r.getValue();
+//		
+//		//intersect bitmaps of nodes neighboring head and nodes in tail nodeset 
+//		RoaringBitmap rs_and = RoaringBitmap.and(s.adj_bits_o, t_bits); 
+//
+//		if (rs_and.isEmpty())
+//			return false; //there are no poss edges from head to this nodeset
+//
+//		for (int ti : rs_and) { //create edges (in bwd and fwd adj lists) b/w head and tail poolentries
+//			PoolEntry e = list.get(t_bits.rank(ti) - 1);
+//			r.addChild(e);
+//			e.addParent(r);
+//		}
+//
+//		return true;
+//
+//	}
+
+	private HashMap<Integer, Integer> getHom(Query view, Query query) { 		//this is exhaustive, iterative
+		//1. For each view node, get all query nodes with same labels 
+		ArrayList<ArrayList<Integer>> nodeMatch = new ArrayList<ArrayList<Integer>>();
+		for (int i = 0; i < view.V; i++) {
+			  ArrayList<Integer> vMatches = new ArrayList<Integer>(); //a view's match cand list
+			  for (int j = 0; j < query.V; j++) {
+				  //check if same label as query
+				  if (view.nodes[i].lb == query.nodes[j].lb) {
+					  vMatches.add(query.nodes[j].id);
+				  }
+			  }  //end check qry candmatches for viewnode i
+
+			  nodeMatch.add(vMatches); 
+		} // end checking candmatches for all view nodes
+
+		// 2. Convert query into graph and get Closure
+		TransitiveReduction tr = new TransitiveReduction(query);
+		AxisType[][] Qclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
 		
-		for (PoolEntry e_f : pl_f.elist()) {
-			if (axis == AxisType.child) 
-				linkOneStep(e_f, tBitsIdxArr[to], pl_t.elist());
-			else {
+		//3. Given a node mapping h: for each view child edge, check if (h(x), h(y)) is a child edge
+		// Try an initial mapping using the first query node of every view's cand list. 
+		int[] candHom = new int[nodeMatch.size()]; 
+		HashMap<Integer, Integer> output = new HashMap<Integer, Integer>(); //key is query nodeset, value is view nodeset
+		for (int i = 0; i < nodeMatch.size(); i++) {
+			candHom[i] = nodeMatch.get(i).get(0);
+			output.put(nodeMatch.get(i).get(0), i);
+		}
+		
+		//one map should be view to query, another is query to view. output latter.
+		
+		//NOTE: ENSURE that 2 view nodes don't map to same query node. If they do, try next mapping.
+		
+		//keep row and col pointers on which match to change in candHom for next mapping.
+		//if fail, move the col pointer right. if col pointer > col size, set cols of all rows below row pointer 
+		//to 0 and move row pointer up (-1) and its col pointer right. then, set row pointer back to lowest row
+		int rowChangeNext = nodeMatch.size() - 1;  //row pointer
+		int colChangeToNext = 0; //col pointer
+		
+		while (true) {
+			for (QEdge edge : view.edges) {
+				String vEdgeType = edge.axis.toString();
+				int viewHnode = edge.from; //head node of view
+				int viewTnode = edge.to; //tail node of view
+				int qryHnode = candHom[viewHnode]; // h(head node)
+				int qryTnode = candHom[viewTnode]; // h(tail node)
+				String qEdgeType = Qclosure[qryHnode][qryTnode].toString();
 				
-				GraphNode n_f = e_f.getValue();
-				for (PoolEntry e_t : pl_t.elist()) {
-
-					GraphNode n_t = e_t.getValue();
-					if (n_f.id == n_t.id)
-						continue;
-					if (n_f.L_interval.mEnd < n_t.L_interval.mStart)
-						break;
-					if (mBFL.reach(n_f, n_t) == 1) {
-
-						e_f.addChild(e_t);
-						e_t.addParent(e_f);
-
+				//try various permutations of matches
+				if (!vEdgeType.equals(qEdgeType)) {
+					//mapping failed,  so try another
+					++colChangeToNext; //try new query node for curr view row
+					
+					//make sure there is next match for curr col. if not, go to row above to move it right
+					if (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1) {
+						while (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1){
+							//move row pointer up (-1) and its col pointer right
+							--rowChangeNext;
+							
+							//get curr col pointer of new row pointer
+							colChangeToNext = nodeMatch.get(rowChangeNext).indexOf(candHom[rowChangeNext]);
+							++colChangeToNext;
+							
+							//check if col has another match to the right
+							if (colChangeToNext <= nodeMatch.get(rowChangeNext).size() - 1) {
+								
+								//set cols of all rows below row pointer to 0. only do this if -1 to row pointer
+								for (int i = nodeMatch.size() - 1; i > rowChangeNext; i--) {
+									candHom[i] = nodeMatch.get(i).get(0);
+									output.replace(nodeMatch.get(i).get(0), i);
+								} //end for: reseting col indices
+								
+								candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
+								output.replace(nodeMatch.get(rowChangeNext).get(colChangeToNext),rowChangeNext );
+								rowChangeNext = nodeMatch.size() - 1; //reset col pointer and row pointer
+								colChangeToNext = 0; 
+							} // end if: check col has another match to the right
+						} //end while: checking if col reached end
+						
+					} else {
+						candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
+						output.replace(nodeMatch.get(rowChangeNext).get(colChangeToNext),rowChangeNext );
 					}
-
-				}
-			}
-
-		}
-
-		
-	}
-
-	private boolean linkOneStep(PoolEntry r, RoaringBitmap t_bits, ArrayList<PoolEntry> list) {
-
-		GraphNode s = r.getValue();
-		
-		//intersect bitmaps of nodes neighboring head and nodes in tail nodeset 
-		RoaringBitmap rs_and = RoaringBitmap.and(s.adj_bits_o, t_bits); 
-
-		if (rs_and.isEmpty())
-			return false; //there are no poss edges from head to this nodeset
-
-		for (int ti : rs_and) { //create edges (in bwd and fwd adj lists) b/w head and tail poolentries
-			PoolEntry e = list.get(t_bits.rank(ti) - 1);
-			r.addChild(e);
-			e.addParent(r);
-		}
-
-		return true;
-
-	}
-
+					break; //break out 'end of check each edge' and try new candHom mapping
+				} //end if (!vEdgeType.equals(qEdgeType)): check edge consistency
+			} // end for (QEdge edge : view.edges): check each edge consistency
+			// Found mapping with all edges consistent -> use view for query, add to list of query's views
+			return output; //all edges passed, so use this mapping
+		} // end of while loop
+	} //end of getHom()
+	
 	public static void main(String[] args) {
 
 	}
