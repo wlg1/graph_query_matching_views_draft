@@ -109,10 +109,10 @@ public class HybTupleEnumer {
 
 		//fwd adj intersection
 		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
-			System.out.println(candBits);
-			System.out.println(cur_vertex);
-			System.out.println(elist.size());
-			System.out.println(i);
+//			System.out.println(candBits);
+//			System.out.println(cur_vertex);
+//			System.out.println(elist.size());
+//			System.out.println(i);
 			//this is bc adj list contains more than node set. getCandBits() uses adj list of prev matched neighbor
 			//and gets all cand graph nodes adj to it. it takes inters of all neighbor adj lists
 			if (elist.size() == 4630 && i == 4634){ 

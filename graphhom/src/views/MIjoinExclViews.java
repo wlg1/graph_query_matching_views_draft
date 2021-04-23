@@ -45,13 +45,12 @@ import views.HybAnsGraphBuilder2;
 
 public class MIjoinExclViews {
 	Query query;
-	ArrayList<Query> viewsOfQuery;
-	Map<Integer, ArrayList<Pool>> qid_Ansgr;
 	HybTupleEnumer tenum;
 	ArrayList<Pool> mPool;
 	TimeTracker tt;
 
-	public MIjoinExclViews(ArrayList<Pool> mPoolIN) {
+	public MIjoinExclViews(Query INquery, ArrayList<Pool> mPoolIN) {
+		query = INquery;
 		mPool = mPoolIN;
 	}
 

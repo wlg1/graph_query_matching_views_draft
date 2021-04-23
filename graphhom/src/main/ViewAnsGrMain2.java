@@ -171,7 +171,7 @@ public class ViewAnsGrMain2 {
 				viewsOfQueries.add(viewsOfQuery);
 				
 				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run();
-				MIjoinExclViews eva = new MIjoinExclViews(mPool);
+				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
 //				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
 //				queryAnsGraphs.add(qryAnsGr);
 				
