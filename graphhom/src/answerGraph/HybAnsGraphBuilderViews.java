@@ -157,8 +157,11 @@ public class HybAnsGraphBuilderViews {
 					HashMap<Integer, ArrayList<GraphNode>> edgesHM = queryHeadNS.fwdAdjLists.get(gn);
 					if (!edgesHM.containsKey(to)) {
 						//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
-						edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
+						//issue: cannot just do edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
+						//	b/c that means the to adj list IS THE SAME as tail nodeset so intersection would alter it too
+						edgesHM.put(to, new ArrayList<GraphNode>());
 						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
+						queryToGNs.addAll(intersectedAnsGr.get(to).gnodes);
 						queryToGNs.retainAll(viewToGNs);
 					} else {
 						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);

@@ -139,7 +139,6 @@ public class ViewAnsGrMain2 {
 	}
 
 	private void evaluate() throws LimitExceededException {
-		
 		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
 		//look up table for view answer graph using Qid of view
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>();
