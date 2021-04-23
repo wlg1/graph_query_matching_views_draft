@@ -148,12 +148,18 @@ public class HybAnsGraphBuilderViews {
 				//intersectedAnsGr.get(vHead) is nodeset of head graph nodes
 				//HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists : key is head graph node
 				//HashMap<Integer, ArrayList<GraphNode>> : key is to nodeset, value is toNS's graph nodes
-				nodeset queryHeadNS = intersectedAnsGr.get(vHead);
+				nodeset queryHeadNS = intersectedAnsGr.get(from);
 				for (GraphNode gn : queryHeadNS.gnodes) {
-					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w 2 node sets
+					if (!viewHeadNS.fwdAdjLists.containsKey(gn)) { //not in intersection of nodeset, so skip
+						continue;
+					}
+					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w headGN to tail NS
 					HashMap<Integer, ArrayList<GraphNode>> edgesHM = queryHeadNS.fwdAdjLists.get(gn);
 					if (!edgesHM.containsKey(to)) {
-						edgesHM.put(to, viewToGNs);
+						//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
+						edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
+						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
+						queryToGNs.retainAll(viewToGNs);
 					} else {
 						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
 						queryToGNs.retainAll(viewToGNs);
@@ -161,7 +167,6 @@ public class HybAnsGraphBuilderViews {
 				}
 			}
 		}
-		
 	}
 
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
@@ -183,7 +188,10 @@ public class HybAnsGraphBuilderViews {
 			GraphNode headGN = e_f.getValue();
 			for (PoolEntry e_t : pl_t.elist()) {
 				GraphNode tailGN = e_t.getValue();
-				if (intersectedAnsGr.get(from).fwdAdjLists.get(headGN).get(to).contains(tailGN) ) {
+				
+				nodeset headNS = intersectedAnsGr.get(from);
+				HashMap<Integer, ArrayList<GraphNode>> ToAdjLists = headNS.fwdAdjLists.get(headGN);
+				if (ToAdjLists.get(to).contains(tailGN) ) {
 					e_f.addChild(e_t);
 					e_t.addParent(e_f);
 				}
