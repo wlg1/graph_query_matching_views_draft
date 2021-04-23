@@ -109,6 +109,7 @@ public class HybAnsGraphBuilderViews {
 //					}
 //				}
 			}
+			intersectedNS.createFwdAL();
 			intersectedAnsGr.add(intersectedNS);
 			
 			QNode qn = qnodes[i];
@@ -131,8 +132,6 @@ public class HybAnsGraphBuilderViews {
 	private void initEdges() {
 		for (QEdge qEdge : mQuery.edges ) {
 			for (Query view : viewsOfQuery) {
-				ArrayList<QEdge> coveringEdges = new ArrayList<QEdge>(); //U: edges b/w 2 node sets
-				
 				HashMap<Integer, Integer> hom = viewHoms.get(view.Qid);
 				int from = qEdge.from, to = qEdge.to;
 				Integer vHead = hom.get(from), vTail = hom.get(to);
@@ -150,12 +149,16 @@ public class HybAnsGraphBuilderViews {
 				//HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists : key is head graph node
 				//HashMap<Integer, ArrayList<GraphNode>> : key is to nodeset, value is toNS's graph nodes
 				nodeset queryHeadNS = intersectedAnsGr.get(vHead);
-				for (GraphNode gn : viewHeadNS.gnodes) {
-					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail);
-					ArrayList<GraphNode> queryToGNs = queryHeadNS.fwdAdjLists.get(gn).get(vTail);
-					queryToGNs.retainAll(viewToGNs);
+				for (GraphNode gn : queryHeadNS.gnodes) {
+					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w 2 node sets
+					HashMap<Integer, ArrayList<GraphNode>> edgesHM = queryHeadNS.fwdAdjLists.get(gn);
+					if (!edgesHM.containsKey(to)) {
+						edgesHM.put(to, viewToGNs);
+					} else {
+						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
+						queryToGNs.retainAll(viewToGNs);
+					}
 				}
-				
 			}
 		}
 		

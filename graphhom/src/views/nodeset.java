@@ -14,4 +14,11 @@ public class nodeset {
 		gnodes = new ArrayList<GraphNode>() ;
 		fwdAdjLists = new HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>>();
 	}
+	
+	public void createFwdAL() {
+		for (GraphNode gn : gnodes) {
+			HashMap<Integer, ArrayList<GraphNode>> edgeHM = new HashMap<Integer, ArrayList<GraphNode>>();
+			fwdAdjLists.put(gn, edgeHM);
+		}
+	}
 }
