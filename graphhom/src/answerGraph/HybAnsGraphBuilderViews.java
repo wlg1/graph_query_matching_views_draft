@@ -59,10 +59,14 @@ public class HybAnsGraphBuilderViews {
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V]; //each nodeset has its own bitmap of GN in it
 		initPool(tBitsIdxArr);
-		initEdges();
-
-		for(QEdge edge: mQuery.edges){
-			
+//		double buildtm = tt.Stop() / 1000;
+//		stat.setMatchTime(buildtm);
+		
+		initEdges(); //this is time consuming
+//		double buildtm = tt.Stop() / 1000;
+//		stat.setMatchTime(buildtm);
+		
+		for(QEdge edge: mQuery.edges){  //this is extremely time consuming
 			linkOneStep(edge,tBitsIdxArr);
 		}
 		
@@ -194,7 +198,7 @@ public class HybAnsGraphBuilderViews {
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
 
 		int from = edge.from, to = edge.to;
-		AxisType axis = edge.axis;
+//		AxisType axis = edge.axis;
 		Pool pl_f = mPool.get(from), pl_t = mPool.get(to);
 		
 		//given covering view edges, get all graph nodes in the covering edge's nodesets

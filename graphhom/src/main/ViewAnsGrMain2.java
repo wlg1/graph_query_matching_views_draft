@@ -179,8 +179,7 @@ public class ViewAnsGrMain2 {
 				
 				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run(s);
 				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
-//				queryAnsGraphs.add(qryAnsGr);
+//				queryAnsGraphs.add(mPool);
 				
 				try {
 					tt.Start();
