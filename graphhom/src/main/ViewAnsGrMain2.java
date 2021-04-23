@@ -34,6 +34,7 @@ import query.graph.Query;
 import query.graph.QueryDirectedCycle;
 import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
+import views.MIjoinExclViews;
 import views.ansgraphExclViews3;
 import views.ansgraphExclViews4;
 import views.getAnsGr;
@@ -170,7 +171,8 @@ public class ViewAnsGrMain2 {
 				}
 				viewsOfQueries.add(viewsOfQuery);
 				
-				HybAnsGraphBuilderViews eva = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr);
+				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run();
+				MIjoinExclViews eva = new MIjoinExclViews(mPool);
 //				ArrayList<Pool> qryAnsGr = eva.getAnsGr();
 //				queryAnsGraphs.add(qryAnsGr);
 				

@@ -119,29 +119,40 @@ public class HybAnsGraphBuilderViews {
 			mPool.add(qAct);
 			
 			//get intersection of all covering nodesets of this nodeset
-			nodeset intersectedNS = (nodeset) null;
+			nodeset intersectedNS = new nodeset();
 			for (Integer key : viewHoms.keySet()) {
 				HashMap<Integer, Integer> hom = viewHoms.get(key);
 				Integer viewNodesetID = hom.get(i);
+				if (viewNodesetID == null) {  //this view doesn't cover this query's node
+					continue;
+				}
 				ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
 				ArrayList<GraphNode> coveringNS = viewAnsgr.get(viewNodesetID).gnodes;
-				if (intersectedNS == null) {
+				if (intersectedNS.gnodes.isEmpty()) {
 					intersectedNS.gnodes = coveringNS;
 				} else {
 					intersectedNS.gnodes.retainAll(coveringNS);
 				}
+				
+				//for every query edge, find its view covering edge using vhead = hom.get(head) and vTail = hom.get(tail)
+				//the fwdadjlist of the head should only keep those that exist in other views
+				//but graph node may not point to some node set of curr view, so add it on if not in node set
 				
 				//get intersection of edges of all views
 				//for every graph node in the nodeset's fwdadjlist, intersect it with a graph node
 				for (GraphNode n : intersectedNS.gnodes) { 
 //					HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
 					
-					if (intersectedNS.fwdAdjLists == null) {
+					if (intersectedNS.fwdAdjLists == null || intersectedNS.fwdAdjLists.isEmpty()) {
 						intersectedNS.fwdAdjLists = viewAnsgr.get(viewNodesetID).fwdAdjLists;
 					} else {
 						HashMap<Integer, ArrayList<GraphNode>> GNfwdAdjLists = intersectedNS.fwdAdjLists.get(n);
 						for (Integer key2 : GNfwdAdjLists.keySet()) {
-							intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+							if (!intersectedNS.fwdAdjLists.get(n).containsKey(key2)) {
+								intersectedNS.fwdAdjLists.get(n).put(key2, viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+							} else {
+								intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
+							}
 						}
 					}
 				}

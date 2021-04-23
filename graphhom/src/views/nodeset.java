@@ -11,7 +11,7 @@ public class nodeset {
 	public HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
 	
 	public nodeset() {
-		gnodes = (ArrayList<GraphNode>) null;
-		fwdAdjLists = (HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>>) null;
+		gnodes = new ArrayList<GraphNode>() ;
+		fwdAdjLists = new HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>>();
 	}
 }
