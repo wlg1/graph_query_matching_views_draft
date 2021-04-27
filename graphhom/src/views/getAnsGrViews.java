@@ -109,9 +109,9 @@ public class getAnsGrViews {
 						}
 						fal.put(key, x);
 					}
-					ns.fwdAdjLists.put(gn, fal);
+					ns.fwdAdjLists.put(gn.pos, fal);
 				} else {
-					ns.fwdAdjLists = (HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>>) null;
+					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, ArrayList<GraphNode>>>) null;
 				}
 			}
 			matView.add(ns);

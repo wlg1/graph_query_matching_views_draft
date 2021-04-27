@@ -58,9 +58,7 @@ public class MIjoinExclViews {
 		tt = new TimeTracker();
 		tt.Start();
 		
-		//run MIjoin using occurrence lists to get answer again
 		double numOutTuples;
-		tt.Start();
 		tenum = new HybTupleEnumer(query, mPool);
 		numOutTuples = tenum.enumTuples();
 		
