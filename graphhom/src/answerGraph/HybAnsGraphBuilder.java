@@ -112,6 +112,10 @@ public class HybAnsGraphBuilder {
 
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
 
+		//for every e_f, poolentry in nodeset that's head to query edge
+		//tBitsIdxArr[to] is bitmap of nodeset that's tail to query edge 
+		//pl_t.elist() is poolentries of nodeset that's tail to query edge 
+		
 		int from = edge.from, to = edge.to;
 		AxisType axis = edge.axis;
 		Pool pl_f = mPool.get(from), pl_t = mPool.get(to);

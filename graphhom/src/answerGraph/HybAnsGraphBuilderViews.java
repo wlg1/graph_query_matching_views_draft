@@ -33,13 +33,15 @@ public class HybAnsGraphBuilderViews {
 	ArrayList<nodeset> intersectedAnsGr;
 	TimeTracker tt;
 	QueryEvalStat stat;
+	HashMap<Integer, GraphNode> posToGN;
 	
 	public HybAnsGraphBuilderViews(Query query, ArrayList<Query> viewsOfQuery_in,
-			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in) {
+			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
+		posToGN = INposToGN;
 	}
 
 	public ArrayList<Pool> run(QueryEvalStat INstat) {
@@ -60,20 +62,20 @@ public class HybAnsGraphBuilderViews {
 		}
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V]; //each nodeset has its own bitmap of GN in it
-		initPool(tBitsIdxArr);  //not that time consuming, but by itself, still more than building ansgr w/o views
+		initPool(tBitsIdxArr); 
 //		double buildtm = tt.Stop() / 1000;
 //		stat.setMatchTime(buildtm);
 		
-		initEdges(); //this is time consuming
-		double buildtm = tt.Stop() / 1000;
-		stat.setMatchTime(buildtm);
+		initEdges(); 
+//		double buildtm = tt.Stop() / 1000;
+//		stat.setMatchTime(buildtm);
 		
-		for(QEdge edge: mQuery.edges){  //not that time consuming, but by itself, still more than building ansgr w/o views
+		for(QEdge edge: mQuery.edges){  
 			linkOneStep(edge,tBitsIdxArr);
 		}
 		
-//		double buildtm = tt.Stop() / 1000;
-//		stat.setMatchTime(buildtm);
+		double buildtm = tt.Stop() / 1000;
+		stat.setMatchTime(buildtm);
 		stat.calAnsGraphSize(mPool);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 //		System.out.println("Answer graph build time:" + buildtm + " sec.");
@@ -110,32 +112,13 @@ public class HybAnsGraphBuilderViews {
 					continue;
 				}
 				ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
-				ArrayList<GraphNode> coveringNS = viewAnsgr.get(viewNodesetID).gnodes;
+//				ArrayList<GraphNode> coveringNS = viewAnsgr.get(viewNodesetID).gnodes;
 				RoaringBitmap coveringNSbits = viewAnsgr.get(viewNodesetID).gnodesBits;
-				if (intersectedNS.gnodes.isEmpty()) {
-					intersectedNS.gnodes = getGNList0(coveringNS);
+				if (intersectedNS.gnodesBits.isEmpty()) {
 					intersectedNS.gnodesBits = getGNList(coveringNSbits);
 				} else {
-					intersectedNS.gnodes.retainAll(coveringNS);
 					intersectedNS.gnodesBits.and(coveringNSbits);
 				}
-				
-				//get intersection of edges of all views
-				//for every graph node in the nodeset's fwdadjlist, intersect it with a graph node
-//				for (GraphNode n : intersectedNS.gnodes) {
-//					if (intersectedNS.fwdAdjLists == null || intersectedNS.fwdAdjLists.isEmpty()) {
-//						intersectedNS.fwdAdjLists = viewAnsgr.get(viewNodesetID).fwdAdjLists;
-//					} else {
-//						HashMap<Integer, ArrayList<GraphNode>> GNfwdAdjLists = intersectedNS.fwdAdjLists.get(n);
-//						for (Integer key2 : GNfwdAdjLists.keySet()) {
-//							if (!intersectedNS.fwdAdjLists.get(n).containsKey(key2)) {
-//								intersectedNS.fwdAdjLists.get(n).put(key2, viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
-//							} else {
-//								intersectedNS.fwdAdjLists.get(n).get(key2).retainAll(viewAnsgr.get(viewNodesetID).fwdAdjLists.get(n).get(key2));
-//							}
-//						}
-//					}
-//				}
 			}
 			intersectedNS.createFwdAL();
 			intersectedAnsGr.add(intersectedNS);
@@ -144,14 +127,14 @@ public class HybAnsGraphBuilderViews {
 			RoaringBitmap t_bits = new RoaringBitmap();
 			tBitsIdxArr[i] = t_bits;
 			int pos = 0; 
-			for (GraphNode n : intersectedNS.gnodes) { 
-				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+			for (int n : intersectedNS.gnodesBits) { 
+				GraphNode gn = posToGN.get(n);
+				PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
 				qAct.addEntry(actEntry);
 				t_bits.add(actEntry.getValue().L_interval.mStart);
 				
-				//map intersectedAnsGr to mPool
-				//create hashmap of graphnode to poolentry
-				intersectedAnsGr.get(i).GNtoPE.put(n.pos, actEntry);
+				//map intersectedAnsGr to mPool: create hashmap of graphnode to poolentry
+				intersectedAnsGr.get(i).GNtoPE.put(n, actEntry);
 			}
 		}
 
@@ -186,44 +169,31 @@ public class HybAnsGraphBuilderViews {
 				
 				//intersectedAnsGr's nodesets contain candCoveringEdges, or cos
 				//intersectedAnsGr.get(vHead) is nodeset of head graph nodes
-				//HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists : key is head graph node
-				//HashMap<Integer, ArrayList<GraphNode>> : key is to nodeset, value is toNS's graph nodes
+				//HashMap<GraphNode, HashMap<Integer, RoaringBitmap>> fwdAdjLists : key is head graph node
+				//HashMap<Integer, RoaringBitmap> : key is to nodeset, value is toNS's graph nodes
 				nodeset queryHeadNS = intersectedAnsGr.get(from);
-				for (GraphNode gn : queryHeadNS.gnodes) {
-					if (!viewHeadNS.fwdAdjLists.containsKey(gn.pos)) { //not in intersection of nodeset, so skip
+				for (int gn : queryHeadNS.gnodesBits) {
+					if (!viewHeadNS.fwdAdjLists.containsKey(gn)) { //not in intersection of nodeset, so skip
 						continue;
 					}
-//					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn.pos).get(vTail); //U: edges b/w headGN to tail NS
-//					HashMap<Integer, ArrayList<GraphNode>> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn.pos);
-					RoaringBitmap viewToGNs = viewHeadNS.fwdAdjLists.get(gn.pos).get(vTail); //U: edges b/w headGN to tail NS
-					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn.pos);
+					RoaringBitmap viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w headGN to tail NS
+					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
 					if (!queryEdgesHM.containsKey(to)) {
 						//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
 						//issue: cannot just do edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
 						//	b/c that means the to adj list IS THE SAME as tail nodeset so intersection would alter it too
-
-//						ArrayList<GraphNode> queryToGNs = new ArrayList<GraphNode>(intersectedAnsGr.get(to).gnodes);
-//						queryToGNs.addAll(intersectedAnsGr.get(to).gnodes); //java.lang.OutOfMemoryError: Java heap space
-//						queryToGNs.retainAll(viewToGNs);
 
 						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
 						RoaringBitmap queryToGNs = getGNList(toGNs);
 						queryToGNs.and(viewToGNs);
 						queryEdgesHM.put(to, queryToGNs);
 					} else {
-//						ArrayList<GraphNode> queryToGNs = queryEdgesHM.get(to);
-//						queryToGNs.retainAll(viewToGNs);
 						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
 						queryToGNs.and(viewToGNs);
 					}
 				}
 			}
 		}
-	}
-	
-	private ArrayList<GraphNode> getGNList0(ArrayList<GraphNode> INGN) {
-		ArrayList<GraphNode> newGN = INGN;
-		return newGN;
 	}
 	
 	private RoaringBitmap getGNList(RoaringBitmap INGN) {
@@ -240,24 +210,16 @@ public class HybAnsGraphBuilderViews {
 		//view adj lists: key is head node, value is list of tail nodes. if tail in list, add it
 		//view ONLY has graph nodes, so must still create poolentries
 
-		//for every e_f, poolentry in nodeset that's head to query edge
-		//tBitsIdxArr[to] is bitmap of nodeset that's tail to query edge 
-		//pl_t.elist() is poolentries of nodeset that's tail to query edge 
-		
-		//nodeset: HashMap<GraphNode, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
-		
 		//instead of looping thru ALL tail nodes, only loop thru adj list of that poolentry
 		for (PoolEntry e_f : pl_f.elist()) {
 			GraphNode headGN = e_f.getValue();
 			nodeset headNS = intersectedAnsGr.get(from);
 			RoaringBitmap ToAdjList = headNS.fwdAdjLists.get(headGN.pos).get(to);
-//			ArrayList<GraphNode> ToAdjList = headNS.fwdAdjLists.get(headGN.pos).get(to);
 			
 			//ASSUME LOOPING THRU BITMAP GETS POSITIONS OF BITMAP, WHICH IS GN POS
 //			for (GraphNode tailGN : ToAdjList ) {
 			for (int tailGN : ToAdjList ) {
 				PoolEntry e_t = intersectedAnsGr.get(to).GNtoPE.get(tailGN);
-//				PoolEntry e_t = intersectedAnsGr.get(to).GNtoPE.get(tailGN.pos);
 				e_f.addChild(e_t);
 				e_t.addParent(e_f);
 			}

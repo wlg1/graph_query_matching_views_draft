@@ -10,27 +10,24 @@ import graph.GraphNode;
 
 public class nodeset {
 	
-	public ArrayList<GraphNode> gnodes;
+//	public ArrayList<GraphNode> gnodes;
 	public RoaringBitmap gnodesBits;
 	
-//	public HashMap<Integer, HashMap<Integer, ArrayList<GraphNode>>> fwdAdjLists;
 	public HashMap<Integer, HashMap<Integer, RoaringBitmap>> fwdAdjLists;
 	public HashMap<Integer, PoolEntry> GNtoPE;
 	
 	public nodeset() {  //init new so not null when adding in
-		gnodes = new ArrayList<GraphNode>() ;
+//		gnodes = new ArrayList<GraphNode>() ;
 		gnodesBits = new RoaringBitmap();
 		
 		fwdAdjLists = new HashMap<Integer, HashMap<Integer, RoaringBitmap>>();
-//		fwdAdjLists = new HashMap<Integer, HashMap<Integer, ArrayList<GraphNode>>>();
 		GNtoPE = new HashMap<Integer, PoolEntry>();
 	}
 	
 	public void createFwdAL() {
-		for (GraphNode gn : gnodes) {
-//			HashMap<Integer, ArrayList<GraphNode>> edgeHM = new HashMap<Integer, ArrayList<GraphNode>>();
+		for (int gn : gnodesBits) {
 			HashMap<Integer, RoaringBitmap> edgeHM = new HashMap<Integer, RoaringBitmap>();
-			fwdAdjLists.put(gn.pos, edgeHM);
+			fwdAdjLists.put(gn, edgeHM);
 		}
 	}
 }

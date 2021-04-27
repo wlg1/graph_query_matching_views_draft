@@ -139,14 +139,16 @@ public class ViewAnsGrMain2 {
 	}
 
 	private void evaluate() throws LimitExceededException {
+		
 		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
-		//look up table for view answer graph using Qid of view
-		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>();
+		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
+		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
 			FilterBuilder fbV = new FilterBuilder(g, view);
-			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl);
+			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run() );
+			posToGN = ansgrBuilder.posToGN;
 		}
 
 		TimeTracker tt = new TimeTracker();
@@ -177,7 +179,7 @@ public class ViewAnsGrMain2 {
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
 				
-				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr).run(s);
+				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN).run(s);
 				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
 //				queryAnsGraphs.add(mPool);
 				

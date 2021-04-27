@@ -37,13 +37,15 @@ public class getAnsGrViews {
 	boolean simfilter = true;
 	HybTupleEnumer tenum;
 	ArrayList<MatArray> mCandLists;
+	public HashMap<Integer, GraphNode> posToGN;
 
-	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl) {
+	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN) {
 
 		mQuery = query;
 		mBFL = bfl;
 		nodes = mBFL.getGraphNodes();
 		mFB = fb;
+		posToGN = INposToGN;
 		tt = new TimeTracker();
 
 	}
@@ -98,7 +100,8 @@ public class getAnsGrViews {
 			nodeset ns = new nodeset();
 			for (PoolEntry pe : pl.elist()) {
 				GraphNode gn = pe.mValue;
-				ns.gnodes.add(gn);
+//				ns.gnodes.add(gn);
+				posToGN.put(gn.pos, gn);
 				ns.gnodesBits.add(gn.pos);
 				if (pe.mFwdEntries != null){
 //					HashMap<Integer, ArrayList<GraphNode>> fal = new HashMap<Integer, ArrayList<GraphNode>>();

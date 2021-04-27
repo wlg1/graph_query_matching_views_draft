@@ -35,7 +35,7 @@ public class DagHomAnsGr {
 	ArrayList<Pool> mPool_ansgr;
 	ArrayList<ArrayList<GraphNode>> mInvLstsByID;
 	ArrayList<RoaringBitmap> mBitsByIDArr;
-	boolean simfilter = false;
+	boolean simfilter = true;
 	HybTupleEnumer tenum;
 	HybTupleEnumer tenum_2;
 	// HybTupleEnumCache tenum;
