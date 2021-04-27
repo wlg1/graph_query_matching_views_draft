@@ -190,6 +190,8 @@ public class HybAnsGraphBuilderViews {
 					if (!viewHeadNS.fwdAdjLists.containsKey(gn.pos)) { //not in intersection of nodeset, so skip
 						continue;
 					}
+//					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn.pos).get(vTail); //U: edges b/w headGN to tail NS
+//					HashMap<Integer, ArrayList<GraphNode>> edgesHM = queryHeadNS.fwdAdjLists.get(gn.pos);
 					ArrayList<GraphNode> viewToGNs = viewHeadNS.fwdAdjLists.get(gn.pos).get(vTail); //U: edges b/w headGN to tail NS
 					HashMap<Integer, ArrayList<GraphNode>> edgesHM = queryHeadNS.fwdAdjLists.get(gn.pos);
 					if (!edgesHM.containsKey(to)) {
@@ -197,9 +199,12 @@ public class HybAnsGraphBuilderViews {
 						//issue: cannot just do edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
 						//	b/c that means the to adj list IS THE SAME as tail nodeset so intersection would alter it too
 						edgesHM.put(to, new ArrayList<GraphNode>());
+						
 						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
-						queryToGNs.addAll(intersectedAnsGr.get(to).gnodes); //java.lang.OutOfMemoryError: Java heap space
-						queryToGNs.retainAll(viewToGNs);
+						queryToGNs = getGNList(viewToGNs);
+						
+//						queryToGNs.addAll(intersectedAnsGr.get(to).gnodes); //java.lang.OutOfMemoryError: Java heap space
+//						queryToGNs.retainAll(viewToGNs);
 					}
 //					} else {
 //						ArrayList<GraphNode> queryToGNs = edgesHM.get(to);
@@ -208,6 +213,10 @@ public class HybAnsGraphBuilderViews {
 				}
 			}
 		}
+	}
+	
+	private ArrayList<GraphNode> getGNList(ArrayList<GraphNode> INGN) {
+		return INGN;
 	}
 
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {

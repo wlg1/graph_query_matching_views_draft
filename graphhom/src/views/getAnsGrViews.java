@@ -101,17 +101,21 @@ public class getAnsGrViews {
 				ns.gnodes.add(gn);
 				if (pe.mFwdEntries != null){
 					HashMap<Integer, ArrayList<GraphNode>> fal = new HashMap<Integer, ArrayList<GraphNode>>();
+//					HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
 					for (Integer key : pe.mFwdEntries.keySet()) {
 						ArrayList<GraphNode> x = new ArrayList<GraphNode>();
+//						RoaringBitmap x = new RoaringBitmap();
 						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
 						for (PoolEntry peTo : nodeFwd) {
 							x.add(peTo.mValue);
+//							x.add(peTo.mValue.pos);
 						}
 						fal.put(key, x);
 					}
 					ns.fwdAdjLists.put(gn.pos, fal);
 				} else {
 					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, ArrayList<GraphNode>>>) null;
+//					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
 				}
 			}
 			matView.add(ns);
