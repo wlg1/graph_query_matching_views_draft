@@ -19,10 +19,11 @@ import simfilter.DagSimGraFilter;
 import tupleEnumerator.HybTupleEnumCache;
 import tupleEnumerator.HybTupleEnumer;
 
-public class DagHomIE {
+public class DagHomAnsGrNoFilt {
 
 	Query mQuery;
 	ArrayList<Pool> mPool;
+	ArrayList<Pool> mPool_ansgr;
 	ArrayList<MatArray> mCandLists;
 
 	BFLIndex mBFL;
@@ -38,11 +39,11 @@ public class DagHomIE {
 	boolean simfilter = false;
 
 	HybTupleEnumer tenum;
-	// HybTupleEnumCache tenum;
+	HybTupleEnumer tenum_2;
 
 	// query is a dag
 
-	public DagHomIE(Query query, ArrayList<ArrayList<GraphNode>> invLstsByID, ArrayList<RoaringBitmap> bitsByIDArr,
+	public DagHomAnsGrNoFilt(Query query, ArrayList<ArrayList<GraphNode>> invLstsByID, ArrayList<RoaringBitmap> bitsByIDArr,
 			BFLIndex bfl) {
 
 		mQuery = query;
@@ -87,23 +88,37 @@ public class DagHomIE {
 		} else
 			mCandLists = getCandList();
 
+		////GET OCCURRENCE LISTS
 		tt.Start();
+		//create simulation graph object
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
 		mPool = agBuilder.run();
+
+		//run MIjoin to get answer
+		tenum = new HybTupleEnumer(mQuery, mPool);
+		double numOutTuples_0 = tenum.enumTuples();
+		
+		//then get unique values in answer to get occ sets
+		ArrayList<MatArray> mOcc;
+		mOcc = tenum.getAnswer();
+		
+		//get answer graph using algo that outputs simulation graph
+//		tt.Start();
+		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
+		mPool_ansgr = agBuilder_2.run();
+		
 		double buildtm = tt.Stop() / 1000;
-		stat.calAnsGraphSize(mPool);
 		stat.setMatchTime(buildtm);
+		stat.calAnsGraphSize(mPool_ansgr);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		System.out.println("Answer graph build time:" + buildtm + " sec.");
 
+		//run MIjoin using occurrence lists to get answer again
+		double numOutTuples;
 		tt.Start();
-		tenum = new HybTupleEnumer(mQuery, mPool);
-		// tenum = new HybTupleEnumCache(mQuery, mPool);
-		// if (mQuery.isTree()) {
-		// numOutTuples = calTotTreeSolns();
-		// } else
-		numOutTuples = tenum.enumTuples();
-
+		tenum_2 = new HybTupleEnumer(mQuery, mPool_ansgr);
+		numOutTuples = tenum_2.enumTuples();
+		
 		double enumtm = tt.Stop() / 1000;
 		stat.setEnumTime(enumtm);
 		System.out.println("Tuple enumeration time:" + enumtm + " sec.");
@@ -118,6 +133,11 @@ public class DagHomIE {
 		if (mPool != null)
 			for (Pool p : mPool)
 				p.clear();
+		
+		if (mPool_ansgr != null)
+			for (Pool p : mPool_ansgr)
+				p.clear();
+		
 	}
 
 	public double getTupleCount() {
@@ -157,28 +177,12 @@ public class DagHomIE {
 	private double calTotCandSolnNodes() {
 
 		double totNodes = 0.0;
-		for (Pool pool : mPool) {
+		for (Pool pool : mPool_ansgr) {
 			ArrayList<PoolEntry> elist = pool.elist();
 			totNodes += elist.size();
 
 		}
 		return totNodes;
-	}
-
-	private double calTotTreeSolns() {
-
-		QNode root = mQuery.getSources().get(0);
-		Pool rPool = mPool.get(root.id);
-		double totTuples = 0;
-		ArrayList<PoolEntry> elist = rPool.elist();
-		for (PoolEntry r : elist) {
-
-			totTuples += r.size();
-
-		}
-		System.out.println("total number of solution tuples: " + totTuples);
-		return totTuples;
-
 	}
 
 	public void printSolutions(ArrayList<PoolEntry> elist) {

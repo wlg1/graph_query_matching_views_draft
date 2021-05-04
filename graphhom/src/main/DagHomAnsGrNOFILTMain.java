@@ -8,50 +8,50 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.roaringbitmap.RoaringBitmap;
+
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 import dao.BFLIndex;
 import dao.DaoController;
-import evaluator.DagHomAnsGr;
+import evaluator.DagHomAnsGrNoFilt;
 import global.Consts;
+import global.Flags;
 import global.Consts.AxisType;
 import global.Consts.status_vals;
-import global.Flags;
-import graph.Digraph;
 import graph.GraphNode;
 import helper.LimitExceededException;
 import helper.QueryEvalStat;
 import helper.QueryEvalStats;
 import helper.TimeTracker;
-import prefilter.FilterBuilder;
 import query.graph.QEdge;
-import query.graph.QNode;
 import query.graph.Query;
 import query.graph.QueryDirectedCycle;
 import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
 
-public class DagHomAnsGrMain {
+public class DagHomAnsGrNOFILTMain {
 
 	ArrayList<Query> queries;
 	HashMap<String, Integer> l2iMap;
 	String queryFileN, dataFileN, outFileN;
-	ArrayList<ArrayList<GraphNode>> invLsts;
+	ArrayList<ArrayList<GraphNode>> invLstsByID;
+	ArrayList<RoaringBitmap> bitsByIDArr;
 	BFLIndex bfl;
 	TimeTracker tt;
 	QueryEvalStats stats;
-	Digraph g;
 
-	public DagHomAnsGrMain(String dataFN, String queryFN) {
+	public DagHomAnsGrNOFILTMain(String dataFN, String queryFN) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
 		String suffix = ".csv";
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
-		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgr_occListTime" + suffix;
-		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
+		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrNOFILT_occListTime" + suffix;
+		stats = new QueryEvalStats(dataFileN, queryFileN, "GraEval_IE_Hyb");
 
 	}
 
@@ -74,18 +74,21 @@ public class DagHomAnsGrMain {
 		System.out.println("\nTotal eval time: " + tt.Stop() / 1000 + "sec.");
 
 		writeStatsToCSV();
+
 		// skip the execution of the timeout tasks;
 		System.exit(0);
+
 	}
 
 	private void loadData() {
 		DaoController dao = new DaoController(dataFileN, stats);
 		dao.loadGraphAndIndex();
-		invLsts = dao.invLsts;
+		invLstsByID = dao.invLstsByID;
 		l2iMap = dao.l2iMap;
 		bfl = dao.bfl;
-		g = dao.G;
+		bitsByIDArr = dao.bitsByIDArr;
 	}
+
 
 	private void readQueries() {
 
@@ -116,23 +119,23 @@ public class DagHomAnsGrMain {
 	}
 
 	private void evaluate() {
-
+		
 		TimeTracker tt = new TimeTracker();
+		
 		for (int i = 0; i < Flags.REPEATS; i++) {
 			for (int Q = 0; Q < queries.size(); Q++) {
 
 				Query query = queries.get(Q);
 				System.out.println("\nEvaluating query " + Q + " ...");
-				double totNodes_before = getTotNodes(query);
-				FilterBuilder fb = new FilterBuilder(g, query);
+
+				DagHomAnsGrNoFilt eva = new DagHomAnsGrNoFilt(query, invLstsByID, bitsByIDArr, bfl);
 				java.util.concurrent.ExecutorService executor = Executors.newSingleThreadExecutor();
 				SimpleTimeLimiter timeout = new SimpleTimeLimiter(executor);
-				
-				DagHomAnsGr eva = new DagHomAnsGr(query, fb, bfl);
-				
+
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();
-				s.totNodesBefore = totNodes_before;
+				// QueryEvalStat stat = eva.run();
+
 				try {
 					tt.Start();
 					timeout.callWithTimeout(new Callable<Boolean>() {
@@ -186,24 +189,8 @@ public class DagHomAnsGrMain {
 				}
 			}
 		}
-
 	}
 
-	private double getTotNodes(Query qry) {
-
-		double totNodes = 0.0;
-
-		QNode[] nodes = qry.nodes;
-		for (int i = 0; i < nodes.length; i++) {
-			QNode n = nodes[i];
-			ArrayList<GraphNode> invLst = invLsts.get(n.lb);
-			totNodes += invLst.size();
-
-		}
-
-		return totNodes;
-	}
-	
 	private void writeStatsToCSV() {
 		PrintWriter opw;
 
@@ -212,6 +199,7 @@ public class DagHomAnsGrMain {
 			stats.printToFile(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -240,7 +228,7 @@ public class DagHomAnsGrMain {
 	public static void main(String[] args) {
 
 		String dataFileN = args[0], queryFileN = args[1]; // the query file
-		DagHomAnsGrMain demain = new DagHomAnsGrMain(dataFileN, queryFileN);
+		DagHomAnsGrNOFILTMain demain = new DagHomAnsGrNOFILTMain(dataFileN, queryFileN);
 
 		demain.run();
 	}

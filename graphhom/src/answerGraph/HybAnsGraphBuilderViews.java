@@ -112,7 +112,6 @@ public class HybAnsGraphBuilderViews {
 					continue;
 				}
 				ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
-//				ArrayList<GraphNode> coveringNS = viewAnsgr.get(viewNodesetID).gnodes;
 				RoaringBitmap coveringNSbits = viewAnsgr.get(viewNodesetID).gnodesBits;
 				if (intersectedNS.gnodesBits.isEmpty()) {
 					intersectedNS.gnodesBits = getGNList(coveringNSbits);

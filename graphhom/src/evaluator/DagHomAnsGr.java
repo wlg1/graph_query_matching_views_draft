@@ -76,7 +76,7 @@ public class DagHomAnsGr {
 			mCandLists = mFB.getCandLists();
 		
 		////GET OCCURRENCE LISTS
-//		tt.Start();
+		tt.Start();
 		//create simulation graph object
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
 		mPool = agBuilder.run();
@@ -90,7 +90,7 @@ public class DagHomAnsGr {
 		mOcc = tenum.getAnswer();
 		
 		//get answer graph using algo that outputs simulation graph
-		tt.Start();
+//		tt.Start();
 		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
 		mPool_ansgr = agBuilder_2.run();
 		
@@ -120,6 +120,11 @@ public class DagHomAnsGr {
 		if (mPool != null)
 			for (Pool p : mPool)
 				p.clear();
+		
+		if (mPool_ansgr != null)
+			for (Pool p : mPool_ansgr)
+				p.clear();
+		
 	}
 
 

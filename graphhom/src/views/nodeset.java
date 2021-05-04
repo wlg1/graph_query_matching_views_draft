@@ -10,16 +10,12 @@ import graph.GraphNode;
 
 public class nodeset {
 	
-//	public ArrayList<GraphNode> gnodes;
 	public RoaringBitmap gnodesBits;
-	
 	public HashMap<Integer, HashMap<Integer, RoaringBitmap>> fwdAdjLists;
 	public HashMap<Integer, PoolEntry> GNtoPE;
 	
 	public nodeset() {  //init new so not null when adding in
-//		gnodes = new ArrayList<GraphNode>() ;
 		gnodesBits = new RoaringBitmap();
-		
 		fwdAdjLists = new HashMap<Integer, HashMap<Integer, RoaringBitmap>>();
 		GNtoPE = new HashMap<Integer, PoolEntry>();
 	}
