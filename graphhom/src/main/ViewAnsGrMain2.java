@@ -140,7 +140,7 @@ public class ViewAnsGrMain2 {
 
 	private void evaluate() throws LimitExceededException {
 		
-		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
+//		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
 		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
@@ -160,7 +160,6 @@ public class ViewAnsGrMain2 {
 				Query query = queries.get(Q);
 				System.out.println("\nEvaluating query " + Q + " ...");
 				double totNodes_before = getTotNodes(query);
-//				FilterBuilder fb = new FilterBuilder(g, query);
 				java.util.concurrent.ExecutorService executor = Executors.newSingleThreadExecutor();
 				SimpleTimeLimiter timeout = new SimpleTimeLimiter(executor);
 				
@@ -170,7 +169,7 @@ public class ViewAnsGrMain2 {
 						viewsOfQuery.add(view);
 					}
 				}
-				viewsOfQueries.add(viewsOfQuery);
+//				viewsOfQueries.add(viewsOfQuery);
 				
 				//compare to result using algo. They will not be equal due to having diff objs
 				//try using small data graph as example
@@ -178,16 +177,19 @@ public class ViewAnsGrMain2 {
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
-				
-				ArrayList<Pool> mPool = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN).run(s);
-				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//				queryAnsGraphs.add(mPool);
+				HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
+//				if (Q == 1) {
+//					ArrayList<Pool> mPool = BuildViews.run(s);
+//					System.out.println();
+//				}
 				
 				try {
 					tt.Start();
 					timeout.callWithTimeout(new Callable<Boolean>() {
-
+						ArrayList<Pool> mPool = BuildViews.run(s);
 						public Boolean call() throws Exception {
+							MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//							queryAnsGraphs.add(mPool);
 							return eva.run(s);
 						}
 					}, Consts.TimeLimit, TimeUnit.MINUTES, false);
@@ -196,6 +198,9 @@ public class ViewAnsGrMain2 {
 					stats.add(i, Q, stat);
 
 				} catch (UncheckedTimeoutException e) {
+					ArrayList<Pool> mPool = BuildViews.run(s);
+					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
                    	stat = new QueryEvalStat(s);
@@ -204,6 +209,9 @@ public class ViewAnsGrMain2 {
 					System.err.println("Time Out!");
 
 				} catch (OutOfMemoryError e) {
+					ArrayList<Pool> mPool = BuildViews.run(s);
+					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat = new QueryEvalStat(s);
@@ -215,6 +223,9 @@ public class ViewAnsGrMain2 {
 				}
 				
 				catch (LimitExceededException e) {
+					ArrayList<Pool> mPool = BuildViews.run(s);
+					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat= new QueryEvalStat(s);	
@@ -226,6 +237,9 @@ public class ViewAnsGrMain2 {
 				}
 
 				catch (Exception e) {
+					ArrayList<Pool> mPool = BuildViews.run(s);
+					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//					queryAnsGraphs.add(mPool);s
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat = new QueryEvalStat(s);
