@@ -277,10 +277,6 @@ public class HybAnsGraphBuilderViews {
 		//try various permutations of matches
 		while (true) {
 			//try new mapping: for each edge, make sure matched head+tail nodes so far give consistent edge type
-			for (int i = 0; i < candHom.length; i++) {
-				System.out.println(candHom[i]);
-			}
-			System.out.println("new");
 			boolean passFlag = true;
 			for (QEdge edge : view.edges) {  //match the nodes in each edge
 				String vEdgeType = edge.axis.toString();
