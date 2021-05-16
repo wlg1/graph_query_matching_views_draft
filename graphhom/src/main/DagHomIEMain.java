@@ -49,8 +49,11 @@ public class DagHomIEMain {
 		dataFileN = Consts.INDIR + dataFN;
 		String suffix = ".csv";
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
-		outFileN = Consts.OUTDIR + "sum_" + fn + "Gra_IE_Hyb" + suffix;
-		stats = new QueryEvalStats(dataFileN, queryFileN, "GraEval_IE_Hyb");
+//		outFileN = Consts.OUTDIR + "sum_" + fn + "Gra_IE_Hyb" + suffix;
+//		stats = new QueryEvalStats(dataFileN, queryFileN, "GraEval_IE_Hyb");
+		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
+		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__nofilt" + suffix;
+		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_IE");
 
 	}
 
