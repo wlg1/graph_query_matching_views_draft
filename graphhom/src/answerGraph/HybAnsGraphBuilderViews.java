@@ -184,6 +184,9 @@ public class HybAnsGraphBuilderViews {
 					//HashMap<Integer, RoaringBitmap> : key is to nodeset, value is toNS's graph nodes
 					nodeset queryHeadNS = intersectedAnsGr.get(from);
 					for (int gn : queryHeadNS.gnodesBits) {
+						if (viewHeadNS.fwdAdjLists == null) {
+							continue;
+						}
 						if (!viewHeadNS.fwdAdjLists.containsKey(gn)) { //not in intersection of nodeset, so skip
 							continue;
 						}
