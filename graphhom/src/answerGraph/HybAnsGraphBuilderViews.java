@@ -278,6 +278,19 @@ public class HybAnsGraphBuilderViews {
 		while (true) {
 			//try new mapping: for each edge, make sure matched head+tail nodes so far give consistent edge type
 			boolean passFlag = true;
+			
+			//check if each value in candHom is unique. no 2 view nodes can map to the same query node.
+			ArrayList<Integer> coveringsSoFar = new ArrayList<Integer>(); //use list bc it has .contains()
+			for (int i = 0; i < candHom.length; i++) {
+				if (i > 0) {
+					if (coveringsSoFar.contains(candHom[i])) {
+						passFlag = false;
+						break;
+					}
+				}
+				coveringsSoFar.add(candHom[i]);
+			}
+			
 			for (QEdge edge : view.edges) {  //match the nodes in each edge
 				String vEdgeType = edge.axis.toString();
 				int viewHnode = edge.from; //head node of view
@@ -300,6 +313,7 @@ public class HybAnsGraphBuilderViews {
 			for (int i = 0; i < candHom.length; i++) {
 				output.put(candHom[i], i);
 			}
+			
 			if (passFlag && !viewHoms.get(view.Qid).contains(output)) {
 				return output; //get out of while loop to test a new mapping
 			}
