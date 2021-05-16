@@ -34,7 +34,7 @@ public class DagHomIEFltSim {
 	ArrayList<Pool> mPool;
 	ArrayList<ArrayList<GraphNode>> mInvLstsByID;
 	ArrayList<RoaringBitmap> mBitsByIDArr;
-	boolean simfilter = false;
+	boolean simfilter = true;
 	HybTupleEnumer tenum;
 	// HybTupleEnumCache tenum;
 
