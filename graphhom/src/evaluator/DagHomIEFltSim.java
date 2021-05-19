@@ -34,17 +34,18 @@ public class DagHomIEFltSim {
 	ArrayList<Pool> mPool;
 	ArrayList<ArrayList<GraphNode>> mInvLstsByID;
 	ArrayList<RoaringBitmap> mBitsByIDArr;
-	boolean simfilter = true;
+	boolean simfilter;
 	HybTupleEnumer tenum;
 	// HybTupleEnumCache tenum;
 
-	public DagHomIEFltSim(Query query, FilterBuilder fb, BFLIndex bfl) {
+	public DagHomIEFltSim(Query query, FilterBuilder fb, BFLIndex bfl, boolean INsimfilter) {
 
 		mQuery = query;
 		mBFL = bfl;
 		nodes = mBFL.getGraphNodes();
 		mFB = fb;
 		tt = new TimeTracker();
+		simfilter = INsimfilter;
 
 	}
 

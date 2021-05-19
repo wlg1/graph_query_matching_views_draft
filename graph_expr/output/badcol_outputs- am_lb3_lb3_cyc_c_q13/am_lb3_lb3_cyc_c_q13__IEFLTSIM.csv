@@ -2,26 +2,26 @@
 Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\am_lb3.dag
 V:403394 E:1267904 lbs:3
 Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb3_cyc_c_q13.qry
-Algorithm:DagEval_ansgr
+Algorithm:DagEval_IEfltsim
 id status preTime planTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln numPlans sizeOfAG
-0 success .00 .00 .07 .00 .07 942,078 1,536 70 0 6,652
+0 success 2.86 .00 .01 .00 2.87 942,078 278 70 0 1,283
 Average running time: 
 id status preTime planTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples numPlans sizeOfAG
-0 success .00 .00 .07 .00 .07 942,078 1,536 70 0 6,652
-Data loading Time:2.73
-Index building Time:.75
-Average Eval Time per run:.07
-Average Eval Time per query:.07
+0 success 2.86 .00 .01 .00 2.87 942,078 278 70 0 1,283
+Data loading Time:2.75
+Index building Time:.71
+Average Eval Time per run:2.87
+Average Eval Time per query:2.87
 Average pruning Time per run:.00
 Average pruning Time per query:.00
 Average Plan Time per run:.00
 Average Plan Time per query:.00
-Average Matching Time per run:.07
-Average Matching Time per query:.07
+Average Matching Time per run:.01
+Average Matching Time per query:.01
 Average Enumeration Time per run:.00
 Average Enumeration Time per query:.00
 Average Nodes before per query:942078.00
-Average Nodes after per query:1536.00
+Average Nodes after per query:278.00
 Average number of solution tuples per query:70.00
-Max Used Memory:899.00 MB
+Max Used Memory:665.00 MB
 *****************************************************

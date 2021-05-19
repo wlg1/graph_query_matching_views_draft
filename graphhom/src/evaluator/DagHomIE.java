@@ -35,7 +35,7 @@ public class DagHomIE {
 	ArrayList<RoaringBitmap> mBitsByIDArr;
 
 	double numOutTuples;
-	boolean simfilter = false;
+	boolean simfilter = true;
 
 	HybTupleEnumer tenum;
 	// HybTupleEnumCache tenum;

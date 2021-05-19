@@ -305,16 +305,14 @@ public class ViewAnsGrMain2 {
 		//1. For each view node, get all query nodes with same labels 
 		ArrayList<ArrayList<Integer>> nodeMatch = new ArrayList<ArrayList<Integer>>();
 		for (int i = 0; i < view.V; i++) {
-			  ArrayList<Integer> vMatches = new ArrayList<Integer>(); 
+			  ArrayList<Integer> vMatches = new ArrayList<Integer>(); //a view's match cand list
 			  for (int j = 0; j < query.V; j++) {
 				  //check if same label as query
 				  if (view.nodes[i].lb == query.nodes[j].lb) {
 					  vMatches.add(query.nodes[j].id);
 				  }
 			  }  //end check qry candmatches for viewnode i
-			  if (vMatches.isEmpty()) {
-				return false; //at least 1 viewnode has no candmatches	
-			  }
+
 			  nodeMatch.add(vMatches); 
 		} // end checking candmatches for all view nodes
 
@@ -323,22 +321,40 @@ public class ViewAnsGrMain2 {
 		AxisType[][] Qclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
 		
 		//3. Given a node mapping h: for each view child edge, check if (h(x), h(y)) is a child edge
-		// Try an initial mapping. 
+		// Try an initial mapping using the first query node of every view's cand list. 
 		int[] candHom = new int[nodeMatch.size()]; 
 		for (int i = 0; i < nodeMatch.size(); i++) {
 			candHom[i] = nodeMatch.get(i).get(0);
 		}
+		
+		//one map should be view to query, another is query to view. output latter.
 		
 		//NOTE: ENSURE that 2 view nodes don't map to same query node. If they do, try next mapping.
 		
 		//keep row and col pointers on which match to change in candHom for next mapping.
 		//if fail, move the col pointer right. if col pointer > col size, set cols of all rows below row pointer 
 		//to 0 and move row pointer up (-1) and its col pointer right. then, set row pointer back to lowest row
-		int rowChangeNext = nodeMatch.size() - 1;  //row pointer
-		int colChangeToNext = 0; //col pointer
+		int rowChangeNext = nodeMatch.size() - 1;  //row pointer for view node
+		int colChangeToNext = 0; //col pointer for candidate query nodes for current view row
 		
+		//try various permutations of matches
 		while (true) {
-			for (QEdge edge : view.edges) {
+			//try new mapping: for each edge, make sure matched head+tail nodes so far give consistent edge type
+			boolean passFlag = true;
+			
+			//check if each value in candHom is unique. no 2 view nodes can map to the same query node.
+			ArrayList<Integer> coveringsSoFar = new ArrayList<Integer>(); //use list bc it has .contains()
+			for (int i = 0; i < candHom.length; i++) {
+				if (i > 0) {
+					if (coveringsSoFar.contains(candHom[i])) {
+						passFlag = false;
+						break;
+					}
+				}
+				coveringsSoFar.add(candHom[i]);
+			}
+			
+			for (QEdge edge : view.edges) {  //match the nodes in each edge
 				String vEdgeType = edge.axis.toString();
 				int viewHnode = edge.from; //head node of view
 				int viewTnode = edge.to; //tail node of view
@@ -347,47 +363,49 @@ public class ViewAnsGrMain2 {
 				String qEdgeType = Qclosure[qryHnode][qryTnode].toString();
 				
 				if (!vEdgeType.equals(qEdgeType)) {
-					//mapping failed,  so try another
+					passFlag = false;
+				} //end if (!vEdgeType.equals(qEdgeType)): check edge consistency
+				//else consistent edge type for this edge, so don't change mapping b/c it's good
+			} // end for (QEdge edge : view.edges): check each edge consistency
+			
+			if (passFlag) {
+				return true; //get out of while loop to test a new mapping
+			}
+			
+			//else: mapping failed,  so try another
+			++colChangeToNext; //try new query node for curr view row
+			//make sure there is next match for curr row. if not, go to row above to move it right
+			if (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1) {
+				while (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1){
+					//move row pointer up (-1) and its col pointer right
+					--rowChangeNext;
+					
+					if (rowChangeNext < 0) {
+						return false; //'all mappings tried'
+					}
+					
+					//get curr col pointer of new row pointer
+					colChangeToNext = nodeMatch.get(rowChangeNext).indexOf(candHom[rowChangeNext]);
 					++colChangeToNext;
 					
-					//make sure there is next match for curr col. if not, go to row above to move it right
-					if (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1) {
-						while (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1){
-							//move row pointer up (-1) and its col pointer right
-							--rowChangeNext;
-							
-							if (rowChangeNext < 0) {
-								return false; //'all mappings tried'
-							}
-							
-							//get curr col pointer of new row pointer
-							colChangeToNext = nodeMatch.get(rowChangeNext).indexOf(candHom[rowChangeNext]);
-							++colChangeToNext;
-							
-							//check if col has another match to the right
-							if (colChangeToNext <= nodeMatch.get(rowChangeNext).size() - 1) {
-								
-								//set cols of all rows below row pointer to 0. only do this if -1 to row pointer
-								for (int i = nodeMatch.size() - 1; i > rowChangeNext; i--) {
-									candHom[i] = nodeMatch.get(i).get(0);
-								} //end for: reseting col indices
-								
-								candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
-								rowChangeNext = nodeMatch.size() - 1; //reset col pointer and row pointer
-								colChangeToNext = 0; 
-							} // end if: check col has another match to the right
-						} //end while: checking if col reached end
+					//check if col has another match to the right
+					if (colChangeToNext <= nodeMatch.get(rowChangeNext).size() - 1) {
+						//set cols of all rows below row pointer to 0. only do this if -1 to row pointer
+						for (int i = nodeMatch.size() - 1; i > rowChangeNext; i--) {
+							candHom[i] = nodeMatch.get(i).get(0);
+						} //end for: reseting col indices
 						
-					} else {
 						candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
-					}
-					break; //break out 'end of check each edge' and try new candHom mapping
-				} //end if (!vEdgeType.equals(qEdgeType)): check edge consistency
-			} // end for (QEdge edge : view.edges): check each edge consistency
-			// Found mapping with all edges consistent -> use view for query, add to list of query's views
-			return true; //all edges passed, so use this mapping
-		} // end of while loop
-	} //end of checkHom()
+						rowChangeNext = nodeMatch.size() - 1; //reset col pointer and row pointer
+						colChangeToNext = 0; 
+					} // end if: check col has another match to the right
+					//else: move row pointer down again
+				} //end while: checking if col reached end
+			} else {  //try the next match for this row
+				candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
+			}
+		} // end of while loop to test a new mapping
+	} //end of getHom()
 	
 	public static void main(String[] args) throws LimitExceededException {
 

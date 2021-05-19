@@ -42,6 +42,7 @@ public class DagHomIEFltSimMain {
 	TimeTracker tt;
 	QueryEvalStats stats;
 	Digraph g;
+	boolean simfilter;
 
 	public DagHomIEFltSimMain(String dataFN, String queryFN) {
 
@@ -51,8 +52,16 @@ public class DagHomIEFltSimMain {
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
 //		outFileN = Consts.OUTDIR + "sum_" + fn + "dag_IEfltsim" + suffix;
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
-		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__sim" + suffix;
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_IEfltsim");
+		simfilter = false;
+		String algotype;
+		if (simfilter) {
+			algotype = "__IEFLTSIM";
+		} else {
+			algotype = "__IEFLT";
+		}
+		outFileN = Consts.OUTDIR + datafn + "_" + fn + algotype + suffix;
+		
 
 	}
 
@@ -128,7 +137,7 @@ public class DagHomIEFltSimMain {
 				FilterBuilder fb = new FilterBuilder(g, query);
 				java.util.concurrent.ExecutorService executor = Executors.newSingleThreadExecutor();
 				SimpleTimeLimiter timeout = new SimpleTimeLimiter(executor);
-				DagHomIEFltSim eva = new DagHomIEFltSim(query, fb, bfl);
+				DagHomIEFltSim eva = new DagHomIEFltSim(query, fb, bfl, simfilter);
 				
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();

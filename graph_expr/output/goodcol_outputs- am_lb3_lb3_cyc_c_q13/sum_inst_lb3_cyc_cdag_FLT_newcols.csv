@@ -1,0 +1,54 @@
+*****************************************************
+Dataset:/home/xiaoying/work/experiments/GraHomMat/input/am_lb3.dag
+V:403394,E:1267904,lbs:3
+Queryset:/home/xiaoying/work/experiments/GraHomMat/input/inst_lb3_cyc_c.qry
+Algorithm:DagEval_IEfltsim
+id,status,preTime,planTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,numPlans,sizeOfAG
+0,success,.99,.00,.66,.10,1.75,402785,329317,46127,0,709311
+1,success,.80,.00,.77,.25,1.82,536208,431262,197170,0,933468
+2,success,.70,.00,.82,.10,1.62,538055,416718,23405,0,890250
+3,success,.70,.00,.98,.07,1.75,537446,416197,20963,0,1003763
+4,success,.67,.00,1.01,.10,1.78,538075,416219,17124,0,1017102
+5,success,.66,.00,1.08,.09,1.83,536837,415410,12233,0,1130052
+6,success,.68,.00,1.89,.07,2.64,671518,497966,2627,0,1611199
+7,success,.66,.00,1.09,.07,1.82,672756,498702,16145,0,1164086
+8,success,.85,.00,1.44,.44,2.73,807397,672306,74288,0,1734777
+9,success,.69,.00,1.44,.08,2.21,805550,598123,7759,0,1504090
+10,success,.69,.00,1.43,.08,2.20,806768,582935,15759,0,1336550
+11,success,.69,.00,1.09,.14,1.92,805570,576545,5356,0,1217364
+12,success,.89,.00,1.29,.13,2.31,806788,652116,36780,0,1493518
+13,success,.88,.00,3.13,.08,4.09,942078,655609,70,0,2797814
+Average,running,time:,
+id,status,preTime,planTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,numPlans,sizeOfAG
+0,success,.99,.00,.66,.10,1.75,402785,329317,46127,0,709311
+1,success,.80,.00,.77,.25,1.82,536208,431262,197170,0,933468
+2,success,.70,.00,.82,.10,1.62,538055,416718,23405,0,890250
+3,success,.70,.00,.98,.07,1.75,537446,416197,20963,0,1003763
+4,success,.67,.00,1.01,.10,1.78,538075,416219,17124,0,1017102
+5,success,.66,.00,1.08,.09,1.83,536837,415410,12233,0,1130052
+6,success,.68,.00,1.89,.07,2.64,671518,497966,2627,0,1611199
+7,success,.66,.00,1.09,.07,1.82,672756,498702,16145,0,1164086
+8,success,.85,.00,1.44,.44,2.73,807397,672306,74288,0,1734777
+9,success,.69,.00,1.44,.08,2.21,805550,598123,7759,0,1504090
+10,success,.69,.00,1.43,.08,2.20,806768,582935,15759,0,1336550
+11,success,.69,.00,1.09,.14,1.92,805570,576545,5356,0,1217364
+12,success,.89,.00,1.29,.13,2.31,806788,652116,36780,0,1493518
+13,success,.88,.00,3.13,.08,4.09,942078,655609,70,0,2797814
+
+Data loading Time,2.52
+Index building Time,.77
+Average Eval Time per run,30.47
+Average Eval Time per query,2.18
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Plan Time per run,.00
+Average Plan Time per query,.00
+Average Matching Time per run,18.11
+Average Matching Time per query,1.29
+Average Enumeration Time per run,1.81
+Average Enumeration Time per query,.13
+Average Nodes before per query,671987.93
+Average Nodes after per query,511387.50
+Average number of solution tuples per query,33986.14
+Max Used Memory,3622.00 MB
+*****************************************************
