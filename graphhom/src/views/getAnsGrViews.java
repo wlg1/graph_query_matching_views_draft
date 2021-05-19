@@ -69,21 +69,22 @@ public class getAnsGrViews {
 		////GET OCCURRENCE LISTS
 		//create simulation graph object
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
-		mPool = agBuilder.run();
+//		mPool = agBuilder.run();
+		mPool_ansgr = agBuilder.run();
 
-		//run MIjoin to get answer
-		double numOutTuples_0;
-		tenum = new HybTupleEnumer(mQuery, mPool);
-		numOutTuples_0 = tenum.enumTuples();
-		
-		//then get unique values in answer to get occ sets
-		ArrayList<MatArray> mOcc;
-		mOcc = tenum.getAnswer();
-		
-		//get answer graph using algo that outputs simulation graph
-		tt.Start();
-		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
-		mPool_ansgr = agBuilder_2.run();
+//		//run MIjoin to get answer
+//		double numOutTuples_0;
+//		tenum = new HybTupleEnumer(mQuery, mPool);
+//		numOutTuples_0 = tenum.enumTuples();
+//		
+//		//then get unique values in answer to get occ sets
+//		ArrayList<MatArray> mOcc;
+//		mOcc = tenum.getAnswer();
+//		
+//		//get answer graph using algo that outputs simulation graph
+//		tt.Start();
+//		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
+//		mPool_ansgr = agBuilder_2.run();
 		
 //		clear();
 		
