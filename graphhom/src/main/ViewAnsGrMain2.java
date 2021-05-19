@@ -316,9 +316,12 @@ public class ViewAnsGrMain2 {
 			  nodeMatch.add(vMatches); 
 		} // end checking candmatches for all view nodes
 
-		// 2. Convert query into graph and get Closure
+		// 2. Convert query into graph and get Closure. Same for view
 		TransitiveReduction tr = new TransitiveReduction(query);
 		AxisType[][] Qclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
+		
+		TransitiveReduction trV = new TransitiveReduction(view);
+		AxisType[][] Vclosure = trV.pathMatrix;
 		
 		//3. Given a node mapping h: for each view child edge, check if (h(x), h(y)) is a child edge
 		// Try an initial mapping using the first query node of every view's cand list. 
@@ -355,9 +358,10 @@ public class ViewAnsGrMain2 {
 			}
 			
 			for (QEdge edge : view.edges) {  //match the nodes in each edge
-				String vEdgeType = edge.axis.toString();
 				int viewHnode = edge.from; //head node of view
 				int viewTnode = edge.to; //tail node of view
+//				String vEdgeType = edge.axis.toString();
+				String vEdgeType = Vclosure[viewHnode][viewTnode].toString();
 				int qryHnode = candHom[viewHnode]; // h(head node)
 				int qryTnode = candHom[viewTnode]; // h(tail node)
 				String qEdgeType = Qclosure[qryHnode][qryTnode].toString();
