@@ -183,13 +183,13 @@ public class ViewAnsGrMain2 {
 //					System.out.println();
 //				}
 				
+				ArrayList<Pool> mPool = BuildViews.run(s);
+				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
+//				queryAnsGraphs.add(mPool);
 				try {
 					tt.Start();
 					timeout.callWithTimeout(new Callable<Boolean>() {
-						ArrayList<Pool> mPool = BuildViews.run(s);
 						public Boolean call() throws Exception {
-							MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//							queryAnsGraphs.add(mPool);
 							return eva.run(s);
 						}
 					}, Consts.TimeLimit, TimeUnit.MINUTES, false);
@@ -198,9 +198,6 @@ public class ViewAnsGrMain2 {
 					stats.add(i, Q, stat);
 
 				} catch (UncheckedTimeoutException e) {
-					ArrayList<Pool> mPool = BuildViews.run(s);
-					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
                    	stat = new QueryEvalStat(s);
@@ -209,9 +206,6 @@ public class ViewAnsGrMain2 {
 					System.err.println("Time Out!");
 
 				} catch (OutOfMemoryError e) {
-					ArrayList<Pool> mPool = BuildViews.run(s);
-					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat = new QueryEvalStat(s);
@@ -223,9 +217,6 @@ public class ViewAnsGrMain2 {
 				}
 				
 				catch (LimitExceededException e) {
-					ArrayList<Pool> mPool = BuildViews.run(s);
-					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//					queryAnsGraphs.add(mPool);
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat= new QueryEvalStat(s);	
@@ -237,9 +228,6 @@ public class ViewAnsGrMain2 {
 				}
 
 				catch (Exception e) {
-					ArrayList<Pool> mPool = BuildViews.run(s);
-					MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
-//					queryAnsGraphs.add(mPool);s
 					eva.clear();
 					s.numSolns = eva.getTupleCount();
 					stat = new QueryEvalStat(s);
