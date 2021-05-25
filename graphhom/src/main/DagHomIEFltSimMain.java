@@ -53,7 +53,7 @@ public class DagHomIEFltSimMain {
 //		outFileN = Consts.OUTDIR + "sum_" + fn + "dag_IEfltsim" + suffix;
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_IEfltsim");
-		simfilter = false;
+		simfilter = true;
 		String algotype;
 		if (simfilter) {
 			algotype = "__IEFLTSIM";
