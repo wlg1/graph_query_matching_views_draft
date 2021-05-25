@@ -2,8 +2,14 @@ package views;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.roaringbitmap.RoaringBitmap;
+
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 import answerGraph.HybAnsGraphBuilder;
 import dao.BFLIndex;
@@ -12,8 +18,10 @@ import dao.Pool;
 import dao.PoolEntry;
 import global.Consts;
 import global.Consts.AxisType;
+import global.Consts.status_vals;
 import graph.GraphNode;
 import helper.LimitExceededException;
+import helper.QueryEvalStat;
 import helper.TimeTracker;
 import prefilter.FilterBuilder;
 import query.graph.QEdge;
@@ -50,7 +58,7 @@ public class getAnsGrViews {
 
 	}
 
-	public ArrayList<nodeset> run() throws LimitExceededException {
+	public ArrayList<nodeset> run() throws Exception {
 
 		mFB.oneRun();
 		mCandLists = null; 
@@ -73,9 +81,7 @@ public class getAnsGrViews {
 		mPool = agBuilder.run();
 
 		//run MIjoin to get answer
-		double numOutTuples_0;
-		tenum = new HybTupleEnumer(mQuery, mPool);
-		numOutTuples_0 = tenum.enumTuples();
+		getAnswer();
 		
 		//then get unique values in answer to get occ sets
 		ArrayList<MatArray> mOcc;
@@ -123,6 +129,25 @@ public class getAnsGrViews {
 		
 		return matView;
 
+	}
+	
+	public boolean getAnswer() throws Exception {
+		java.util.concurrent.ExecutorService executor = Executors.newSingleThreadExecutor();
+		SimpleTimeLimiter timeout = new SimpleTimeLimiter(executor);
+		try {
+			tt.Start();
+			timeout.callWithTimeout(new Callable<Boolean>() {
+				public Boolean call() throws Exception {
+					double numOutTuples_0;
+					tenum = new HybTupleEnumer(mQuery, mPool);
+					numOutTuples_0 = tenum.enumTuples();
+					return true;
+				}
+			}, Consts.TimeLimit, TimeUnit.MINUTES, false);
+		} catch (LimitExceededException e) {
+			System.err.println("Exceed Output Limit!");
+		}
+		return true;
 	}
 	
 	public ArrayList<MatArray> getCandLists(){

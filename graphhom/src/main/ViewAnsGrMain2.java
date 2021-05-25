@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 import answerGraph.HybAnsGraphBuilderViews;
+import answerGraph.HybAnsGraphBuilderViews2;
 import dao.BFLIndex;
 import dao.DaoController;
 import dao.Pool;
@@ -65,7 +66,7 @@ public class ViewAnsGrMain2 {
 
 	}
 
-	public void run() throws LimitExceededException {
+	public void run() throws Exception {
 
 		tt = new TimeTracker();
 
@@ -138,7 +139,7 @@ public class ViewAnsGrMain2 {
 		}
 	}
 
-	private void evaluate() throws LimitExceededException {
+	private void evaluate() throws Exception {
 		
 //		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
 		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
@@ -399,7 +400,7 @@ public class ViewAnsGrMain2 {
 		} // end of while loop to test a new mapping
 	} //end of getHom()
 	
-	public static void main(String[] args) throws LimitExceededException {
+	public static void main(String[] args) throws Exception {
 
 		String dataFileN = args[0], queryFileN = args[1], viewFileN = args[2];
 		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN);
