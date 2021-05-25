@@ -46,8 +46,9 @@ public class getAnsGrViews {
 	HybTupleEnumer tenum;
 	ArrayList<MatArray> mCandLists;
 	public HashMap<Integer, GraphNode> posToGN;
+	boolean useAnsGr;
 
-	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN) {
+	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN, boolean INuseAnsGr) {
 
 		mQuery = query;
 		mBFL = bfl;
@@ -55,7 +56,7 @@ public class getAnsGrViews {
 		mFB = fb;
 		posToGN = INposToGN;
 		tt = new TimeTracker();
-
+		useAnsGr = INuseAnsGr;
 	}
 
 	public ArrayList<nodeset> run() throws Exception {
@@ -77,22 +78,23 @@ public class getAnsGrViews {
 		////GET OCCURRENCE LISTS
 		//create simulation graph object
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
-//		mPool_ansgr = agBuilder.run();
-		mPool = agBuilder.run();
+		if (useAnsGr) {
+			mPool = agBuilder.run();
 
-		//run MIjoin to get answer
-		getAnswer();
-		
-		//then get unique values in answer to get occ sets
-		ArrayList<MatArray> mOcc;
-		mOcc = tenum.getAnswer();
-		
-		//get answer graph using algo that outputs simulation graph
-		tt.Start();
-		HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
-		mPool_ansgr = agBuilder_2.run();
-		
-		clear();
+			//run MIjoin to get answer
+			getAnswer();
+			
+			//then get unique values in answer to get occ sets
+			ArrayList<MatArray> mOcc;
+			mOcc = tenum.getAnswer();
+			
+			//get answer graph using algo that outputs simulation graph
+			tt.Start();
+			HybAnsGraphBuilder agBuilder_2 = new HybAnsGraphBuilder(mQuery, mBFL, mOcc);
+			mPool_ansgr = agBuilder_2.run();
+		} else {
+			mPool_ansgr = agBuilder.run();
+		}
 		
 		//return as adj lists. hash table where key is graph node ID, value is obj of 2 adj lists
 		//for each pool entry, get their graph node ID
@@ -126,9 +128,8 @@ public class getAnsGrViews {
 			}
 			matView.add(ns);
 		}
-		
+		clear();
 		return matView;
-
 	}
 	
 	public boolean getAnswer() throws Exception {

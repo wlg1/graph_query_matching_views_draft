@@ -17,7 +17,6 @@ import answerGraph.HybAnsGraphBuilderViews2;
 import dao.BFLIndex;
 import dao.DaoController;
 import dao.Pool;
-import dao.PoolEntry;
 import global.Consts;
 import global.Consts.AxisType;
 import global.Consts.status_vals;
@@ -36,9 +35,6 @@ import query.graph.QueryDirectedCycle;
 import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
 import views.MIjoinExclViews;
-import views.ansgraphExclViews3;
-import views.ansgraphExclViews4;
-import views.getAnsGr;
 import views.getAnsGrViews;
 import views.nodeset;
 
@@ -52,6 +48,7 @@ public class ViewAnsGrMain2 {
 	TimeTracker tt;
 	QueryEvalStats stats;
 	Digraph g;
+	boolean useAnsGr;
 
 	public ViewAnsGrMain2(String dataFN, String queryFN, String viewFN) {
 
@@ -61,7 +58,13 @@ public class ViewAnsGrMain2 {
 		String suffix = ".csv";
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
-		outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS" + suffix;
+		useAnsGr = false;
+		if (useAnsGr) {
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS" + suffix;
+		} else {
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS" + suffix;
+		}
+		
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 
 	}
@@ -146,7 +149,7 @@ public class ViewAnsGrMain2 {
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
 			FilterBuilder fbV = new FilterBuilder(g, view);
-			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN);
+			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run() );
 			posToGN = ansgrBuilder.posToGN;
@@ -262,7 +265,7 @@ public class ViewAnsGrMain2 {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			stats.printToFile(opw);
+			stats.printToFileNoPlan(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -185,6 +185,107 @@ public class QueryEvalStats {
 		opw.append("*****************************************************\r\n");
 	
 	}
+	
+	public void printToFileNoPlan(PrintWriter opw) {
+		opw.append("*****************************************************\r\n");
+		opw.append("Dataset:" + dataFN + "\r\n");
+		opw.append("V:" + V + " " + "E:" + E + " " + "lbs:" + numLbs + "\r\n");
+		opw.append("Queryset:" + qryFN + "\r\n");
+		opw.append("Algorithm:" + algN + "\r\n");
+		
+		DecimalFormat f = new DecimalFormat("##.00");
+
+		int totQs = qryEvalStats[0].size();
+		int numQs = totQs;
+		double[] evalTimes, matchTimes, enumTimes, preTimes;
+		evalTimes = new double[numQs];
+		matchTimes = new double[numQs];
+		enumTimes = new double[numQs];
+		preTimes = new double[numQs];
+
+		double totNodesBefore = 0.0, totNodesAfter = 0.0;
+		double totSolns = 0.0;
+
+		opw.append("id" + " " + "status" + " " + "preTime" + " " + "matchTime" + " " + "enumTime"
+				+ " " + "totTime" + " " + "numNodesBefore" + " " + "numNodesAfter" + " " + "numSoln" + " "
+				+ "sizeOfAG"
+				+ "\r\n");
+
+		for (int i = 0; i < Flags.REPEATS; i++) {
+			numQs = totQs;
+			ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[i];
+			for (int q = 0; q < totQs; q++) {
+				QueryEvalStat stat = qryEvalStatList.get(q);
+				//if (stat.status != Consts.status_vals.success) {
+				//	numQs--;
+
+				//} else {
+					matchTimes[q] += stat.matchTime;
+					enumTimes[q] += stat.enumTime;
+					preTimes[q] += stat.preTime;
+					evalTimes[q] += stat.totTime;
+					totTimes[i] += evalTimes[q];
+					totMatchTimes[i] += matchTimes[q];
+					totEnumTimes[i] += enumTimes[q];
+					if (i == 0) {
+						totNodesBefore += stat.totNodesBefore;
+						totNodesAfter += stat.totNodesAfter;
+						totSolns += stat.numSolns;
+					}
+				//}
+
+				opw.append(q + " " + stat.status + " " + f.format(stat.preTime) + " "
+						+ f.format(stat.matchTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
+						+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+						+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+						+ new DecimalFormat(",###").format(stat.numSolns) + " "
+						+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+
+			}
+		}
+
+		opw.append("Average running time: \r\n");
+		opw.append("id" + " " + "status" + " " + "preTime" + " " + "matchTime" + " " + "enumTime"
+				+ " " + "totTime" + " " + "totNodesBefore" + " " + "totNodesAfter" + " " + "numOfTuples" + " "
+				+  "sizeOfAG" + "\r\n");
+		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
+		for (int q = 0; q < totQs; q++) {
+			QueryEvalStat stat = qryEvalStatList.get(q);
+
+			opw.append(q + " " + stat.status + " " 
+					+ f.format(preTimes[q] / Flags.REPEATS) + " "
+					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
+					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+					+ new DecimalFormat(",###").format(stat.numSolns) + " "
+					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+
+		}
+
+		opw.append("Data loading Time:" + f.format(loadTime) + "\r\n");
+		opw.append("Index building Time:" + f.format(bldTime) + "\r\n");
+
+		double avgExeTime = calAvg(totTimes);
+		double avgMatTime = calAvg(totMatchTimes);
+		double avgPreTime = calAvg(totPreTimes);
+		double avgEnumTime = calAvg(totEnumTimes);
+
+		opw.append("Average Eval Time per run:" + f.format(avgExeTime) + "\r\n");
+		opw.append("Average Eval Time per query:" + f.format(avgExeTime / numQs) + "\r\n");
+		opw.append("Average pruning Time per run:" + f.format(avgPreTime) + "\r\n");
+		opw.append("Average pruning Time per query:" + f.format(avgPreTime / numQs) + "\r\n");
+		opw.append("Average Matching Time per run:" + f.format(avgMatTime) + "\r\n");
+		opw.append("Average Matching Time per query:" + f.format(avgMatTime / numQs) + "\r\n");
+		opw.append("Average Enumeration Time per run:" + f.format(avgEnumTime) + "\r\n");
+		opw.append("Average Enumeration Time per query:" + f.format(avgEnumTime / numQs) + "\r\n");
+		opw.append("Average Nodes before per query:" + f.format(totNodesBefore / numQs) + "\r\n");
+		opw.append("Average Nodes after per query:" + f.format(totNodesAfter / numQs) + "\r\n");
+		opw.append("Average number of solution tuples per query:" + f.format(totSolns / numQs) + "\r\n");
+		opw.append("Max Used Memory:" + f.format(Flags.mt.getMaxUsedMem()) + " MB\r\n");
+		opw.append("*****************************************************\r\n");
+	
+	}
 
 	public String toString() {
 
