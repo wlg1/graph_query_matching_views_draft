@@ -317,7 +317,7 @@ public class QueryEvalStats {
 		opw.append("*****************************************************\r\n");
 		opw.append("View Build Times: \r\n");
 		opw.append("id" + " " + "status" + " " + "preTime" + " " + "matchTime" + " "
-				+ " " + "totTime" + " " + "numNodesBefore" + " " + "numNodesAfter" + " "
+				+ "totTime" + " " + "numNodesBefore" + " " + "numNodesAfter" + " "
 				+ "sizeOfAG"
 				+ "\r\n");
 		int totVs = viewEvalStatList.size();
