@@ -47,10 +47,13 @@ while True:
 
 num_new_qrys = randint(1,1)
 new_qrys = []
+new_qrys_views = []
 for i in range(num_new_qrys):
     #rand choose num templates and which to use
     G = templates[0]
     H = templates[1]
+    new_qrys_views.append(G)
+    new_qrys_views.append(H)
     F = nx.compose(G,H)
     
     num_new_edges = randint(1,1)
@@ -81,6 +84,7 @@ fig = plt.figure()
 ax1 = plt.subplot2grid((1, 1), (0, 0))
 pos = nx.spring_layout(F)
 node_labels = nx.get_node_attributes(F, 'label')
+edges = nx.get_edge_attributes(F,'label')
 colors = [F[u][v]['color'] for u,v in edges]
 nx.draw(F, pos, with_labels=True,node_size=400, 
         labels = node_labels, edge_color=colors)
@@ -88,9 +92,47 @@ edge_labels = nx.get_edge_attributes(F, 'label')
 nx.draw_networkx_edge_labels(F, pos, edge_labels)
 plt.savefig("temp0_temp1_v1.png")
 
-# pdb.set_trace()
-
 #output templates used as views of this query set
+out_file = open("temp0_temp1_v1.vw", "w")
+for q, qry in enumerate(new_qrys_views):
+    out_file.write("q # " + str(q) + '\n')
+    nodes = nx.get_node_attributes(qry,'label')
+    for nodeID, vertex in enumerate(nodes.keys()):
+        out_file.write("v " + str(nodeID) + " " + nodes[vertex]  + '\n' )
+    edges = nx.get_edge_attributes(qry,'label')
+    for e in edges:
+        head = str(list(nodes.keys()).index(e[0]))
+        tail = str(list(nodes.keys()).index(e[1]))
+        out_file.write("e " + head + " " + tail + " " + edges[e] + '\n' )
+        
+out_file.close()
+
+F = templates[0]
+fig = plt.figure()
+ax1 = plt.subplot2grid((1, 1), (0, 0))
+pos = nx.spring_layout(F)
+node_labels = nx.get_node_attributes(F, 'label')
+edges = nx.get_edge_attributes(F,'label')
+colors = [F[u][v]['color'] for u,v in edges]
+nx.draw(F, pos, with_labels=True,node_size=400, 
+        labels = node_labels, edge_color=colors)
+edge_labels = nx.get_edge_attributes(F, 'label')
+nx.draw_networkx_edge_labels(F, pos, edge_labels)
+plt.savefig("view0.png")
+
+F = templates[1]
+fig = plt.figure()
+ax1 = plt.subplot2grid((1, 1), (0, 0))
+pos = nx.spring_layout(F)
+node_labels = nx.get_node_attributes(F, 'label')
+edges = nx.get_edge_attributes(F,'label')
+colors = [F[u][v]['color'] for u,v in edges]
+nx.draw(F, pos, with_labels=True,node_size=400, 
+        labels = node_labels, edge_color=colors)
+edge_labels = nx.get_edge_attributes(F, 'label')
+nx.draw_networkx_edge_labels(F, pos, edge_labels)
+plt.savefig("view1.png")
+
 
 
 
