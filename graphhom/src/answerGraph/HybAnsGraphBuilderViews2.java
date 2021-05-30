@@ -226,19 +226,22 @@ public class HybAnsGraphBuilderViews2 {
 			}
 		}
 		//at end, for each edge, for each head node's AL, intersect with new tail nodeset 
-		for (QEdge qEdge : mQuery.edges ) {
-			int from = qEdge.from, to = qEdge.to;
-			nodeset queryHeadNS = intersectedAnsGr.get(from);
-			for (int gn : queryHeadNS.gnodesBits) {
-				HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
-				if (queryEdgesHM.containsKey(to)) {
-					RoaringBitmap queryToGNs = queryEdgesHM.get(to);
-					RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
-					queryToGNs.and(toGNs);
-				} else {
-					queryHeadNS.gnodesBits.remove(gn);
-					queryHeadNS.fwdAdjLists.remove(gn);
-					queryHeadNS.GNtoPE.remove(gn);
+		//perform several passes
+		for (int i = 0; i < mQuery.V; i++) {
+			for (QEdge qEdge : mQuery.edges ) {
+				int from = qEdge.from, to = qEdge.to;
+				nodeset queryHeadNS = intersectedAnsGr.get(from);
+				for (int gn : queryHeadNS.gnodesBits) {
+					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+					if (queryEdgesHM.containsKey(to)) {
+						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
+						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
+						queryToGNs.and(toGNs);
+					} else {
+						queryHeadNS.gnodesBits.remove(gn);
+						queryHeadNS.fwdAdjLists.remove(gn);
+						queryHeadNS.GNtoPE.remove(gn);
+					}
 				}
 			}
 		}

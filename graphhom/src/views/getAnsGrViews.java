@@ -59,9 +59,11 @@ public class getAnsGrViews {
 		useAnsGr = INuseAnsGr;
 	}
 
-	public ArrayList<nodeset> run() throws Exception {
+	public ArrayList<nodeset> run(QueryEvalStat stat) throws Exception {
 
 		mFB.oneRun();
+		double prunetm = mFB.getBuildTime();
+		stat.setPreTime(prunetm);
 		mCandLists = null; 
 
 		if (simfilter) {
@@ -71,6 +73,8 @@ public class getAnsGrViews {
 			DagSimGraFilter filter = new DagSimGraFilter(mQuery, nodes, mInvLstsByID, mBitsByIDArr, mBFL, true);
 			filter.prune();
 			mCandLists = filter.getCandList();
+			prunetm += tt.Stop() / 1000;
+			stat.setPreTime(prunetm);
 		}
 		else
 			mCandLists = mFB.getCandLists();
@@ -78,6 +82,7 @@ public class getAnsGrViews {
 		////GET OCCURRENCE LISTS
 		//create simulation graph object
 		HybAnsGraphBuilder agBuilder = new HybAnsGraphBuilder(mQuery, mBFL, mCandLists);
+		tt.Start();
 		if (useAnsGr) {
 			mPool = agBuilder.run();
 
@@ -128,6 +133,12 @@ public class getAnsGrViews {
 			}
 			matView.add(ns);
 		}
+		
+		double buildtm = tt.Stop() / 1000;
+		stat.setMatchTime(buildtm);
+		stat.calAnsGraphSize(mPool_ansgr);
+		stat.setTotNodesAfter(calTotCandSolnNodes());
+		
 		clear();
 		return matView;
 	}
@@ -149,6 +160,17 @@ public class getAnsGrViews {
 			System.err.println("Exceed Output Limit!");
 		}
 		return true;
+	}
+	
+	private double calTotCandSolnNodes() {
+
+		double totNodes = 0.0;
+		for (Pool pool : mPool_ansgr) {
+			ArrayList<PoolEntry> elist = pool.elist();
+			totNodes += elist.size();
+
+		}
+		return totNodes;
 	}
 	
 	public ArrayList<MatArray> getCandLists(){

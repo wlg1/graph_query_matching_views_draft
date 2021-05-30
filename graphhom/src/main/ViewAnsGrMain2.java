@@ -61,11 +61,14 @@ public class ViewAnsGrMain2 {
 		useAnsGr = false;
 		if (useAnsGr) {
 			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS" + suffix;
+			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 		} else {
 			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS" + suffix;
+			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_simgr");
 		}
 		
-		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
+		
+		
 
 	}
 
@@ -148,11 +151,19 @@ public class ViewAnsGrMain2 {
 		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
+			QueryEvalStat stat = null;
+			final QueryEvalStat sV = new QueryEvalStat();
+			double totNodes_before = getTotNodes(view);
+			sV.totNodesBefore = totNodes_before;
+			
 			FilterBuilder fbV = new FilterBuilder(g, view);
 			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
-			qid_Ansgr.put(view.Qid, ansgrBuilder.run() );
+			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
 			posToGN = ansgrBuilder.posToGN;
+			
+			stat = new QueryEvalStat(sV);
+			stats.addView(stat);
 		}
 
 		TimeTracker tt = new TimeTracker();
@@ -182,10 +193,6 @@ public class ViewAnsGrMain2 {
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
 				HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
-//				if (Q == 1) {
-//					ArrayList<Pool> mPool = BuildViews.run(s);
-//					System.out.println();
-//				}
 				
 				ArrayList<Pool> mPool = BuildViews.run(s);
 				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
@@ -265,7 +272,7 @@ public class ViewAnsGrMain2 {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			stats.printToFileNoPlan(opw);
+			stats.printToFileViews(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
