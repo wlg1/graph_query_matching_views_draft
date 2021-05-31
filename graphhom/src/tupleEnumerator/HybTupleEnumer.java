@@ -109,13 +109,11 @@ public class HybTupleEnumer {
 
 		//fwd adj intersection
 		for (int i : candBits) { //each bit i corresponds to a graph node; order all graph nodes and their pos is i
-//			System.out.println(candBits);
-//			System.out.println(cur_vertex);
-//			System.out.println(elist.size());
-//			System.out.println(i);
-			//this is bc adj list contains more than node set. getCandBits() uses adj list of prev matched neighbor
-			//and gets all cand graph nodes adj to it. it takes inters of all neighbor adj lists
-			if (elist.size() == 4630 && i == 4634){ 
+			//S from getCandBits() uses inters adj list of prev matched neighbors, but NOT inters w/ cur_V nodeset.
+			//when get err: Index 25 out of bounds for length 21, do elist.size() == 21... and breakpt
+			//if this happens, that means neigh adj list contains gn not in cur_V nodeset
+			//soln: when build SG, incl those in nodeset, or rmv them from neigh adj list by intersection w/ nodeset
+			if (elist.size() == 9 && i == 9){ 
 				System.out.println(i);
 			}
 			
@@ -245,15 +243,15 @@ public class HybTupleEnumer {
 		return rs;
 	}
 
-	//in transition(): get S, which are neighbors to previously matched graph node
+	//in transition(): getCandBits returns S, which are neighbors to previously matched graph node
 	private RoaringBitmap getCandBits(int cur_vertex) {
 
 		RoaringBitmap bits = new RoaringBitmap();
-		int num = bn_count[cur_vertex]; //number of backward neighbors
+		int num = bn_count[cur_vertex]; //number of matched neighbors to cur_vertex?
 
 		if (num == 0) {  //no neighbors b/c it's the first query vertex to match
 
-			for (PoolEntry e : pool.get(cur_vertex).elist()) {
+			for (PoolEntry e : pool.get(cur_vertex).elist()) { //ALL nodes in nodeset of summary graph
 				bits.add(e.getPos());
 
 			}
@@ -263,26 +261,22 @@ public class HybTupleEnumer {
 		//prev matches which are neighbors to the curr node set to match
 		int[] bns = bn[cur_vertex];
 
-		for (int i = 0; i < num; i++) {  //for each neighbor, intersect their occ list
-			int bn_vertex = bns[i];
+		for (int i = 0; i < num; i++) {  //for each matched neighbor, intersect their adj list to cur_vertex
+			int bn_vertex = bns[i]; //ID of matched neighbor
 			DirType dir = query.dir(bn_vertex, cur_vertex);
 			RoaringBitmap curbits;
-			PoolEntry bm = match[bn_vertex];
-//			if (bm.mFwdBits == null && dir == DirType.FWD) {
-//				System.out.println();
-//			}
+			PoolEntry bm = match[bn_vertex];  //matched neighbor as poolentry (contains adj list)
 			
+			//bits: the final intersected list to return
+			//curbits: the list of neigh in loop to intersect w/ bits
 			if (dir == DirType.FWD) {
 
-				curbits = bm.mFwdBits.get(cur_vertex);
+				curbits = bm.mFwdBits.get(cur_vertex); //adj list of matched neighbor
 			} else {
 
 				curbits = bm.mBwdBits.get(cur_vertex);
 			}
 
-//			if (curbits == null) {
-//				System.out.println(curbits);
-//			}
 			if (i == 0)
 				bits.or(curbits);
 			else

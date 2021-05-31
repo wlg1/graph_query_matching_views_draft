@@ -25,6 +25,12 @@ public class Pool {
 	
 	}
 	
+	public void rmvEntry(PoolEntry entry){
+		
+		elist.remove(entry);
+	
+	}
+	
 	public void setList(ArrayList<PoolEntry> nlist){
 		
 		elist.clear();

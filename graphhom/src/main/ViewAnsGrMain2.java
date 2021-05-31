@@ -66,10 +66,6 @@ public class ViewAnsGrMain2 {
 			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS" + suffix;
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_simgr");
 		}
-		
-		
-		
-
 	}
 
 	public void run() throws Exception {
@@ -192,7 +188,7 @@ public class ViewAnsGrMain2 {
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
-				HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
+				HybAnsGraphBuilderViews2 BuildViews = new HybAnsGraphBuilderViews2(query, viewsOfQuery, qid_Ansgr, posToGN);
 				
 				ArrayList<Pool> mPool = BuildViews.run(s);
 				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);

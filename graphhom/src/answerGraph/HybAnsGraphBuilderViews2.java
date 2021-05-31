@@ -72,17 +72,28 @@ public class HybAnsGraphBuilderViews2 {
 			}
 		}
 
-		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V]; //each nodeset has its own bitmap of GN in it
-		initPool(tBitsIdxArr); 
-//		double buildtm = tt.Stop() / 1000;
-//		stat.setMatchTime(buildtm);
-		
+		initNodes(); 
 		initEdges(); 
-//		double buildtm = tt.Stop() / 1000;
-//		stat.setMatchTime(buildtm);
+		
+		QNode[] qnodes = mQuery.nodes;
+		for (int i = 0; i < mQuery.V; i++) {
+			QNode qn = qnodes[i];
+			int pos = 0; 
+			Pool qAct = new Pool();
+			mPool.add(qAct);
+			nodeset intersectedNS = intersectedAnsGr.get(i);
+			for (int n : intersectedNS.gnodesBits) { 
+				GraphNode gn = posToGN.get(n);
+				PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
+				qAct.addEntry(actEntry);
+				
+				//map intersectedAnsGr to mPool: create hashmap of graphnode to poolentry
+				intersectedAnsGr.get(i).GNtoPE.put(n, actEntry);
+			}
+		}
 		
 		for(QEdge edge: mQuery.edges){  
-			linkOneStep(edge,tBitsIdxArr);
+			linkOneStep(edge);
 		}
 		
 		double buildtm = tt.Stop() / 1000;
@@ -102,17 +113,14 @@ public class HybAnsGraphBuilderViews2 {
 		return totNodes;
 	}
 	
-	private void initPool(RoaringBitmap[] tBitsIdxArr) {
+	private void initNodes() {
 		
 		//first get all graph nodes of nodesets of covering views
 		//these are less of these than the candidate nodes that come from mCandLists.get(i)
 
 		mPool = new ArrayList<Pool>(mQuery.V);
-		QNode[] qnodes = mQuery.nodes;
 		intersectedAnsGr = new ArrayList<nodeset>();
 		for (int i = 0; i < mQuery.V; i++) { // i is nodeset ID of query
-			Pool qAct = new Pool();
-			mPool.add(qAct);
 			
 			//get intersection of all covering nodesets of this nodeset
 			nodeset intersectedNS = new nodeset();
@@ -133,20 +141,6 @@ public class HybAnsGraphBuilderViews2 {
 			}
 			intersectedNS.createFwdAL();
 			intersectedAnsGr.add(intersectedNS);
-			
-			QNode qn = qnodes[i];
-			RoaringBitmap t_bits = new RoaringBitmap();
-			tBitsIdxArr[i] = t_bits;
-			int pos = 0; 
-			for (int n : intersectedNS.gnodesBits) { 
-				GraphNode gn = posToGN.get(n);
-				PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
-				qAct.addEntry(actEntry);
-				t_bits.add(actEntry.getValue().L_interval.mStart);
-				
-				//map intersectedAnsGr to mPool: create hashmap of graphnode to poolentry
-				intersectedAnsGr.get(i).GNtoPE.put(n, actEntry);
-			}
 		}
 
 	}
@@ -206,20 +200,27 @@ public class HybAnsGraphBuilderViews2 {
 							//but then need to make sure this head node isn't pointed to either
 							//thus at end, for each edge, for each head node's AL, intersect with new tail nodeset 
 							//we shouldn't rmv the tail node bc there may be another gn pointing to it
-							if (queryToGNs.isEmpty()) {
-								queryHeadNS.gnodesBits.remove(gn);
-								queryHeadNS.fwdAdjLists.remove(gn);
-								queryHeadNS.GNtoPE.remove(gn);
-							}
+//							if (queryToGNs.isEmpty()) {
+//								queryHeadNS.gnodesBits.remove(gn);
+//								queryEdgesHM.remove(gn); 
+//								
+//								//must rmv from mPool's nodeset Pool too for when making mPool's edges
+//								PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
+//								mPool.get(from).rmvEntry(pe);
+//								queryHeadNS.GNtoPE.remove(gn);
+//							}
 						} else {
 							RoaringBitmap queryToGNs = queryEdgesHM.get(to);
 							queryToGNs.and(viewToGNs);
 							
-							if (queryToGNs.isEmpty()) {
-								queryHeadNS.gnodesBits.remove(gn);
-								queryHeadNS.fwdAdjLists.remove(gn);
-								queryHeadNS.GNtoPE.remove(gn);
-							}
+//							if (queryToGNs.isEmpty()) {
+//								queryHeadNS.gnodesBits.remove(gn);
+//								queryEdgesHM.remove(gn);
+//								//must rmv from mPool's nodeset Pool too for when making mPool's edges
+//								PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
+//								mPool.get(from).rmvEntry(pe);
+//								queryHeadNS.GNtoPE.remove(gn);
+//							}
 						}
 					}
 				}
@@ -227,24 +228,91 @@ public class HybAnsGraphBuilderViews2 {
 		}
 		//at end, for each edge, for each head node's AL, intersect with new tail nodeset 
 		//perform several passes
-		for (int i = 0; i < mQuery.V; i++) {
+		
+		boolean stopFlag = true;
+//		while (stopFlag) {
+//			stopFlag = false;
+//			for (int i = 0; i < mQuery.V; i++ ) {
+//				nodeset queryHeadNS = intersectedAnsGr.get(i);
+//				for (int gn : queryHeadNS.gnodesBits) {
+//					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+//					for (Integer from : queryEdgesHM.keySet()) {
+//						RoaringBitmap queryToGNs = queryEdgesHM.get(from);
+//						RoaringBitmap toGNs = intersectedAnsGr.get(from).gnodesBits;
+//						queryToGNs.and(toGNs);
+//						if (queryToGNs.isEmpty()) {
+//							queryHeadNS.gnodesBits.remove(gn);
+//							queryEdgesHM.remove(gn);
+//							//must rmv from mPool's nodeset Pool too for when making mPool's edges
+//							PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
+//							mPool.get(from).rmvEntry(pe);
+//							queryHeadNS.GNtoPE.remove(gn);
+//							stopFlag = true;
+//						}
+//					}
+//				}
+//			}
+//		}
+		
+//		stopFlag = true;
+//		while (stopFlag) {
+//			stopFlag = false;
+//			for (QEdge qEdge : mQuery.edges ) {
+//				int from = qEdge.from, to = qEdge.to;
+//				nodeset queryHeadNS = intersectedAnsGr.get(from);
+//				for (int gn : queryHeadNS.gnodesBits) {
+//					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+//					if (queryEdgesHM.containsKey(to)) {
+//						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
+//						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
+//						queryToGNs.and(toGNs);
+//						if (queryToGNs.isEmpty()) {
+//							queryHeadNS.gnodesBits.remove(gn);
+//							queryEdgesHM.remove(gn);
+//							//must rmv from mPool's nodeset Pool too for when making mPool's edges
+//							PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
+//							mPool.get(from).rmvEntry(pe);
+//							queryHeadNS.GNtoPE.remove(gn);
+//							stopFlag = true;
+//						}
+//					} else {
+//						queryHeadNS.gnodesBits.remove(gn);
+//						queryEdgesHM.remove(gn);
+//						//must rmv from mPool's nodeset Pool too for when making mPool's edges
+//						PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
+//						mPool.get(from).rmvEntry(pe);
+//						queryHeadNS.GNtoPE.remove(gn);
+//						stopFlag = true;
+//					}
+//				}
+//			}
+//		}
+		
+		stopFlag = true;
+		while (stopFlag) {
+			stopFlag = false;
 			for (QEdge qEdge : mQuery.edges ) {
 				int from = qEdge.from, to = qEdge.to;
 				nodeset queryHeadNS = intersectedAnsGr.get(from);
+				nodeset newNS = new nodeset();
 				for (int gn : queryHeadNS.gnodesBits) {
 					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
 					if (queryEdgesHM.containsKey(to)) {
 						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
 						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
 						queryToGNs.and(toGNs);
-					} else {
-						queryHeadNS.gnodesBits.remove(gn);
-						queryHeadNS.fwdAdjLists.remove(gn);
-						queryHeadNS.GNtoPE.remove(gn);
+						if (!queryToGNs.isEmpty()) {
+							newNS.gnodesBits.add(gn);
+							newNS.fwdAdjLists.put(gn, queryEdgesHM);
+						} else {
+							stopFlag = true;
+						}
 					}
 				}
+				intersectedAnsGr.set(from, newNS);
 			}
 		}
+		
 	}
 	
 	private RoaringBitmap getGNList(RoaringBitmap INGN) {
@@ -252,7 +320,7 @@ public class HybAnsGraphBuilderViews2 {
 		return newGN;
 	}
 	
-	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
+	private void linkOneStep(QEdge edge) {
 
 		int from = edge.from, to = edge.to;
 		Pool pl_f = mPool.get(from);
