@@ -44,7 +44,7 @@ public class DagHomIEFltSimMain {
 	Digraph g;
 	boolean simfilter;
 
-	public DagHomIEFltSimMain(String dataFN, String queryFN) {
+	public DagHomIEFltSimMain(String dataFN, String queryFN, boolean simfilter) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -53,7 +53,7 @@ public class DagHomIEFltSimMain {
 //		outFileN = Consts.OUTDIR + "sum_" + fn + "dag_IEfltsim" + suffix;
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_IEfltsim");
-		simfilter = false;
+		
 		String algotype;
 		if (simfilter) {
 			algotype = "__IEFLTSIM";
@@ -85,7 +85,7 @@ public class DagHomIEFltSimMain {
 
 		writeStatsToCSV();
 		// skip the execution of the timeout tasks;
-		System.exit(0);
+//		System.exit(0);
 	}
 
 	private void loadData() {
@@ -249,7 +249,8 @@ public class DagHomIEFltSimMain {
 	public static void main(String[] args) {
 
 		String dataFileN = args[0], queryFileN = args[1]; // the query file
-		DagHomIEFltSimMain demain = new DagHomIEFltSimMain(dataFileN, queryFileN);
+		boolean simfilter = false;
+		DagHomIEFltSimMain demain = new DagHomIEFltSimMain(dataFileN, queryFileN, simfilter);
 
 		demain.run();
 	}

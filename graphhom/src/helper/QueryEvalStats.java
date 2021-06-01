@@ -412,6 +412,69 @@ public class QueryEvalStats {
 		opw.append("*****************************************************\r\n");
 	
 	}
+	
+	public void printToFileCombined(PrintWriter opw) {
+		opw.append("*****************************************************\r\n");
+		opw.append("Dataset:" + dataFN + "\r\n");
+		opw.append("V:" + V + " " + "E:" + E + " " + "lbs:" + numLbs + "\r\n");
+		opw.append("Queryset:" + qryFN + "\r\n");
+		opw.append("Algorithm:" + algN + "\r\n");
+		
+		DecimalFormat f = new DecimalFormat("##.00");
+
+		int totQs = qryEvalStats[0].size();
+		int numQs = totQs;
+		double[] evalTimes, matchTimes, enumTimes, preTimes;
+		evalTimes = new double[numQs];
+		matchTimes = new double[numQs];
+		enumTimes = new double[numQs];
+		preTimes = new double[numQs];
+
+		double totNodesBefore = 0.0, totNodesAfter = 0.0;
+		double totSolns = 0.0;
+
+		for (int i = 0; i < Flags.REPEATS; i++) {
+			numQs = totQs;
+			ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[i];
+			for (int q = 0; q < totQs; q++) {
+				QueryEvalStat stat = qryEvalStatList.get(q);
+				matchTimes[q] += stat.matchTime;
+				enumTimes[q] += stat.enumTime;
+				preTimes[q] += stat.preTime;
+				evalTimes[q] += stat.totTime;
+				totTimes[i] += evalTimes[q];
+				totMatchTimes[i] += matchTimes[q];
+				totEnumTimes[i] += enumTimes[q];
+				if (i == 0) {
+					totNodesBefore += stat.totNodesBefore;
+					totNodesAfter += stat.totNodesAfter;
+					totSolns += stat.numSolns;
+				}
+
+			}
+		}
+
+		opw.append("Average running time: \r\n");
+		opw.append("id" + " " + "status" + " " + "preTime" + " " + "matchTime" + " " + "enumTime"
+				+ " " + "totTime" + " " + "totNodesBefore" + " " + "totNodesAfter" + " " + "numOfTuples" + " "
+				+  "sizeOfAG" + "\r\n");
+		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
+		for (int q = 0; q < totQs; q++) {
+			QueryEvalStat stat = qryEvalStatList.get(q);
+
+			opw.append(q + " " + stat.status + " " 
+					+ f.format(preTimes[q] / Flags.REPEATS) + " "
+					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
+					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+					+ new DecimalFormat(",###").format(stat.numSolns) + " "
+					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+
+		}
+
+	
+	}
 
 	public String toString() {
 

@@ -75,6 +75,8 @@ public class HybAnsGraphBuilderViews2 {
 		initNodes(); 
 		initEdges(); 
 		
+
+		mPool = new ArrayList<Pool>(mQuery.V);
 		QNode[] qnodes = mQuery.nodes;
 		for (int i = 0; i < mQuery.V; i++) {
 			QNode qn = qnodes[i];
@@ -118,7 +120,6 @@ public class HybAnsGraphBuilderViews2 {
 		//first get all graph nodes of nodesets of covering views
 		//these are less of these than the candidate nodes that come from mCandLists.get(i)
 
-		mPool = new ArrayList<Pool>(mQuery.V);
 		intersectedAnsGr = new ArrayList<nodeset>();
 		for (int i = 0; i < mQuery.V; i++) { // i is nodeset ID of query
 			
@@ -195,100 +196,18 @@ public class HybAnsGraphBuilderViews2 {
 							RoaringBitmap queryToGNs = getGNList(toGNs);
 							queryToGNs.and(viewToGNs);
 							queryEdgesHM.put(to, queryToGNs);
-							
-							//if queryToGNs is empty but qEdge should have tail node, rmv this head node
-							//but then need to make sure this head node isn't pointed to either
-							//thus at end, for each edge, for each head node's AL, intersect with new tail nodeset 
-							//we shouldn't rmv the tail node bc there may be another gn pointing to it
-//							if (queryToGNs.isEmpty()) {
-//								queryHeadNS.gnodesBits.remove(gn);
-//								queryEdgesHM.remove(gn); 
-//								
-//								//must rmv from mPool's nodeset Pool too for when making mPool's edges
-//								PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
-//								mPool.get(from).rmvEntry(pe);
-//								queryHeadNS.GNtoPE.remove(gn);
-//							}
 						} else {
 							RoaringBitmap queryToGNs = queryEdgesHM.get(to);
 							queryToGNs.and(viewToGNs);
-							
-//							if (queryToGNs.isEmpty()) {
-//								queryHeadNS.gnodesBits.remove(gn);
-//								queryEdgesHM.remove(gn);
-//								//must rmv from mPool's nodeset Pool too for when making mPool's edges
-//								PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
-//								mPool.get(from).rmvEntry(pe);
-//								queryHeadNS.GNtoPE.remove(gn);
-//							}
 						}
 					}
 				}
 			}
 		}
+		
 		//at end, for each edge, for each head node's AL, intersect with new tail nodeset 
 		//perform several passes
-		
 		boolean stopFlag = true;
-//		while (stopFlag) {
-//			stopFlag = false;
-//			for (int i = 0; i < mQuery.V; i++ ) {
-//				nodeset queryHeadNS = intersectedAnsGr.get(i);
-//				for (int gn : queryHeadNS.gnodesBits) {
-//					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
-//					for (Integer from : queryEdgesHM.keySet()) {
-//						RoaringBitmap queryToGNs = queryEdgesHM.get(from);
-//						RoaringBitmap toGNs = intersectedAnsGr.get(from).gnodesBits;
-//						queryToGNs.and(toGNs);
-//						if (queryToGNs.isEmpty()) {
-//							queryHeadNS.gnodesBits.remove(gn);
-//							queryEdgesHM.remove(gn);
-//							//must rmv from mPool's nodeset Pool too for when making mPool's edges
-//							PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
-//							mPool.get(from).rmvEntry(pe);
-//							queryHeadNS.GNtoPE.remove(gn);
-//							stopFlag = true;
-//						}
-//					}
-//				}
-//			}
-//		}
-		
-//		stopFlag = true;
-//		while (stopFlag) {
-//			stopFlag = false;
-//			for (QEdge qEdge : mQuery.edges ) {
-//				int from = qEdge.from, to = qEdge.to;
-//				nodeset queryHeadNS = intersectedAnsGr.get(from);
-//				for (int gn : queryHeadNS.gnodesBits) {
-//					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
-//					if (queryEdgesHM.containsKey(to)) {
-//						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
-//						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
-//						queryToGNs.and(toGNs);
-//						if (queryToGNs.isEmpty()) {
-//							queryHeadNS.gnodesBits.remove(gn);
-//							queryEdgesHM.remove(gn);
-//							//must rmv from mPool's nodeset Pool too for when making mPool's edges
-//							PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
-//							mPool.get(from).rmvEntry(pe);
-//							queryHeadNS.GNtoPE.remove(gn);
-//							stopFlag = true;
-//						}
-//					} else {
-//						queryHeadNS.gnodesBits.remove(gn);
-//						queryEdgesHM.remove(gn);
-//						//must rmv from mPool's nodeset Pool too for when making mPool's edges
-//						PoolEntry pe = queryHeadNS.GNtoPE.get(gn);
-//						mPool.get(from).rmvEntry(pe);
-//						queryHeadNS.GNtoPE.remove(gn);
-//						stopFlag = true;
-//					}
-//				}
-//			}
-//		}
-		
-		stopFlag = true;
 		while (stopFlag) {
 			stopFlag = false;
 			for (QEdge qEdge : mQuery.edges ) {

@@ -1,0 +1,16 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_q7.qry
+Algorithm:DagEval_ansgr
+Average running time: 
+id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
+0 success .00 .00 .00 .00 52,709 74 22 183
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_q7.qry
+Algorithm:DagEval_IEfltsim
+Average running time: 
+id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
+0 success .15 .01 .00 .16 52,709 10,246 22 11,462

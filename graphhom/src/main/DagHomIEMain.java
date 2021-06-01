@@ -78,7 +78,7 @@ public class DagHomIEMain {
 		writeStatsToCSV();
 
 		// skip the execution of the timeout tasks;
-		System.exit(0);
+//		System.exit(0);
 
 	}
 

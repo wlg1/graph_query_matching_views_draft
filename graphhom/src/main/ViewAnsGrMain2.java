@@ -49,8 +49,9 @@ public class ViewAnsGrMain2 {
 	QueryEvalStats stats;
 	Digraph g;
 	boolean useAnsGr;
-
-	public ViewAnsGrMain2(String dataFN, String queryFN, String viewFN) {
+	boolean rmvEmpty;
+	
+	public ViewAnsGrMain2(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, boolean INrmvEmpty) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -58,14 +59,19 @@ public class ViewAnsGrMain2 {
 		String suffix = ".csv";
 		String fn = queryFN.substring(0, queryFN.lastIndexOf('.'));
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
-		useAnsGr = false;
+		useAnsGr = INuseAnsGr;
+		rmvEmpty = INrmvEmpty;
 		if (useAnsGr) {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS" + suffix;
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 		} else {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS" + suffix;
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_simgr");
 		}
+		if (rmvEmpty) {
+			outFileN = outFileN + "_rmvEmpty";
+		}
+		outFileN = outFileN + suffix;
 	}
 
 	public void run() throws Exception {
@@ -90,7 +96,7 @@ public class ViewAnsGrMain2 {
 
 		writeStatsToCSV();
 		// skip the execution of the timeout tasks;
-		System.exit(0);
+//		System.exit(0);
 	}
 
 	private void loadData() {
@@ -188,9 +194,16 @@ public class ViewAnsGrMain2 {
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
-				HybAnsGraphBuilderViews2 BuildViews = new HybAnsGraphBuilderViews2(query, viewsOfQuery, qid_Ansgr, posToGN);
 				
-				ArrayList<Pool> mPool = BuildViews.run(s);
+				ArrayList<Pool> mPool;
+				if (rmvEmpty) {
+					HybAnsGraphBuilderViews2 BuildViews = new HybAnsGraphBuilderViews2(query, viewsOfQuery, qid_Ansgr, posToGN);	
+					mPool = BuildViews.run(s);
+				} else {
+					HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
+					mPool = BuildViews.run(s);
+				}
+				
 				MIjoinExclViews eva = new MIjoinExclViews(query, mPool);
 //				queryAnsGraphs.add(mPool);
 				try {
@@ -409,7 +422,9 @@ public class ViewAnsGrMain2 {
 	public static void main(String[] args) throws Exception {
 
 		String dataFileN = args[0], queryFileN = args[1], viewFileN = args[2];
-		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN);
+		boolean useAnsGr = false;
+		boolean rmvEmpty = true;
+		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, useAnsGr, rmvEmpty);
 
 		demain.run();
 	}
