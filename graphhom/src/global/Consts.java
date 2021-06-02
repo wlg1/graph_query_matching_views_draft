@@ -32,7 +32,7 @@ public class Consts {
 	
 	public static int FirstK = 100000;
 	public static int TimeLimit = 10; // minutes
-	public static int OutputLimit = 10000000;  //1000000000; 
+	public static int OutputLimit = 100000000;  //1000000000; 
 	public static int PruneLimit = 3;
 	public static int K = 5;
 	public static int D = 320 * K;

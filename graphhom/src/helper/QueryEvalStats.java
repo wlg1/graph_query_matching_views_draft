@@ -464,7 +464,7 @@ public class QueryEvalStats {
 		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
 		for (int q = 0; q < totQs; q++) {
 			QueryEvalStat stat = qryEvalStatList.get(q);
-			double numE = stat.sizeOfAnsGraph - stat.numSolns;
+			double numE = stat.sizeOfAnsGraph - stat.totNodesAfter;
 			opw.append(algo + " " + q + " " + stat.status + " " 
 					+ f.format(preTimes[q] / Flags.REPEATS) + " "
 					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "

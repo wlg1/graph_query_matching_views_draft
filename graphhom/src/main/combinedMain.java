@@ -60,7 +60,8 @@ public class combinedMain {
 		
 		//loop thru files in input list of inputs or inputs in folder
 		String dataFileN = "Email_lb20.dag";
-		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\lb20_cyc_m_1Eviews";
+//		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\lb20_cyc_m_1Eviews";
+		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files";
 		  File dir = new File(myDirectoryPath);
 		  File[] directoryListing = dir.listFiles();
 		  if (directoryListing != null) {

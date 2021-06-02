@@ -28,7 +28,7 @@ for querynum in range(num_queries):
             break
             
     #output queries in format readable by patternMatch algos
-    out_file = open(output_name + str(querynum) + ".qry", "w")
+    out_file = open(output_name + "_q" + str(querynum+6) + ".qry", "w")
     out_file.write("q # 0\n")
     for nodeID in range(len(node_labels)):
         out_file.write("v " + str(nodeID) + " " + node_labels[str(nodeID)]  + '\n' )
@@ -41,7 +41,7 @@ for querynum in range(num_queries):
     #new view. map old query nodeIDs to new view nodeIDs
     
     #output templates used as views of this query set
-    out_file = open(output_name + str(querynum) + ".vw", "w")
+    out_file = open(output_name + "_q" + str(querynum+6) + ".vw", "w")
     for q, view in enumerate(edges):
         out_file.write("q # " + str(q) + '\n')
         for nodeID, vertex in enumerate(view):
