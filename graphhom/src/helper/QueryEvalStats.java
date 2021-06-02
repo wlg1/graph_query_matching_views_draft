@@ -413,13 +413,20 @@ public class QueryEvalStats {
 	
 	}
 	
-	public void printToFileCombined(PrintWriter opw) {
+	public void printToFileCombinedHeader(PrintWriter opw) {
 		opw.append("*****************************************************\r\n");
 		opw.append("Dataset:" + dataFN + "\r\n");
 		opw.append("V:" + V + " " + "E:" + E + " " + "lbs:" + numLbs + "\r\n");
 		opw.append("Queryset:" + qryFN + "\r\n");
 		opw.append("Algorithm:" + algN + "\r\n");
 		
+		opw.append("Average running time: \r\n");
+		opw.append("Algo" + " " + "id" + " " + "status" + " " + "preFiltTime" + " " + "SGbuildTime" + " " + "MIjoinTime"
+				+ " " + "totTime" + " " + "#DGNodes" + " " + "#NodesSG" + " " + "numSoln" + " "
+				+  "sizeOfSG" + " " + "#edgesSG" + "\r\n");
+	}
+	
+	public void printToFileCombined(PrintWriter opw, String algo) {
 		DecimalFormat f = new DecimalFormat("##.00");
 
 		int totQs = qryEvalStats[0].size();
@@ -454,22 +461,19 @@ public class QueryEvalStats {
 			}
 		}
 
-		opw.append("Average running time: \r\n");
-		opw.append("id" + " " + "status" + " " + "preTime" + " " + "matchTime" + " " + "enumTime"
-				+ " " + "totTime" + " " + "totNodesBefore" + " " + "totNodesAfter" + " " + "numOfTuples" + " "
-				+  "sizeOfAG" + "\r\n");
 		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
 		for (int q = 0; q < totQs; q++) {
 			QueryEvalStat stat = qryEvalStatList.get(q);
-
-			opw.append(q + " " + stat.status + " " 
+			double numE = stat.sizeOfAnsGraph - stat.numSolns;
+			opw.append(algo + " " + q + " " + stat.status + " " 
 					+ f.format(preTimes[q] / Flags.REPEATS) + " "
 					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
 					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
 					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
 					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
 					+ new DecimalFormat(",###").format(stat.numSolns) + " "
-					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + " "
+					+ new DecimalFormat(",###").format(numE) + "\r\n");
 
 		}
 
