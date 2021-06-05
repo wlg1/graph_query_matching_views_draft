@@ -16,7 +16,7 @@ input_path = 'queries/' + input_file
 output_prefix = prefix + '_2to3Eviews'
 output_name = output_prefix + '/' + output_prefix
 f = open(input_path, "r")
-num_queries = 14
+num_queries = 13
 
 def get_edge_color(label):
     if label == '0':
@@ -77,7 +77,7 @@ for querynum in range(num_queries):
                     tail = edge[1]
                     edgeLabel = edge_labels[edge]
                     newSG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
-                all_connected_subgraphs.append(SG)
+                all_connected_subgraphs.append(newSG)
                 
     if not all_connected_subgraphs:
         continue
@@ -86,7 +86,7 @@ for querynum in range(num_queries):
     covered_edges = []
     views = []
     goFlag = True
-    edges = list(unG.edges())
+    edges = list(G.edges())
     while goFlag:
         vw = sample(all_connected_subgraphs, 1)[0]
         if vw not in views:
@@ -100,12 +100,11 @@ for querynum in range(num_queries):
     out_file = open(outFN + ".vw", "w")
     for q, qry in enumerate(views):
         fig = plt.figure()
-        ax1 = plt.subplot2grid((1, 1), (0, 0))
         pos = nx.spring_layout(qry)
         node_labels = nx.get_node_attributes(qry, 'label')
         edges = nx.get_edge_attributes(qry,'label')
         colors = [qry[u][v]['color'] for u,v in edges]
-        nx.draw(qry, pos, with_labels=True,node_size=400, 
+        nx.draw(qry, pos, with_labels=True,node_size=800, 
                 labels = node_labels, edge_color=colors)
         edge_labels = nx.get_edge_attributes(qry, 'label')
         nx.draw_networkx_edge_labels(qry, pos, edge_labels)
