@@ -23,7 +23,7 @@ import views.nodeset;
 
 //only add edge to nodes if covering edge has it
 
-public class HybAnsGraphBuilderViews2 {
+public class HybAnsGraphBuilderViews3 {
 
 	Query mQuery;
 	ArrayList<Pool> mPool;
@@ -35,7 +35,7 @@ public class HybAnsGraphBuilderViews2 {
 	TimeTracker tt;
 	QueryEvalStat stat;
 	
-	public HybAnsGraphBuilderViews2(Query query, ArrayList<Query> viewsOfQuery_in,
+	public HybAnsGraphBuilderViews3(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN) {
 		
 		mQuery = query;
@@ -44,11 +44,7 @@ public class HybAnsGraphBuilderViews2 {
 		posToGN = INposToGN;
 	}
 
-	public ArrayList<Pool> run(QueryEvalStat INstat) {
-		stat = INstat;
-		tt = new TimeTracker();
-		tt.Start();
-		
+	public ArrayList<Pool> run() {
 		//each view can have more than 1 hom to the query
 		viewHoms = new HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>();
 		//store hom for every view used in this query
@@ -75,7 +71,6 @@ public class HybAnsGraphBuilderViews2 {
 		initNodes(); 
 		initEdges(); 
 		
-
 		mPool = new ArrayList<Pool>(mQuery.V);
 		QNode[] qnodes = mQuery.nodes;
 		for (int i = 0; i < mQuery.V; i++) {
@@ -98,11 +93,6 @@ public class HybAnsGraphBuilderViews2 {
 			linkOneStep(edge);
 		}
 		
-		double buildtm = tt.Stop() / 1000;
-		stat.setMatchTime(buildtm);
-		stat.calAnsGraphSize(mPool);
-		stat.setTotNodesAfter(calTotCandSolnNodes());
-//		System.out.println("Answer graph build time:" + buildtm + " sec.");
 		return mPool;
 	}
 	

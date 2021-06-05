@@ -16,19 +16,19 @@ public class combinedMain {
 	}
 	
 	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN) throws Exception {
-		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true);
-		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
+//		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true);
+//		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
 		ViewAnsGrMain2 demain6 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true);
 		ViewAnsGrMain2 demain7 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
-		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);
-		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false);
-		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
+//		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);
+//		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false);
+//		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
 
-		demain.run();
-		demain2.run();
-		demain3.run();
-		demain4.run();
-		demain5.run();
+//		demain.run();
+//		demain2.run();
+//		demain3.run();
+//		demain4.run();
+//		demain5.run();
 		demain6.run();
 		demain7.run();
 		
@@ -37,14 +37,14 @@ public class combinedMain {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			demain.stats.printToFileCombinedHeader(opw);
-			demain.stats.printToFileCombined(opw, "View_ans_rmvEmp");
-			demain5.stats.printToFileCombined(opw, "View_ans");
+//			demain.stats.printToFileCombinedHeader(opw);
+//			demain.stats.printToFileCombined(opw, "View_ans_rmvEmp");
+//			demain5.stats.printToFileCombined(opw, "View_ans");
 			demain6.stats.printToFileCombined(opw, "View_sim_rmvEmp");
 			demain7.stats.printToFileCombined(opw, "View_sim");
-			demain2.stats.printToFileCombined(opw, "FLTSIM");
-			demain3.stats.printToFileCombined(opw, "SIM");
-			demain4.stats.printToFileCombined(opw, "FLT");
+//			demain2.stats.printToFileCombined(opw, "FLTSIM");
+//			demain3.stats.printToFileCombined(opw, "FLT");
+//			demain4.stats.printToFileCombined(opw, "SIM");
 			
 			opw.close();
 		} catch (FileNotFoundException e) {
