@@ -123,9 +123,7 @@ for querynum in range(num_queries):
             
     out_file.close()
     
-        
-
-    #num overlapping edges
+    #tot num overlapping edges, which edges overlap and how many times
             
 # A = (unTemplates[0].subgraph(c) for c in nx.connected_components(unTemplates[0]))
 # x = list(A)[0]
