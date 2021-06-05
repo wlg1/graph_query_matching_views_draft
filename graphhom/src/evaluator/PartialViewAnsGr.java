@@ -91,7 +91,6 @@ public class PartialViewAnsGr {
 		
 		tt = new TimeTracker();
 		tt.Start();
-		ArrayList<Pool> mPool;
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViews3 BuildViews = new HybAnsGraphBuilderViews3(query, viewsOfQuery, qid_Ansgr, posToGN);	
 			mPool = BuildViews.run();
