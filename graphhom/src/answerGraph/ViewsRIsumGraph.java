@@ -96,39 +96,50 @@ public class ViewsRIsumGraph {
 	
 	private void initPool(RoaringBitmap[] tBitsIdxArr) {
 
-		//only get pools for nodes with uncovered edges
-		//union this pool with existing pool, as some graph nodes with edges may not be there
-		
-		ArrayList<Integer> nodesToCompute = new ArrayList<Integer>();  
-		for (QEdge edge : uncoveredEdges) {
-			if (!nodesToCompute.contains(edge.from)) {
-				nodesToCompute.add(edge.from);
-			}
-			if (!nodesToCompute.contains(edge.to)) {
-				nodesToCompute.add(edge.to);
-			}
-		}
-		
-		QNode[] qnodes = mQuery.nodes;
-		
-		//mPool already contains a Pool for every query node, but a Pool may be empty
-		for (Integer i : nodesToCompute) {
+		for (int i=0; i<mQuery.V; i++) {
 			Pool qAct = mPool.get(i);
 			MatArray mli = mCandLists.get(i);
-			ArrayList<GraphNode> elist = mli.elist();
-			QNode qn = qnodes[i];
 			RoaringBitmap t_bits = new RoaringBitmap();
 			tBitsIdxArr[i] = t_bits;
-			int pos = 0; 
-			for (GraphNode n : elist) {
-				if (!posToGN.containsKey(n.pos)) { // only add new node if it doesn't already exist 
-					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
-					qAct.addEntry(actEntry);
-					t_bits.add(actEntry.getValue().L_interval.mStart);
-				}
+			for (int pos=0; pos < qAct.size(); pos++) {
+				PoolEntry actEntry = qAct.elist().get(pos);
+				t_bits.add(actEntry.getValue().L_interval.mStart);
 			}
-
 		}
+		
+//		//only get pools for nodes with uncovered edges
+//		//union this pool with existing pool, as some graph nodes with edges may not be there
+//		
+//		ArrayList<Integer> nodesToCompute = new ArrayList<Integer>();  
+//		for (QEdge edge : uncoveredEdges) {
+//			if (!nodesToCompute.contains(edge.from)) {
+//				nodesToCompute.add(edge.from);
+//			}
+//			if (!nodesToCompute.contains(edge.to)) {
+//				nodesToCompute.add(edge.to);
+//			}
+//		}
+//		
+//		QNode[] qnodes = mQuery.nodes;
+//		
+//		//mPool already contains a Pool for every query node, but a Pool may be empty
+//		for (Integer i : nodesToCompute) {
+//			Pool qAct = mPool.get(i);
+//			MatArray mli = mCandLists.get(i);
+//			ArrayList<GraphNode> elist = mli.elist();
+//			QNode qn = qnodes[i];
+//			RoaringBitmap t_bits = new RoaringBitmap();
+//			tBitsIdxArr[i] = t_bits;
+//			int pos = 0; 
+//			for (GraphNode n : elist) {
+//				if (!posToGN.containsKey(n.pos)) { // only add new node if it doesn't already exist 
+//					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+//					qAct.addEntry(actEntry);
+//					t_bits.add(actEntry.getValue().L_interval.mStart);
+//				}
+//			}
+//
+//		}
 
 	}
 
