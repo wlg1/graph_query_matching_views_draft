@@ -104,11 +104,12 @@ for querynum in range(num_queries):
         node_labels = nx.get_node_attributes(qry, 'label')
         edges = nx.get_edge_attributes(qry,'label')
         colors = [qry[u][v]['color'] for u,v in edges]
-        nx.draw(qry, pos, with_labels=True,node_size=800, 
-                labels = node_labels, edge_color=colors)
+        Ncolors = ['skyblue' for n in list(qry.nodes())]
+        nx.draw(qry, pos, with_labels=True,node_size=800, font_weight = 'bold',
+                labels = node_labels, node_color = Ncolors, edge_color=colors)
         edge_labels = nx.get_edge_attributes(qry, 'label')
-        nx.draw_networkx_edge_labels(qry, pos, edge_labels)
-        plt.savefig(outFN+"_v"+ str(q) + ".png")
+        nx.draw_networkx_edge_labels(qry, pos, edge_labels, font_weight = 'bold')
+        plt.savefig(outFN+"_v"+ str(q) + ".jpg")
         
         out_file.write("q # " + str(q) + '\n')
         nodes = nx.get_node_attributes(qry,'label')
@@ -123,7 +124,39 @@ for querynum in range(num_queries):
     out_file.close()
     
     #tot num overlapping edges, which edges overlap and how many times
-            
+    num_edges = {} # (x,y) : num overlaps
+    edges = list(G.edges())
+    tot_num_overlap = 0
+    for e in edges:
+        num_overlap = 0
+        for vw in views:
+            if e in list(vw.edges()):
+                num_overlap += 1
+        num_edges[e] = num_overlap
+        tot_num_overlap += num_overlap
+    
+    
+    out_file = open(outFN + "_edgeInfo.txt", "w")
+    out_file.write("num views: " + str(len(views)) + "\n")
+    out_file.write("tot num overlapping edges: " + str(tot_num_overlap) + "\n")
+    out_file.write("edge : num overlaps\n")
+    for edge, num_overlaps in num_edges.items():
+        out_file.write(repr(edge) + " : " + str(num_overlaps)  + "\n")    
+    out_file.close()
+    
+    #output queries in format readable by patternMatch algos
+    out_file = open(outFN + ".qry", "w")
+    out_file.write("q # " + str(q) + '\n')
+    nodes = nx.get_node_attributes(G,'label')
+    for nodeID, vertex in enumerate(nodes.keys()):
+        out_file.write("v " + str(nodeID) + " " + nodes[vertex]  + '\n' )
+    edges = nx.get_edge_attributes(G,'label')
+    for e in edges:
+        head = str(list(nodes.keys()).index(e[0]))
+        tail = str(list(nodes.keys()).index(e[1]))
+        out_file.write("e " + head + " " + tail + " " + edges[e] + '\n' )
+    out_file.close()
+    
 # A = (unTemplates[0].subgraph(c) for c in nx.connected_components(unTemplates[0]))
 # x = list(A)[0]
 
