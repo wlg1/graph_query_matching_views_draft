@@ -1,9 +1,9 @@
 import networkx as nx
-from random import choice, randint
+from random import choice, randint, sample
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
+import itertools
 
 
 #store both directed and undirected graphs. rand get subgraphs of size X
@@ -11,8 +11,12 @@ import matplotlib.pyplot as plt
 #at end, record how many edges overlap, and % of those over total # edges
 
 input_file = 'inst_lb20_cyc_m.qry'
+prefix = 'lb20_cyc_m'
 input_path = 'queries/' + input_file
+output_prefix = prefix + '_2to3Eviews'
+output_name = output_prefix + '/' + output_prefix
 f = open(input_path, "r")
+num_queries = 14
 
 def get_edge_color(label):
     if label == '0':
@@ -20,82 +24,108 @@ def get_edge_color(label):
     else:
         return 'b'
 
-node_labels = {} #id : label
-edge_labels = {} #(x,y) : label
-templates = []
-unTemplates = []
-G = nx.DiGraph()
-unG = nx.Graph()
-#create graph objs for each qry template
-while True:
-    line = f.readline().replace('\n','')
-    lineAsList = line.split(' ')
-    if lineAsList[0] == 'q':
-        qryTempID = lineAsList[2]
-        if qryTempID != '0':
-            templates.append(G)  #does not add by ref
+for querynum in range(num_queries):
+    node_labels = {} #id : label
+    edge_labels = {} #(x,y) : label
+    templates = []
+    unTemplates = []
+    G = nx.DiGraph()
+    unG = nx.Graph()
+    #create graph objs for each qry template
+    while True:
+        line = f.readline().replace('\n','')
+        lineAsList = line.split(' ')
+        if lineAsList[0] == 'q':
+            currQ = int(lineAsList[2])
+        if currQ == querynum:
+            if lineAsList[0] == 'v':
+                nodeID =  lineAsList[1]
+                nodeLabel = lineAsList[2]
+                node_labels[nodeID] = nodeLabel
+                G.add_nodes_from([
+                (nodeID, {"label": nodeLabel}) ])
+                unG.add_nodes_from([
+                (nodeID, {"label": nodeLabel}) ])
+            elif lineAsList[0] == 'e':
+                head = lineAsList[1]
+                tail = lineAsList[2]
+                edgeLabel = lineAsList[3]
+                edge = (head, tail)
+                edge_labels[edge] = edgeLabel
+                G.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
+                unG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
+        if currQ > querynum or len(line) == 0:
+            templates.append(G)
             unTemplates.append(unG)
-        G = nx.DiGraph() 
-        unG = nx.Graph()
-    elif lineAsList[0] == 'v':
-        nodeID =  lineAsList[1] + '_' + qryTempID
-        nodeLabel = lineAsList[2]
-        node_labels[nodeID] = nodeLabel
-        G.add_nodes_from([
-        (nodeID, {"label": nodeLabel}) ])
-        unG.add_nodes_from([
-        (nodeID, {"label": nodeLabel}) ])
-    elif lineAsList[0] == 'e':
-        head = lineAsList[1] + '_' + qryTempID
-        tail = lineAsList[2] + '_' + qryTempID
-        edgeLabel = lineAsList[3]
-        edge = (head, tail)
-        edge_labels[edge] = edgeLabel
-        G.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
-        unG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
-    if len(line) == 0:
-        templates.append(G)
-        unTemplates.append(unG)
-        break
-
-import itertools
-
-G = unTemplates[0]
-all_connected_subgraphs = []
-
-# here we ask for all connected subgraphs that have at least 2 nodes AND have less nodes than the input graph
-# for nb_nodes in range(2, G.number_of_nodes()):
-for nb_nodes in range(3, 4):
-    for SG in (G.subgraph(selected_nodes) for selected_nodes in itertools.combinations(G, nb_nodes)):
-        if nx.is_connected(SG) and SG not in all_connected_subgraphs:
-            newSG = nx.DiGraph()
-            for node in SG.nodes():
-                newSG.add_node(node)
-                newSG.add_nodes_from([
-                    (node, {"label": node_labels[node]}) ])
-            for edge in SG.edges():
-                head = edge[0]
-                tail = edge[1]
-                edgeLabel = edge_labels[edge]
-                newSG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
-            all_connected_subgraphs.append(SG)
-
-            
-views = [all_connected_subgraphs[0]]
-#outputviews of this query set
-out_file = open("test.vw", "w")
-for q, qry in enumerate(views):
-    out_file.write("q # " + str(q) + '\n')
-    nodes = nx.get_node_attributes(qry,'label')
-    for nodeID, vertex in enumerate(nodes.keys()):
-        out_file.write("v " + str(nodeID) + " " + nodes[vertex]  + '\n' )
-    edges = nx.get_edge_attributes(qry,'label')
-    for e in edges:
-        head = str(list(nodes.keys()).index(e[0]))
-        tail = str(list(nodes.keys()).index(e[1]))
-        out_file.write("e " + head + " " + tail + " " + edges[e] + '\n' )
+            break
+    
+    all_connected_subgraphs = []
+    
+    # here we ask for all connected subgraphs that have at least 2 nodes AND have less nodes than the input graph
+    # for nb_nodes in range(2, G.number_of_nodes()):
+    for nb_nodes in range(3, 4):
+        for SG in (unG.subgraph(selected_nodes) for selected_nodes in itertools.combinations(unG, nb_nodes)):
+            if nx.is_connected(SG) and SG not in all_connected_subgraphs:
+                dirSG = G.subgraph(SG.nodes())
+                newSG = nx.DiGraph()
+                for node in dirSG.nodes():
+                    newSG.add_node(node)
+                    newSG.add_nodes_from([
+                        (node, {"label": node_labels[node]}) ])
+                for edge in dirSG.edges():
+                    head = edge[0]
+                    tail = edge[1]
+                    edgeLabel = edge_labels[edge]
+                    newSG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
+                all_connected_subgraphs.append(SG)
+                
+    if not all_connected_subgraphs:
+        continue
+                
+    #randomly choose views until all edges covered
+    covered_edges = []
+    views = []
+    goFlag = True
+    edges = list(unG.edges())
+    while goFlag:
+        vw = sample(all_connected_subgraphs, 1)[0]
+        if vw not in views:
+            views.append(vw)
+            covered_edges += list(vw.edges())
+            if (all(x in covered_edges for x in edges)):
+                goFlag = False
+    
+    #outputviews of this query set
+    outFN = output_name + "_q" + str(querynum+6)
+    out_file = open(outFN + ".vw", "w")
+    for q, qry in enumerate(views):
+        fig = plt.figure()
+        ax1 = plt.subplot2grid((1, 1), (0, 0))
+        pos = nx.spring_layout(qry)
+        node_labels = nx.get_node_attributes(qry, 'label')
+        edges = nx.get_edge_attributes(qry,'label')
+        colors = [qry[u][v]['color'] for u,v in edges]
+        nx.draw(qry, pos, with_labels=True,node_size=400, 
+                labels = node_labels, edge_color=colors)
+        edge_labels = nx.get_edge_attributes(qry, 'label')
+        nx.draw_networkx_edge_labels(qry, pos, edge_labels)
+        plt.savefig(outFN+"_v"+ str(q) + ".png")
         
-out_file.close()
+        out_file.write("q # " + str(q) + '\n')
+        nodes = nx.get_node_attributes(qry,'label')
+        for nodeID, vertex in enumerate(nodes.keys()):
+            out_file.write("v " + str(nodeID) + " " + nodes[vertex]  + '\n' )
+        edges = nx.get_edge_attributes(qry,'label')
+        for e in edges:
+            head = str(list(nodes.keys()).index(e[0]))
+            tail = str(list(nodes.keys()).index(e[1]))
+            out_file.write("e " + head + " " + tail + " " + edges[e] + '\n' )
+            
+    out_file.close()
+    
+        
+
+    #num overlapping edges
             
 # A = (unTemplates[0].subgraph(c) for c in nx.connected_components(unTemplates[0]))
 # x = list(A)[0]
