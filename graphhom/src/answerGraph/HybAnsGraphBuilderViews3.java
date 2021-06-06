@@ -12,7 +12,6 @@ import dao.Pool;
 import dao.PoolEntry;
 import global.Consts.AxisType;
 import graph.GraphNode;
-import helper.QueryEvalStat;
 import helper.TimeTracker;
 import query.graph.QEdge;
 import query.graph.QNode;
@@ -33,7 +32,7 @@ public class HybAnsGraphBuilderViews3 {
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	ArrayList<nodeset> intersectedAnsGr;
 	TimeTracker tt;
-	QueryEvalStat stat;
+	ArrayList<QEdge> uncoveredEdges;
 	
 	public HybAnsGraphBuilderViews3(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN) {
@@ -42,6 +41,10 @@ public class HybAnsGraphBuilderViews3 {
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
 		posToGN = INposToGN;
+		uncoveredEdges = new ArrayList<QEdge>();
+		for (QEdge edge : query.edges) {
+			uncoveredEdges.add(edge);
+		}
 	}
 
 	public ArrayList<Pool> run() {
@@ -56,10 +59,23 @@ public class HybAnsGraphBuilderViews3 {
 				ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
 				viewHoms.put(view.Qid, homsList);
 				while (true) {
-					HashMap<Integer, Integer> hom = getHom(view, mQuery);  //key is view node ID, value is query node ID
-//					System.out.println(hom);
+					HashMap<Integer, Integer> hom = getHom(view, mQuery);  //key is query nodeset, value is view nodeset
 					if (!hom.isEmpty()){  //only empty if there doesn't exist any more homs
 						homsList.add(hom);
+						
+						for (QEdge edge : mQuery.getEdges() ) {
+							for (QEdge Vedge : view.getEdges() ) {
+								Integer covVhead = hom.get(edge.from);
+								Integer covVtail = hom.get(edge.to);
+								if (covVhead == null || covVtail == null) {
+									continue;
+								}
+								if (Vedge.from == covVhead && Vedge.to == covVtail && uncoveredEdges.contains(edge)) {
+									uncoveredEdges.remove(edge);
+								}
+							}
+						}
+						
 					} else {  //exit finding homs from v to q b/c no more
 						break;
 					}
@@ -96,13 +112,8 @@ public class HybAnsGraphBuilderViews3 {
 		return mPool;
 	}
 	
-	private double calTotCandSolnNodes() {
-		double totNodes = 0.0;
-		for (Pool pool : mPool) {
-			ArrayList<PoolEntry> elist = pool.elist();
-			totNodes += elist.size();
-		}
-		return totNodes;
+	public ArrayList<QEdge> getUncoveredEdges(){
+		return uncoveredEdges;
 	}
 	
 	private void initNodes() {
@@ -197,30 +208,31 @@ public class HybAnsGraphBuilderViews3 {
 		
 		//at end, for each edge, for each head node's AL, intersect with new tail nodeset 
 		//perform several passes
-		boolean stopFlag = true;
-		while (stopFlag) {
-			stopFlag = false;
-			for (QEdge qEdge : mQuery.edges ) {
-				int from = qEdge.from, to = qEdge.to;
-				nodeset queryHeadNS = intersectedAnsGr.get(from);
-				nodeset newNS = new nodeset();
-				for (int gn : queryHeadNS.gnodesBits) {
-					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
-					if (queryEdgesHM.containsKey(to)) {
-						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
-						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
-						queryToGNs.and(toGNs);
-						if (!queryToGNs.isEmpty()) {
-							newNS.gnodesBits.add(gn);
-							newNS.fwdAdjLists.put(gn, queryEdgesHM);
-						} else {
-							stopFlag = true;
-						}
-					}
-				}
-				intersectedAnsGr.set(from, newNS);
-			}
-		}
+		
+//		boolean stopFlag = true;
+//		while (stopFlag) {
+//			stopFlag = false;
+//			for (QEdge qEdge : mQuery.edges ) {
+//				int from = qEdge.from, to = qEdge.to;
+//				nodeset queryHeadNS = intersectedAnsGr.get(from);
+//				nodeset newNS = new nodeset();
+//				for (int gn : queryHeadNS.gnodesBits) {
+//					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+//					if (queryEdgesHM.containsKey(to)) {
+//						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
+//						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
+//						queryToGNs.and(toGNs);
+//						if (!queryToGNs.isEmpty()) {
+//							newNS.gnodesBits.add(gn);
+//							newNS.fwdAdjLists.put(gn, queryEdgesHM);
+//						} else {
+//							stopFlag = true;
+//						}
+//					}
+//				}
+//				intersectedAnsGr.set(from, newNS);
+//			}
+//		}
 		
 	}
 	
@@ -243,6 +255,11 @@ public class HybAnsGraphBuilderViews3 {
 			GraphNode headGN = e_f.getValue();
 			nodeset headNS = intersectedAnsGr.get(from);
 			RoaringBitmap ToAdjList = headNS.fwdAdjLists.get(headGN.pos).get(to);
+			
+			//bc only partial, don't expect all to have complete adj lists yet until finish with RI
+			if (ToAdjList == null) {
+				continue;
+			}
 			
 			//ASSUME LOOPING THRU BITMAP GETS POSITIONS OF BITMAP, WHICH IS GN POS
 //			for (GraphNode tailGN : ToAdjList ) {

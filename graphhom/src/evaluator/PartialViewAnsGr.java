@@ -91,35 +91,20 @@ public class PartialViewAnsGr {
 		
 		tt = new TimeTracker();
 		tt.Start();
+		ArrayList<Pool> partialPool;
+		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViews3 BuildViews = new HybAnsGraphBuilderViews3(query, viewsOfQuery, qid_Ansgr, posToGN);	
-			mPool = BuildViews.run();
+			partialPool = BuildViews.run();
+			uncoveredEdges = BuildViews.getUncoveredEdges();
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
-			mPool = BuildViews.run(stat);
+			partialPool = BuildViews.run(stat);
+//			uncoveredEdges = BuildViews.getUncoveredEdges();
 		}
 		
 		//send mPool to ViewsRIsumGraph. get the uncovered edges
-		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
-		for (QEdge edge : query.getEdges() ) {
-			boolean addFlag = true;
-			for (Query view : viewsOfQuery ) {
-				for (QEdge Vedge : view.getEdges() ) {
-					if (edge == Vedge) {
-						addFlag = false;
-						break;
-					}
-				}
-				if (!addFlag) {
-					break;
-				}
-			}
-			if (addFlag) {
-				uncoveredEdges.add(edge);
-			}
-		}
-		
-		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, mPool, uncoveredEdges, posToGN);
+		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, posToGN);
 		mPool = finishSG.run();
 		
 		double buildtm = tt.Stop() / 1000;
