@@ -28,6 +28,7 @@ public class HybTupleEnumer {
 	private Query query;
 	private ArrayList<Pool> pool;
 	private PoolEntry[] match;
+	private Integer[] matchGNpos;
 	private int[] order;
 	private int[][] bn; // backward neighbors
 	private int[] bn_count;
@@ -41,6 +42,7 @@ public class HybTupleEnumer {
 		query = qry;
 		pool = pl; //
 		match = new PoolEntry[query.V];
+		matchGNpos = new Integer[query.V];
 		tupleCount = 0;
 		order = // PlanGenerator.generateTopoQueryPlan(query);
 				// PlanGenerator.generateRITOPOQueryPlan(query);
@@ -120,15 +122,16 @@ public class HybTupleEnumer {
 			
 			PoolEntry e = elist.get(i); //the graph node at i's bit
 			match[cur_vertex] = e;  //try this graph node as a match to this query vertex
+			matchGNpos[cur_vertex] = e.getValue().pos;
 		    
 			if (depth == max_depth - 1) {
 				tupleCount++;
-				// printMatch();
+				printMatchGNpos();
 				
 				// add to occ list of each query vertex i
 				for (i = 0; i < match.length; i++) { 
 					HashSet<GraphNode> occLst = occ.get(i);
-					occLst.add(match[i].mValue);
+					occLst.add(match[i].getValue());
 				}
 
 				if (Flags.OUTLIMIT && tupleCount >= Consts.OutputLimit)
@@ -139,6 +142,7 @@ public class HybTupleEnumer {
 			}
 
 			match[cur_vertex] = null;
+			matchGNpos[cur_vertex] = null;
 
 		}
 
@@ -286,10 +290,20 @@ public class HybTupleEnumer {
 
 		return bits;
 	}
-
+	
 	private void printMatch() {
 
 		for (PoolEntry v : match) {
+
+			System.out.print(v + " ");
+		}
+
+		System.out.println();
+	}
+	
+	private void printMatchGNpos() {
+
+		for (Integer v : matchGNpos) {
 
 			System.out.print(v + " ");
 		}

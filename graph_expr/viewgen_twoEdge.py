@@ -13,9 +13,10 @@ import itertools
 input_file = 'inst_lb20_cyc_m.qry'
 prefix = 'lb20_cyc_m'
 input_path = 'queries/' + input_file
-output_prefix = prefix + '_2to3Eviews'
+output_prefix = prefix + '_2Eviews'
 output_name = output_prefix + '/' + output_prefix
 f = open(input_path, "r")
+max_num_Vedges = 2
 num_queries = 13
 
 def get_edge_color(label):
@@ -62,11 +63,14 @@ for querynum in range(num_queries):
     all_connected_subgraphs = []
     
     # here we ask for all connected subgraphs that have at least 2 nodes AND have less nodes than the input graph
-    # for nb_nodes in range(2, G.number_of_nodes()):
-    for nb_nodes in range(3, 4):
-        for SG in (unG.subgraph(selected_nodes) for selected_nodes in itertools.combinations(unG, nb_nodes)):
-            if nx.is_connected(SG) and SG not in all_connected_subgraphs:
-                dirSG = G.subgraph(SG.nodes())
+    for num_Vedges in range(max_num_Vedges, max_num_Vedges+1):
+        subgraphs = [(unG.edge_subgraph(selected_Es), G.edge_subgraph(selected_Es))  for selected_Es in itertools.combinations(G.edges(), num_Vedges)]
+        # if querynum == 2:
+        #     print()
+        for SG_pair in subgraphs:
+            undirSG = SG_pair[0]
+            dirSG = SG_pair[1]
+            if nx.is_connected(undirSG):  #is_conn doesn't work for dir G
                 newSG = nx.DiGraph()
                 for node in dirSG.nodes():
                     newSG.add_node(node)
@@ -77,8 +81,11 @@ for querynum in range(num_queries):
                     tail = edge[1]
                     edgeLabel = edge_labels[edge]
                     newSG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
-                all_connected_subgraphs.append(newSG)
-                
+                if newSG not in all_connected_subgraphs and len(newSG.edges()) == num_Vedges:
+                    all_connected_subgraphs.append(newSG)
+            # if (SG.edges()) == [('1', '3'), ('3', '2')]:
+            #     print()
+
     if not all_connected_subgraphs:
         continue
                 
@@ -87,13 +94,19 @@ for querynum in range(num_queries):
     views = []
     goFlag = True
     edges = list(G.edges())
+    escCounter = 0
+    # while goFlag and escCounter < 20:
     while goFlag:
         vw = sample(all_connected_subgraphs, 1)[0]
         if vw not in views:
             views.append(vw)
+            # all_connected_subgraphs.remove(vw)
             covered_edges += list(vw.edges())
-            if (all(x in covered_edges for x in edges)):
+            if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
                 goFlag = False
+        escCounter += 1
+        if escCounter > 20 or not all_connected_subgraphs:
+            x=1
     
     #outputviews of this query set
     outFN = output_name + "_q" + str(querynum+6)
@@ -139,6 +152,7 @@ for querynum in range(num_queries):
     out_file = open(outFN + "_edgeInfo.txt", "w")
     out_file.write("num views: " + str(len(views)) + "\n")
     out_file.write("tot num overlapping edges: " + str(tot_num_overlap) + "\n")
+    out_file.write("avg num overlapping edges: " + str(tot_num_overlap / len(edges)) + "\n")
     out_file.write("edge : num overlaps\n")
     for edge, num_overlaps in num_edges.items():
         out_file.write(repr(edge) + " : " + str(num_overlaps)  + "\n")    

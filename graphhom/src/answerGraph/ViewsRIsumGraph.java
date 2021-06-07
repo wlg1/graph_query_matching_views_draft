@@ -42,7 +42,8 @@ public class ViewsRIsumGraph {
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
 		initPool(tBitsIdxArr);
 
-		for(QEdge edge: uncoveredEdges){
+//		for(QEdge edge: uncoveredEdges){
+		for(QEdge edge: mQuery.edges){
 			
 			linkOneStep(edge,tBitsIdxArr);
 		}
@@ -117,18 +118,15 @@ public class ViewsRIsumGraph {
 			MatArray mli = mCandLists.get(i);
 			ArrayList<GraphNode> elist = mli.elist();
 			QNode qn = qnodes[i];
-			RoaringBitmap t_bits = new RoaringBitmap();
-			tBitsIdxArr[i] = t_bits;
-			int pos = 0; 
+//			RoaringBitmap t_bits = new RoaringBitmap();
+//			tBitsIdxArr[i] = t_bits;
+			int pos = qAct.size();
 			for (GraphNode n : elist) {
 				if (!posToGN.containsKey(n.pos)) { // only add new node if it doesn't already exist 
 					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
 					qAct.addEntry(actEntry);
 //					t_bits.add(actEntry.getValue().L_interval.mStart);
 				}
-//				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
-//				qAct.addEntry(actEntry);
-//				t_bits.add(actEntry.getValue().L_interval.mStart);
 			}
 
 		}
@@ -227,6 +225,15 @@ public class ViewsRIsumGraph {
 		if (rs_and.isEmpty())
 			return false;
 
+//		for (int ti : rs_and) {
+//			PoolEntry e = list.get(t_bits.rank(ti) - 1);
+//			ArrayList<PoolEntry> subs = r.mFwdEntries.get(e.getQID());
+//			if (!subs.contains(e)) {
+//				r.addChild(e);
+//				e.addParent(r);
+//			}
+//
+//		}
 		for (int ti : rs_and) {
 			PoolEntry e = list.get(t_bits.rank(ti) - 1);
 			r.addChild(e);

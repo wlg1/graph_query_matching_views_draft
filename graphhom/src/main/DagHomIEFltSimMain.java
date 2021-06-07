@@ -249,7 +249,7 @@ public class DagHomIEFltSimMain {
 	public static void main(String[] args) {
 
 		String dataFileN = args[0], queryFileN = args[1]; // the query file
-		boolean simfilter = false;
+		boolean simfilter = true;
 		DagHomIEFltSimMain demain = new DagHomIEFltSimMain(dataFileN, queryFileN, simfilter);
 
 		demain.run();

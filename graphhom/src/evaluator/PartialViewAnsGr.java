@@ -104,6 +104,7 @@ public class PartialViewAnsGr {
 		}
 		
 		//send mPool to ViewsRIsumGraph. get the uncovered edges
+		//this modifies partialPool globally as it turns it into mPool
 		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, posToGN);
 		mPool = finishSG.run();
 		
