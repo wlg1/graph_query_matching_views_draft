@@ -10,14 +10,14 @@ import itertools
 #choose how many subgraphs of sizes 2 and 3 you want
 #at end, record how many edges overlap, and % of those over total # edges
 
+max_num_Vedges = 3
+num_queries = 13
 input_file = 'inst_lb20_cyc_m.qry'
 prefix = 'lb20_cyc_m'
 input_path = 'queries/' + input_file
-output_prefix = prefix + '_2Eviews'
+output_prefix = prefix + '_'+str(max_num_Vedges)+'Eviews'
 output_name = output_prefix + '/' + output_prefix
 f = open(input_path, "r")
-max_num_Vedges = 2
-num_queries = 13
 
 def get_edge_color(label):
     if label == '0':
@@ -65,8 +65,6 @@ for querynum in range(num_queries):
     # here we ask for all connected subgraphs that have at least 2 nodes AND have less nodes than the input graph
     for num_Vedges in range(max_num_Vedges, max_num_Vedges+1):
         subgraphs = [(unG.edge_subgraph(selected_Es), G.edge_subgraph(selected_Es))  for selected_Es in itertools.combinations(G.edges(), num_Vedges)]
-        # if querynum == 2:
-        #     print()
         for SG_pair in subgraphs:
             undirSG = SG_pair[0]
             dirSG = SG_pair[1]
@@ -83,8 +81,6 @@ for querynum in range(num_queries):
                     newSG.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
                 if newSG not in all_connected_subgraphs and len(newSG.edges()) == num_Vedges:
                     all_connected_subgraphs.append(newSG)
-            # if (SG.edges()) == [('1', '3'), ('3', '2')]:
-            #     print()
 
     if not all_connected_subgraphs:
         continue
