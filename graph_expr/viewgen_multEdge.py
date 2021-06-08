@@ -1,21 +1,25 @@
 import networkx as nx
-from random import choice, randint, sample
+from random import sample
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import itertools
-
+import os
 
 #store both directed and undirected graphs. rand get subgraphs of size X
 #choose how many subgraphs of sizes 2 and 3 you want
 #at end, record how many edges overlap, and % of those over total # edges
 
-max_num_Vedges = 3
+#user tunable parameters
+min_num_Vedges = 2
+max_num_Vedges = min_num_Vedges
 num_queries = 13
-input_file = 'inst_lb20_cyc_m.qry'
-prefix = 'lb20_cyc_m'
-input_path = 'queries/' + input_file
-output_prefix = prefix + '_'+str(max_num_Vedges)+'Eviews'
+input_file = 'inst_lb20_cyc_d'
+
+input_path = 'queries/' + input_file + '.qry'
+output_prefix = input_file.replace('inst_', '') + '_'+str(max_num_Vedges)+'Eviews'
+if not os.path.exists(output_prefix):
+    os.makedirs(output_prefix)
 output_name = output_prefix + '/' + output_prefix
 f = open(input_path, "r")
 
@@ -63,7 +67,7 @@ for querynum in range(num_queries):
     all_connected_subgraphs = []
     
     # here we ask for all connected subgraphs that have at least 2 nodes AND have less nodes than the input graph
-    for num_Vedges in range(max_num_Vedges, max_num_Vedges+1):
+    for num_Vedges in range(min_num_Vedges, max_num_Vedges+1):
         subgraphs = [(unG.edge_subgraph(selected_Es), G.edge_subgraph(selected_Es))  for selected_Es in itertools.combinations(G.edges(), num_Vedges)]
         for SG_pair in subgraphs:
             undirSG = SG_pair[0]
@@ -108,17 +112,18 @@ for querynum in range(num_queries):
     outFN = output_name + "_q" + str(querynum+6)
     out_file = open(outFN + ".vw", "w")
     for q, qry in enumerate(views):
-        fig = plt.figure()
-        pos = nx.spring_layout(qry)
-        node_labels = nx.get_node_attributes(qry, 'label')
-        edges = nx.get_edge_attributes(qry,'label')
-        colors = [qry[u][v]['color'] for u,v in edges]
-        Ncolors = ['skyblue' for n in list(qry.nodes())]
-        nx.draw(qry, pos, with_labels=True,node_size=800, font_weight = 'bold',
-                labels = node_labels, node_color = Ncolors, edge_color=colors)
-        edge_labels = nx.get_edge_attributes(qry, 'label')
-        nx.draw_networkx_edge_labels(qry, pos, edge_labels, font_weight = 'bold')
-        plt.savefig(outFN+"_v"+ str(q) + ".jpg")
+        if max_num_Vedges > 1:
+            fig = plt.figure()
+            pos = nx.spring_layout(qry)
+            node_labels = nx.get_node_attributes(qry, 'label')
+            edges = nx.get_edge_attributes(qry,'label')
+            colors = [qry[u][v]['color'] for u,v in edges]
+            Ncolors = ['skyblue' for n in list(qry.nodes())]
+            nx.draw(qry, pos, with_labels=True,node_size=800, font_weight = 'bold',
+                    labels = node_labels, node_color = Ncolors, edge_color=colors)
+            edge_labels = nx.get_edge_attributes(qry, 'label')
+            nx.draw_networkx_edge_labels(qry, pos, edge_labels, font_weight = 'bold')
+            plt.savefig(outFN+"_v"+ str(q) + ".jpg")
         
         out_file.write("q # " + str(q) + '\n')
         nodes = nx.get_node_attributes(qry,'label')

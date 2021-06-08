@@ -1,14 +1,14 @@
-num views: 15
-tot num overlapping edges: 30
-avg num overlapping edges: 3.0
+num views: 8
+tot num overlapping edges: 16
+avg num overlapping edges: 1.6
 edge : num overlaps
-('0', '1') : 3
-('0', '2') : 4
+('0', '1') : 1
+('0', '2') : 2
 ('0', '3') : 2
-('0', '4') : 1
-('1', '2') : 3
-('1', '3') : 3
-('1', '4') : 3
-('2', '3') : 4
-('2', '4') : 4
-('3', '4') : 3
+('0', '4') : 2
+('1', '2') : 2
+('1', '3') : 2
+('1', '4') : 2
+('2', '3') : 1
+('2', '4') : 1
+('3', '4') : 1
