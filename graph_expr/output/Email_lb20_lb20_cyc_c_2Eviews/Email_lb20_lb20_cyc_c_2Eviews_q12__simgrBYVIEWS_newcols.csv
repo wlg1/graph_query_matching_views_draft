@@ -1,0 +1,50 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_2Eviews_q12.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.26,.00,.26,39672,451,904
+1,success,.42,.00,.42,39789,424,848
+2,success,.43,.00,.43,39860,443,901
+3,success,.28,.00,.28,39789,2235,4533
+4,success,.24,.00,.24,39743,442,891
+5,success,.19,.00,.19,39904,2239,4572
+6,success,.18,.00,.18,39785,610,1269
+7,success,.23,.00,.23,39624,343,673
+8,success,.36,.00,.37,39628,877,1769
+9,success,.27,.00,.27,39628,419,823
+10,success,.22,.00,.22,39860,321,633
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+0,success,.00,.00,.00,.00,66267,43,0,96
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.00,.00,.00,66267,43,0,96
+
+Data loading Time,.77
+Index building Time,.29
+Average Eval Time per run,.01
+Average Eval Time per query,.01
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,.01
+Average Matching Time per query,.01
+Average Enumeration Time per run,.00
+Average Enumeration Time per query,.00
+Average Nodes before per query,66267.00
+Average Nodes after per query,43.00
+Average number of solution tuples per query,.00
+Max Used Memory,2031.00 MB
+*****************************************************

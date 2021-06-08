@@ -1,0 +1,47 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_1Eviews_q15.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.25,.00,.26,26652,955,1855
+1,success,.24,.00,.24,26236,808,1514
+2,success,.19,.00,.19,26390,972,1831
+3,success,.22,.00,.23,26442,833,1587
+4,success,.20,.00,.20,26454,740,1400
+5,success,.23,.00,.24,26236,866,1655
+6,success,.22,.00,.22,26664,864,1643
+7,success,.21,.00,.21,26390,899,1740
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+0,success,.00,.00,.00,.00,79342,124,0,296
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.00,.00,.00,79342,124,0,296
+
+Data loading Time,1.16
+Index building Time,.24
+Average Eval Time per run,.01
+Average Eval Time per query,.01
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,.01
+Average Matching Time per query,.01
+Average Enumeration Time per run,.00
+Average Enumeration Time per query,.00
+Average Nodes before per query,79342.00
+Average Nodes after per query,124.00
+Average number of solution tuples per query,.00
+Max Used Memory,2305.00 MB
+*****************************************************
