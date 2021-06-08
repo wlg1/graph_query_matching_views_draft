@@ -184,6 +184,7 @@ public class HybAnsGraphBuilderViews {
 					//HashMap<Integer, RoaringBitmap> : key is to nodeset, value is toNS's graph nodes
 					nodeset queryHeadNS = intersectedAnsGr.get(from);
 					for (int gn : queryHeadNS.gnodesBits) {
+						//check if view contains an edge that covers this qEdge. if not, skip it.
 						if (viewHeadNS.fwdAdjLists == null) {
 							continue;
 						}
@@ -191,6 +192,10 @@ public class HybAnsGraphBuilderViews {
 							continue;
 						}
 						RoaringBitmap viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w headGN to tail NS
+						if (viewToGNs == null) {
+							continue;
+						}
+						
 						HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
 						if (!queryEdgesHM.containsKey(to)) {
 							//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr

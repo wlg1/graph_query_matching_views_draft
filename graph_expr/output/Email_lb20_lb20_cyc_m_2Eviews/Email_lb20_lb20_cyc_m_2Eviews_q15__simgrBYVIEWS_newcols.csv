@@ -1,0 +1,41 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q15.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.45,1.54,1.99,40049,10072,1342796
+1,success,.14,.06,.20,39840,7573,309045
+2,success,.80,2.50,3.30,39800,10095,1558040
+3,success,6.83,51.89,58.73,39991,17430,23789536
+4,success,.17,3.44,3.61,39782,8041,1101595
+5,success,.47,1.24,1.71,39782,9965,1259514
+6,success,1.63,3.56,5.19,39782,3145,638623
+7,success,.17,.00,.17,39840,681,1402
+8,success,.84,2.33,3.17,39858,10141,1453654
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.02,19.71,19.74,79849,1408,88129737,141110
+0,success,.00,.02,18.98,19.00,79849,1408,88129737,141110
+0,success,.00,.02,19.62,19.64,79849,1408,88129737,141110
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.02,19.44,19.46,79849,1408,88129737,141110
+
+Data loading Time,.55
+Index building Time,.17
+Average Eval Time per run,38.95
+Average Eval Time per query,38.95
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,.04
+Average Matching Time per query,.04
+Average Enumeration Time per run,38.91
+Average Enumeration Time per query,38.91
+Average Nodes before per query,79849.00
+Average Nodes after per query,1408.00
+Average number of solution tuples per query,88129737.00
+Max Used Memory,2824.00 MB
+*****************************************************

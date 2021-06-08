@@ -101,7 +101,7 @@ for querynum in range(num_queries):
             if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
                 goFlag = False
         escCounter += 1
-        if escCounter > 20 or not all_connected_subgraphs:
+        if escCounter > 20:
             x=1
     
     #outputviews of this query set

@@ -166,7 +166,7 @@ public class HybAnsGraphBuilderViews2 {
 					Integer vHead = hom.get(from), vTail = hom.get(to);
 
 					if (vHead == null || vTail == null){
-						continue; //view has no covering edge for this qedge
+						continue; //view lacks the covering nodes for this qedge
 					}
 					
 					ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(view.Qid); //node sets of view
@@ -179,6 +179,8 @@ public class HybAnsGraphBuilderViews2 {
 					//HashMap<Integer, RoaringBitmap> : key is to nodeset, value is toNS's graph nodes
 					nodeset queryHeadNS = intersectedAnsGr.get(from);
 					for (int gn : queryHeadNS.gnodesBits) {
+						
+						//check if view contains an edge that covers this qEdge. if not, skip it.
 						if (viewHeadNS.fwdAdjLists == null) {
 							continue;
 						}
@@ -186,6 +188,10 @@ public class HybAnsGraphBuilderViews2 {
 							continue;
 						}
 						RoaringBitmap viewToGNs = viewHeadNS.fwdAdjLists.get(gn).get(vTail); //U: edges b/w headGN to tail NS
+						if (viewToGNs == null) {
+							continue;
+						}
+						
 						HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
 						if (!queryEdgesHM.containsKey(to)) {
 							//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
@@ -194,6 +200,9 @@ public class HybAnsGraphBuilderViews2 {
 
 							RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;
 							RoaringBitmap queryToGNs = getGNList(toGNs);
+							if (viewToGNs == null) {
+								int x = 1;
+							}
 							queryToGNs.and(viewToGNs);
 							queryEdgesHM.put(to, queryToGNs);
 						} else {
