@@ -12,7 +12,7 @@ totNumE = 3
 def run(edgeType, numqrys, totNumE):
     algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
     totTimes_ByEdge = []
-    for numE in range(2,totNumE + 1):
+    for numE in range(1,totNumE + 1):
         algo_totTimes = []
         for i in range(len(algoNames)):
             algo_totTimes.append([0] * numqrys)    
@@ -31,7 +31,7 @@ def run(edgeType, numqrys, totNumE):
         totTimes_ByEdge.append(algo_totTimes)
     
     #plot edges vs algoTotTime. each algo is a separate line in plot
-    xAxis =  [str(x+1)+'E' for x in list(range(1,totNumE))]
+    xAxis =  [str(x+1)+'E' for x in list(range(totNumE))]
     for algoNum in range(len(algoNames)):
         yAxis = []
         for edgeTimes in totTimes_ByEdge:
@@ -41,7 +41,7 @@ def run(edgeType, numqrys, totNumE):
     plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
     plt.savefig(output_prefix+'_avgTimes.png', bbox_inches="tight")
     
-    for qrynum in range(1,13):
+    for qrynum in range(numqrys):
         plt.figure()
         for algoNum in range(len(algoNames)):
             yAxis = []

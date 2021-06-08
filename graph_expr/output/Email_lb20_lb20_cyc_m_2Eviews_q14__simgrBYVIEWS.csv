@@ -1,0 +1,45 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q14.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View Build Times: 
+id status preTime matchTime totTime numNodesBefore numNodesAfter sizeOfAG
+0 success 24.33 .74 25.07 39,902 8,889 1,324,111
+1 success .21 2.94 3.15 39,771 10,014 1,565,325
+2 success 24.80 .36 25.16 39,829 8,853 1,205,883
+3 success .18 2.40 2.58 39,656 10,048 1,504,722
+4 success .74 134.74 135.48 39,696 18,061 24,118,001
+5 success .23 3.79 4.02 39,902 10,021 1,559,916
+6 success .71 121.21 121.92 39,646 18,374 24,816,892
+*****************************************************
+id status preTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln sizeOfAG
+0 exceedLimit .00 .33 .00 16.84 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .54 .00 18.36 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .36 .00 16.11 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .37 .00 17.34 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .47 .00 17.15 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .38 .00 16.59 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .38 .00 15.26 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .34 .00 15.44 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .41 .00 16.09 79,548 8,959 100,000,000 2,615,869
+0 exceedLimit .00 .46 .00 16.44 79,548 8,959 100,000,000 2,615,869
+Average running time: 
+id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
+0 exceedLimit .00 .40 .00 16.56 79,548 8,959 100,000,000 2,615,869
+Data loading Time:.65
+Index building Time:.24
+Average Eval Time per run:92.57
+Average Eval Time per query:92.57
+Average pruning Time per run:.00
+Average pruning Time per query:.00
+Average Matching Time per run:2.21
+Average Matching Time per query:2.21
+Average Enumeration Time per run:.00
+Average Enumeration Time per query:.00
+Average Nodes before per query:79548.00
+Average Nodes after per query:8959.00
+Average number of solution tuples per query:100000000.00
+Max Used Memory:2406.00 MB
+*****************************************************
