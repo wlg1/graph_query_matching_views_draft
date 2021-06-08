@@ -8,7 +8,7 @@ numqrys = 14
 totNumE = 3
 algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
 totTimes_ByEdge = []
-for numE in range(1,totNumE + 1):
+for numE in range(2,totNumE + 1):
     algo_totTimes = []
     for i in range(len(algoNames)):
         algo_totTimes.append([0] * numqrys)    
@@ -26,12 +26,24 @@ for numE in range(1,totNumE + 1):
     totTimes_ByEdge.append(algo_totTimes)
 
 #plot edges vs algoTotTime. each algo is a separate line in plot
-xAxis =  [str(x+1)+'E' for x in list(range(totNumE))]
+xAxis =  [str(x+1)+'E' for x in list(range(1,totNumE))]
 for algoNum in range(len(algoNames)):
     yAxis = []
     for edgeTimes in totTimes_ByEdge:
         algoTimes = edgeTimes[algoNum]
         yAxis.append(sum(algoTimes) / len(algoTimes))
-    plt.plot(xAxis, yAxis, label = "line " + str(algoNum))
-        
+    plt.plot(xAxis, yAxis, label = algoNames[algoNum])
+plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
+plt.savefig('avgTimes.png', bbox_inches="tight")
+
+for qrynum in range(1,13):
+    plt.figure()
+    for algoNum in range(len(algoNames)):
+        yAxis = []
+        for edgeTimes in totTimes_ByEdge:
+            algoTimes = edgeTimes[algoNum]
+            yAxis.append(algoTimes[qrynum])
+        plt.plot(xAxis, yAxis, label = algoNames[algoNum])
+    plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
+    plt.savefig('q'+str(qrynum+6)+'_Times.png', bbox_inches="tight")
         
