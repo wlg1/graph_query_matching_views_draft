@@ -1,0 +1,9 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\am_lb3.dag
+V:403394,E:1267904,lbs:3
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb3_cyc_c_1Eviews_q6.qry
+Algorithm:DagEval_simgr
+Average,running,time:,
+Algo,id,status,preFiltTime,SGbuildTime,MIjoinTime,totTime,#DGNodes,#NodesSG,numSoln,sizeOfSG,#edgesSG
+View_sim_rmvEmp,0,success,.00,.82,.06,.88,402785,172520,46127,410293,237773
+View_sim,0,success,.00,.94,.08,1.02,402785,184831,46127,441994,257163

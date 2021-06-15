@@ -6,30 +6,37 @@ Algorithm:DagEval_simgr
 *****************************************************
 View,Build,Times:,
 id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
-0,success,.55,.30,.85,39968,2676,52941
-1,success,2.25,2.58,4.84,40094,3329,557857
-2,success,46.55,1.54,48.09,39956,8501,1381345
+0,success,.34,.47,.82,39942,7544,330964
+1,success,48.77,2.43,51.20,39956,8501,1381345
+2,success,.45,.32,.77,39968,2676,52941
 *****************************************************
 id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
-0,success,.00,.00,.01,.01,53320,665,41632,2540
-0,success,.00,.00,.01,.01,53320,665,41632,2540
-0,success,.00,.00,.01,.01,53320,665,41632,2540
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
+0,success,.00,.00,.01,.01,53320,630,41632,2489
 Average,running,time:,
 id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
-0,success,.00,.00,.01,.01,53320,665,41632,2540
+0,success,.00,.00,.01,.01,53320,630,41632,2489
 
-Data loading Time,.76
-Index building Time,.12
-Average Eval Time per run,.01
-Average Eval Time per query,.01
+Data loading Time,.66
+Index building Time,.15
+Average Eval Time per run,.04
+Average Eval Time per query,.04
 Average pruning Time per run,.00
 Average pruning Time per query,.00
-Average Matching Time per run,.00
-Average Matching Time per query,.00
-Average Enumeration Time per run,.01
-Average Enumeration Time per query,.01
+Average Matching Time per run,.01
+Average Matching Time per query,.01
+Average Enumeration Time per run,.03
+Average Enumeration Time per query,.03
 Average Nodes before per query,53320.00
-Average Nodes after per query,665.00
+Average Nodes after per query,630.00
 Average number of solution tuples per query,41632.00
-Max Used Memory,2824.00 MB
+Max Used Memory,3014.00 MB
 *****************************************************

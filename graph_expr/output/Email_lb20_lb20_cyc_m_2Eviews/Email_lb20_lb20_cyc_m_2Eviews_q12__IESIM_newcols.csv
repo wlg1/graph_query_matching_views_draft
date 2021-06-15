@@ -4,17 +4,24 @@ V:265214,E:345203,lbs:20
 Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q12.qry
 Algorithm:DagEval_IE
 id,status,preTime,planTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,numPlans,sizeOfAG
-0,success,2.31,.00,.00,.00,2.31,66524,63,1,0,561
-0,success,2.29,.00,.00,.00,2.29,66524,63,1,0,561
-0,success,2.24,.00,.00,.00,2.24,66524,63,1,0,561
+0,success,3.51,.00,.00,.00,3.51,66524,63,1,0,561
+0,success,3.38,.00,.00,.00,3.38,66524,63,1,0,561
+0,success,2.61,.00,.00,.00,2.61,66524,63,1,0,561
+0,success,3.16,.00,.00,.00,3.16,66524,63,1,0,561
+0,success,2.92,.00,.00,.00,2.92,66524,63,1,0,561
+0,success,2.76,.00,.00,.00,2.76,66524,63,1,0,561
+0,success,3.38,.00,.00,.00,3.38,66524,63,1,0,561
+0,success,3.39,.00,.00,.00,3.39,66524,63,1,0,561
+0,success,3.52,.00,.00,.00,3.52,66524,63,1,0,561
+0,success,2.63,.00,.00,.00,2.63,66524,63,1,0,561
 Average,running,time:,
 id,status,preTime,planTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,numPlans,sizeOfAG
-0,success,2.28,.00,.00,.00,2.28,66524,63,1,0,561
+0,success,3.13,.00,.00,.00,3.13,66524,63,1,0,561
 
-Data loading Time,.66
-Index building Time,.14
-Average Eval Time per run,4.59
-Average Eval Time per query,4.59
+Data loading Time,.67
+Index building Time,.17
+Average Eval Time per run,17.33
+Average Eval Time per query,17.33
 Average pruning Time per run,.00
 Average pruning Time per query,.00
 Average Plan Time per run,.00
@@ -26,5 +33,5 @@ Average Enumeration Time per query,.00
 Average Nodes before per query,66524.00
 Average Nodes after per query,63.00
 Average number of solution tuples per query,1.00
-Max Used Memory,1552.00 MB
+Max Used Memory,2332.00 MB
 *****************************************************

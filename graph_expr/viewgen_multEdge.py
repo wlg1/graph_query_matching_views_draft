@@ -11,10 +11,12 @@ import os
 #at end, record how many edges overlap, and % of those over total # edges
 
 #user tunable parameters
-min_num_Vedges = 2
+min_num_Vedges = 3
 max_num_Vedges = min_num_Vedges
 num_queries = 13
-input_file = 'inst_lb20_cyc_d'
+# input_file = 'inst_lb20_cyc_d'
+# input_file = 'lb20_cyc_m_combQrys__6_7_8_v1'
+input_file = 'inst_lb5_cyc_c'
 
 input_path = 'queries/' + input_file + '.qry'
 output_prefix = input_file.replace('inst_', '') + '_'+str(max_num_Vedges)+'Eviews'
@@ -110,6 +112,7 @@ for querynum in range(num_queries):
     
     #outputviews of this query set
     outFN = output_name + "_q" + str(querynum+6)
+    # outFN = output_name
     out_file = open(outFN + ".vw", "w")
     for q, qry in enumerate(views):
         if max_num_Vedges > 1:
@@ -161,7 +164,7 @@ for querynum in range(num_queries):
     
     #output queries in format readable by patternMatch algos
     out_file = open(outFN + ".qry", "w")
-    out_file.write("q # " + str(q) + '\n')
+    out_file.write("q # " + str(querynum) + '\n')
     nodes = nx.get_node_attributes(G,'label')
     for nodeID, vertex in enumerate(nodes.keys()):
         out_file.write("v " + str(nodeID) + " " + nodes[vertex]  + '\n' )

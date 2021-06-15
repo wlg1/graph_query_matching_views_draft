@@ -1,0 +1,44 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\bs_lb5.dag
+V:685230,E:4029494,lbs:5
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb5_cyc_c_1Eviews_q10.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,1.15,.15,1.30,273804,103948,254947
+1,success,1.19,.26,1.45,273914,103465,254493
+2,success,1.08,.14,1.23,274416,104693,266021
+3,success,1.00,.18,1.18,273914,111341,275773
+4,success,.86,.24,1.11,274306,103756,253765
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.63,.17,.80,548220,83698,872107,348174
+0,success,.00,.54,.17,.71,548220,83698,872107,348174
+0,success,.00,.53,.18,.71,548220,83698,872107,348174
+0,success,.00,.58,.16,.74,548220,83698,872107,348174
+0,success,.00,.58,.16,.73,548220,83698,872107,348174
+0,success,.00,.57,.24,.81,548220,83698,872107,348174
+0,success,.00,.58,.23,.81,548220,83698,872107,348174
+0,success,.00,.50,.26,.75,548220,83698,872107,348174
+0,success,.00,.58,.19,.77,548220,83698,872107,348174
+0,success,.00,.58,.20,.78,548220,83698,872107,348174
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.57,.20,.76,548220,83698,872107,348174
+
+Data loading Time,6.03
+Index building Time,.69
+Average Eval Time per run,4.16
+Average Eval Time per query,4.16
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,3.14
+Average Matching Time per query,3.14
+Average Enumeration Time per run,1.03
+Average Enumeration Time per query,1.03
+Average Nodes before per query,548220.00
+Average Nodes after per query,83698.00
+Average number of solution tuples per query,872107.00
+Max Used Memory,2616.00 MB
+*****************************************************

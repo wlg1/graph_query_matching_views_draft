@@ -1,0 +1,11 @@
+num views: 6
+tot num overlapping edges: 18
+avg num overlapping edges: 2.5714285714285716
+edge : num overlaps
+('0', '1') : 3
+('0', '2') : 1
+('0', '3') : 5
+('1', '2') : 1
+('3', '4') : 3
+('3', '5') : 3
+('4', '5') : 2

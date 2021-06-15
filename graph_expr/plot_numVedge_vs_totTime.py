@@ -8,15 +8,19 @@ import matplotlib.pyplot as plt
 edgeTypeList = ['c']
 numqrys = 13
 totNumE = 3
+# dataType = 'Email_lb20_lb20_cyc'
+# dataType = 'am_lb3_lb3_cyc' 
+dataType = 'bs_lb5_lb5_cyc'
 
-def run(edgeType, numqrys, totNumE):
-    algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
+def run(edgeType, dataType, numqrys, totNumE):
+    # algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
+    algoNames = ['View_sim_rmvEmp', 'View_sim']
     totTimes_ByEdge = []
     for numE in range(1,totNumE + 1):
         algo_totTimes = []
         for i in range(len(algoNames)):
             algo_totTimes.append([0] * numqrys)    
-        output_prefix = 'output/Email_lb20_lb20_cyc_'+edgeType+'_'+str(numE)+'Eviews'
+        output_prefix = 'output/' + dataType +'_'+edgeType+'_'+str(numE)+'Eviews'
         input_path = output_prefix + '/'
         for filename in os.listdir(input_path):
             if 'ALL' not in filename:
@@ -53,4 +57,4 @@ def run(edgeType, numqrys, totNumE):
         plt.savefig(output_prefix+'_q'+str(qrynum+6)+'_Times.png', bbox_inches="tight")
             
 for edgeType in edgeTypeList:
-    run(edgeType, numqrys, totNumE)
+    run(edgeType, dataType, numqrys, totNumE)

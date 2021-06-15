@@ -5,8 +5,8 @@ import csv, os, pdb
 directory = r'D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\output\badcol_outputs'
 
 def output_goodcol(fn):
-    input_fn = 'badcol_outputs/' + fn + '.csv'
-    output_fn = 'goodcol_outputs/'+fn+'_newcols.csv'
+    input_fn = '__badcol_outputs/' + fn + '.csv'
+    output_fn = '__goodcol_outputs/'+fn+'_newcols.csv'
     output_file = open(output_fn, mode='w', newline='')
     output_writer = csv.writer(output_file)
     

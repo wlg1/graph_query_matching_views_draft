@@ -1,0 +1,43 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\am_lb3.dag
+V:403394,E:1267904,lbs:3
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb3_cyc_c_1Eviews_q7.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,1.17,.34,1.51,268104,159779,300161
+1,success,1.20,.19,1.39,268104,159779,300161
+2,success,1.17,.19,1.36,268104,159779,300161
+3,success,1.02,.26,1.28,268104,159779,300161
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,1.44,.22,1.66,536208,232008,197170,576308
+0,success,.00,1.46,.26,1.71,536208,232008,197170,576308
+0,success,.00,1.49,.19,1.69,536208,232008,197170,576308
+0,success,.00,1.30,.21,1.51,536208,232008,197170,576308
+0,success,.00,1.62,.23,1.85,536208,232008,197170,576308
+0,success,.00,1.90,.26,2.16,536208,232008,197170,576308
+0,success,.00,1.63,.21,1.84,536208,232008,197170,576308
+0,success,.00,1.43,.20,1.62,536208,232008,197170,576308
+0,success,.00,1.46,.21,1.67,536208,232008,197170,576308
+0,success,.00,1.62,.25,1.87,536208,232008,197170,576308
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,1.53,.22,1.76,536208,232008,197170,576308
+
+Data loading Time,2.13
+Index building Time,.57
+Average Eval Time per run,9.54
+Average Eval Time per query,9.54
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,8.31
+Average Matching Time per query,8.31
+Average Enumeration Time per run,1.23
+Average Enumeration Time per query,1.23
+Average Nodes before per query,536208.00
+Average Nodes after per query,232008.00
+Average number of solution tuples per query,197170.00
+Max Used Memory,3293.00 MB
+*****************************************************

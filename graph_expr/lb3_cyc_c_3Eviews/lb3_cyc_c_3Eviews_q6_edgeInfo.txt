@@ -1,0 +1,7 @@
+num views: 1
+tot num overlapping edges: 3
+avg num overlapping edges: 1.0
+edge : num overlaps
+('0', '1') : 1
+('0', '2') : 1
+('1', '2') : 1

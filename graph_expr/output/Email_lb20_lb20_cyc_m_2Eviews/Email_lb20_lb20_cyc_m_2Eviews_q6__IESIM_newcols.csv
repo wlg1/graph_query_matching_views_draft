@@ -4,27 +4,34 @@ V:265214,E:345203,lbs:20
 Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q6.qry
 Algorithm:DagEval_IE
 id,status,preTime,planTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,numPlans,sizeOfAG
-0,success,7.06,.00,.08,.01,7.15,39736,906,18281,0,90003
-0,success,6.80,.00,.04,.01,6.85,39736,906,18281,0,90003
-0,success,7.09,.00,.04,.01,7.14,39736,906,18281,0,90003
+0,success,5.84,.00,.04,.01,5.88,39736,906,18281,0,90003
+0,success,5.94,.00,.04,.01,5.98,39736,906,18281,0,90003
+0,success,5.86,.00,.04,.01,5.91,39736,906,18281,0,90003
+0,success,6.21,.00,.05,.01,6.26,39736,906,18281,0,90003
+0,success,5.85,.00,.04,.01,5.90,39736,906,18281,0,90003
+0,success,5.94,.00,.04,.01,5.98,39736,906,18281,0,90003
+0,success,6.74,.00,.04,.01,6.78,39736,906,18281,0,90003
+0,success,5.99,.00,.05,.01,6.05,39736,906,18281,0,90003
+0,success,5.89,.00,.04,.01,5.94,39736,906,18281,0,90003
+0,success,6.28,.00,.03,.01,6.32,39736,906,18281,0,90003
 Average,running,time:,
 id,status,preTime,planTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,numPlans,sizeOfAG
-0,success,6.98,.00,.06,.01,7.04,39736,906,18281,0,90003
+0,success,6.05,.00,.04,.01,6.10,39736,906,18281,0,90003
 
-Data loading Time,.60
-Index building Time,.14
-Average Eval Time per run,14.09
-Average Eval Time per query,14.09
+Data loading Time,.59
+Index building Time,.20
+Average Eval Time per run,33.25
+Average Eval Time per query,33.25
 Average pruning Time per run,.00
 Average pruning Time per query,.00
 Average Plan Time per run,.00
 Average Plan Time per query,.00
-Average Matching Time per run,.13
-Average Matching Time per query,.13
-Average Enumeration Time per run,.01
-Average Enumeration Time per query,.01
+Average Matching Time per run,.22
+Average Matching Time per query,.22
+Average Enumeration Time per run,.04
+Average Enumeration Time per query,.04
 Average Nodes before per query,39736.00
 Average Nodes after per query,906.00
 Average number of solution tuples per query,18281.00
-Max Used Memory,2824.00 MB
+Max Used Memory,3014.00 MB
 *****************************************************

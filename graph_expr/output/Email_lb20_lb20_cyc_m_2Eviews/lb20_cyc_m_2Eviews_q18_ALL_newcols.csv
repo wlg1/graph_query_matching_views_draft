@@ -1,5 +1,12 @@
-View_sim_rmvEmp,0,success,.00,.02,6.67,6.69,79907,1272,45800291,117321,116049
-View_sim,0,success,.00,.02,6.89,6.90,79907,1305,45800291,122999,121694
-FLTSIM,0,success,.18,3.80,35.43,39.41,79907,13127,45800291,2794931,2781804
-FLT,0,success,.17,3.91,33.10,37.18,79907,13127,45800291,2794931,2781804
-SIM,0,success,4.53,.53,5.84,10.90,79907,1269,45800291,117822,116553
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q18.qry
+Algorithm:DagEval_IEfltsim
+Average,running,time:,
+Algo,id,status,preFiltTime,SGbuildTime,MIjoinTime,totTime,#DGNodes,#NodesSG,numSoln,sizeOfSG,#edgesSG
+View_sim_rmvEmp,0,success,.00,.02,5.90,5.92,79907,1276,45800291,118197,116921
+View_sim,0,success,.00,.01,5.39,5.40,79907,1304,45800291,123025,121721
+FLTSIM,0,success,.18,4.67,33.43,38.28,79907,13127,45800291,2794931,2781804
+FLT,0,success,.17,5.06,34.28,39.52,79907,13127,45800291,2794931,2781804
+SIM,0,success,7.34,.63,5.65,13.62,79907,1269,45800291,117822,116553

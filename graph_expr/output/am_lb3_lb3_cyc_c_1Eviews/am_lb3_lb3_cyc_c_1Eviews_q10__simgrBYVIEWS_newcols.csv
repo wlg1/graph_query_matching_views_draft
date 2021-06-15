@@ -1,0 +1,44 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\am_lb3.dag
+V:403394,E:1267904,lbs:3
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb3_cyc_c_1Eviews_q10.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.93,.20,1.13,269342,160914,302313
+1,success,1.19,.20,1.39,269342,160914,302313
+2,success,1.15,.21,1.36,268733,160195,300963
+3,success,1.09,.19,1.28,269362,161159,303044
+4,success,1.03,.39,1.42,268713,159367,298833
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,2.26,.08,2.34,538075,185458,17124,450717
+0,success,.00,1.86,.07,1.93,538075,185458,17124,450717
+0,success,.00,1.38,.09,1.47,538075,185458,17124,450717
+0,success,.00,1.65,.06,1.71,538075,185458,17124,450717
+0,success,.00,1.41,.07,1.48,538075,185458,17124,450717
+0,success,.00,1.09,.06,1.15,538075,185458,17124,450717
+0,success,.00,1.25,.05,1.30,538075,185458,17124,450717
+0,success,.00,1.20,.07,1.27,538075,185458,17124,450717
+0,success,.00,1.09,.05,1.14,538075,185458,17124,450717
+0,success,.00,1.06,.05,1.11,538075,185458,17124,450717
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,1.43,.06,1.49,538075,185458,17124,450717
+
+Data loading Time,3.03
+Index building Time,.90
+Average Eval Time per run,9.16
+Average Eval Time per query,9.16
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,8.77
+Average Matching Time per query,8.77
+Average Enumeration Time per run,.38
+Average Enumeration Time per query,.38
+Average Nodes before per query,538075.00
+Average Nodes after per query,185458.00
+Average number of solution tuples per query,17124.00
+Max Used Memory,2009.00 MB
+*****************************************************

@@ -12,15 +12,17 @@ def RepresentsInt(s):
 edgeTypeList = ['c']
 numqrys = 13
 totNumE = 3
+# dataType = 'Email_lb20_lb20_cyc'
+dataType = 'am_lb3_lb3_cyc' 
 
-def run(edgeType, numqrys, totNumE):
+def run(edgeType, dataType, numqrys, totNumE):
     algoNames = ['simgrBYVIEWS_rmvEmpty', 'simgrBYVIEWS']
     tot_ByEdge = []
     for numE in range(1,totNumE + 1):
         algo_avgViewSizes = {}
         for algoN in algoNames:
             algo_avgViewSizes[algoN] = [0] * numqrys
-        output_prefix = 'output/Email_lb20_lb20_cyc_'+edgeType+'_'+str(numE)+'Eviews'
+        output_prefix = 'output/' + dataType +'_'+edgeType+'_'+str(numE)+'Eviews'
         input_path = output_prefix + '/'
         for filename in os.listdir(input_path):
             if 'VIEWS' not in filename:
@@ -66,4 +68,4 @@ def run(edgeType, numqrys, totNumE):
         plt.savefig(output_prefix+'_q'+str(qrynum+6)+'_ViewSizes.png', bbox_inches="tight")
         
 for edgeType in edgeTypeList:
-    run(edgeType, numqrys, totNumE)
+    run(edgeType, dataType, numqrys, totNumE)

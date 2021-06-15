@@ -95,6 +95,7 @@ public class ViewAnsGrMain2 {
 		System.out.println("\nTotal eval time: " + tt.Stop() / 1000 + "sec.");
 
 		writeStatsToCSV();
+		
 		// skip the execution of the timeout tasks;
 //		System.exit(0);
 	}
@@ -418,6 +419,7 @@ public class ViewAnsGrMain2 {
 			}
 		} // end of while loop to test a new mapping
 	} //end of getHom()
+	
 	
 	public static void main(String[] args) throws Exception {
 

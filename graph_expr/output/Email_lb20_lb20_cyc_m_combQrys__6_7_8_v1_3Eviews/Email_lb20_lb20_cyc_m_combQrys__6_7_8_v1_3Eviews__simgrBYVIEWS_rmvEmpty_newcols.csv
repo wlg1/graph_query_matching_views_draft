@@ -1,0 +1,56 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_combQrys__6_7_8_v1_3Eviews.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,8.15,53.15,61.31,53237,10427,12036988
+1,success,2.68,2.85,5.53,53320,5387,544268
+2,success,7.91,50.91,58.82,53400,17408,13104649
+3,success,13.96,32.20,46.16,53468,16288,2269560
+4,success,1.06,.30,1.36,53521,10543,384912
+5,success,13.96,1.19,15.16,53114,10873,1953022
+6,success,.61,.01,.61,53037,1643,11051
+7,success,.66,.80,1.46,53388,1993,85053
+8,success,.80,1.17,1.97,53247,10204,1169489
+9,success,.15,.01,.16,53320,581,2427
+10,success,.33,.86,1.19,53346,3049,213901
+11,success,13.31,25.69,39.00,53114,17347,13139618
+12,success,.50,.08,.58,53443,1637,9577
+13,success,.69,.94,1.64,53290,3121,284464
+14,success,9.53,35.11,44.64,53388,10779,12561166
+15,success,1.00,.28,1.28,53315,10671,392342
+16,success,.42,1.71,2.12,53443,5651,717039
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,exceedLimit,.00,.04,.00,124.86,146499,1958,100000000,106868
+0,exceedLimit,.00,.03,.00,119.63,146499,1958,100000000,106868
+0,exceedLimit,.00,.03,.00,122.25,146499,1958,100000000,106868
+0,exceedLimit,.00,.03,.00,109.67,146499,1958,100000000,106868
+0,exceedLimit,.00,.04,.00,108.80,146499,1958,100000000,106868
+0,exceedLimit,.00,.02,.00,108.65,146499,1958,100000000,106868
+0,exceedLimit,.00,.02,.00,113.96,146499,1958,100000000,106868
+0,exceedLimit,.00,.02,.00,111.90,146499,1958,100000000,106868
+0,exceedLimit,.00,.02,.00,108.84,146499,1958,100000000,106868
+0,exceedLimit,.00,.02,.00,108.64,146499,1958,100000000,106868
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,exceedLimit,.00,.03,.00,113.72,146499,1958,100000000,106868
+
+Data loading Time,.60
+Index building Time,.17
+Average Eval Time per run,638.48
+Average Eval Time per query,638.48
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,.18
+Average Matching Time per query,.18
+Average Enumeration Time per run,.00
+Average Enumeration Time per query,.00
+Average Nodes before per query,146499.00
+Average Nodes after per query,1958.00
+Average number of solution tuples per query,100000000.00
+Max Used Memory,2861.00 MB
+*****************************************************

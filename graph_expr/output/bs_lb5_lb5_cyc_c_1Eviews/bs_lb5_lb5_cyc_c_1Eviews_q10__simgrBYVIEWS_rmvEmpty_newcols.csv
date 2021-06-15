@@ -1,0 +1,44 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\bs_lb5.dag
+V:685230,E:4029494,lbs:5
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb5_cyc_c_1Eviews_q10.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,1.51,.40,1.91,273804,103948,254947
+1,success,.97,.16,1.13,273914,103465,254493
+2,success,1.13,.17,1.30,274416,104693,266021
+3,success,1.11,.12,1.23,273914,111341,275773
+4,success,1.04,.25,1.29,274306,103756,253765
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.85,.58,1.43,548220,53816,872107,274344
+0,success,.00,.56,.28,.84,548220,53816,872107,274344
+0,success,.00,.53,.15,.68,548220,53816,872107,274344
+0,success,.00,.49,.14,.63,548220,53816,872107,274344
+0,success,.00,.52,.13,.65,548220,53816,872107,274344
+0,success,.00,.52,.19,.72,548220,53816,872107,274344
+0,success,.00,.46,.12,.58,548220,53816,872107,274344
+0,success,.00,.50,.13,.63,548220,53816,872107,274344
+0,success,.00,.42,.12,.54,548220,53816,872107,274344
+0,success,.00,.42,.13,.55,548220,53816,872107,274344
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.53,.20,.72,548220,53816,872107,274344
+
+Data loading Time,5.96
+Index building Time,1.08
+Average Eval Time per run,4.50
+Average Eval Time per query,4.50
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,3.16
+Average Matching Time per query,3.16
+Average Enumeration Time per run,1.34
+Average Enumeration Time per query,1.34
+Average Nodes before per query,548220.00
+Average Nodes after per query,53816.00
+Average number of solution tuples per query,872107.00
+Max Used Memory,1674.00 MB
+*****************************************************

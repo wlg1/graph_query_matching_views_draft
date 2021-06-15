@@ -71,7 +71,7 @@ while True:
         break
 
 #output queries in format readable by patternMatch algos
-prefix = input_file.replace('inst_','')
+prefix = input_file.replace('inst_','').replace('.qry','')
 outFN = prefix+"_combQrys_"
 for qrynum in qrys_to_combine:
     outFN = outFN+"_"+str(qrynum)
@@ -92,7 +92,7 @@ out_file.close()
 
 fig = plt.figure()
 ax1 = plt.subplot2grid((1, 1), (0, 0))
-pos = nx.spring_layout(F, k=0.5, iterations=50)
+pos = nx.spring_layout(F, k=1, iterations=5)
 node_labels = nx.get_node_attributes(F, 'label')
 edges = nx.get_edge_attributes(F,'label')
 colors = [F[u][v]['color'] for u,v in edges]

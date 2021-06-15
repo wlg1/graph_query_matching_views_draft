@@ -6,32 +6,41 @@ Algorithm:DagEval_simgr
 *****************************************************
 View,Build,Times:,
 id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
-0,success,.26,.72,.98,39689,2879,80212
-1,success,1.79,3.27,5.06,39977,4053,1458309
-2,success,40.12,9.95,50.06,39492,8247,1193094
-3,success,.16,.00,.16,39649,520,1039
-4,success,.71,10.88,11.60,39846,8517,1741399
+0,success,.92,13.16,14.08,39846,8517,1741399
+1,success,.15,.47,.62,39689,2879,80212
+2,success,.15,.23,.38,39649,7660,326777
+3,success,.15,1.26,1.41,39689,7606,474199
+4,success,1.11,2.80,3.91,39977,4053,1458309
+5,success,.20,.39,.59,39689,3412,73779
+6,success,2.49,3.31,5.79,39492,10036,1354753
 *****************************************************
 id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
-0,success,.00,.01,.33,.33,79469,1407,1029072,48203
-0,success,.00,.01,.16,.17,79469,1407,1029072,48203
-0,success,.00,.01,.15,.16,79469,1407,1029072,48203
+0,success,.00,.01,.19,.20,79469,1408,1029072,48267
+0,success,.00,.01,.15,.16,79469,1408,1029072,48267
+0,success,.00,.01,.14,.15,79469,1408,1029072,48267
+0,success,.00,.01,.15,.16,79469,1408,1029072,48267
+0,success,.00,.01,.15,.16,79469,1408,1029072,48267
+0,success,.00,.01,.17,.18,79469,1408,1029072,48267
+0,success,.00,.01,.14,.15,79469,1408,1029072,48267
+0,success,.00,.01,.14,.15,79469,1408,1029072,48267
+0,success,.00,.01,.17,.18,79469,1408,1029072,48267
+0,success,.00,.01,.15,.16,79469,1408,1029072,48267
 Average,running,time:,
 id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
-0,success,.00,.01,.21,.22,79469,1407,1029072,48203
+0,success,.00,.01,.16,.17,79469,1408,1029072,48267
 
-Data loading Time,.60
-Index building Time,.20
-Average Eval Time per run,.50
-Average Eval Time per query,.50
+Data loading Time,.78
+Index building Time,.22
+Average Eval Time per run,.92
+Average Eval Time per query,.92
 Average pruning Time per run,.00
 Average pruning Time per query,.00
-Average Matching Time per run,.02
-Average Matching Time per query,.02
-Average Enumeration Time per run,.48
-Average Enumeration Time per query,.48
+Average Matching Time per run,.06
+Average Matching Time per query,.06
+Average Enumeration Time per run,.86
+Average Enumeration Time per query,.86
 Average Nodes before per query,79469.00
-Average Nodes after per query,1407.00
+Average Nodes after per query,1408.00
 Average number of solution tuples per query,1029072.00
-Max Used Memory,2824.00 MB
+Max Used Memory,2896.00 MB
 *****************************************************

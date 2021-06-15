@@ -1,12 +1,10 @@
 package views;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.roaringbitmap.RoaringBitmap;
 
 import dao.PoolEntry;
-import graph.GraphNode;
 
 public class nodeset {
 	
@@ -26,4 +24,10 @@ public class nodeset {
 			fwdAdjLists.put(gn, edgeHM);
 		}
 	}
+	
+//	public void clear(){
+//		gnodesBits.clear();
+//		fwdAdjLists.clear();
+//		GNtoPE.clear();
+//	}
 }

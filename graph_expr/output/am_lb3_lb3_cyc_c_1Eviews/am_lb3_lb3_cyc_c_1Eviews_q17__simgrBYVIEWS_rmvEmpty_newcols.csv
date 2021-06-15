@@ -1,0 +1,45 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\am_lb3.dag
+V:403394,E:1267904,lbs:3
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb3_cyc_c_1Eviews_q17.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,1.07,.18,1.25,268733,159985,300565
+1,success,.98,.19,1.17,268104,159779,300161
+2,success,2.24,.25,2.49,268733,160195,300963
+3,success,1.27,.19,1.46,268733,160195,300963
+4,success,1.25,.30,1.55,268733,160195,300963
+5,success,1.19,.23,1.41,268104,159779,300161
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,2.23,.08,2.31,805570,226652,5356,505619
+0,success,.00,2.20,.10,2.31,805570,226652,5356,505619
+0,success,.00,1.70,.08,1.78,805570,226652,5356,505619
+0,success,.00,1.93,.10,2.04,805570,226652,5356,505619
+0,success,.00,2.02,.07,2.10,805570,226652,5356,505619
+0,success,.00,1.65,.09,1.74,805570,226652,5356,505619
+0,success,.00,1.73,.07,1.80,805570,226652,5356,505619
+0,success,.00,1.79,.09,1.88,805570,226652,5356,505619
+0,success,.00,1.75,.07,1.82,805570,226652,5356,505619
+0,success,.00,1.90,.08,1.98,805570,226652,5356,505619
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,1.89,.08,1.97,805570,226652,5356,505619
+
+Data loading Time,2.85
+Index building Time,.76
+Average Eval Time per run,11.20
+Average Eval Time per query,11.20
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,10.73
+Average Matching Time per query,10.73
+Average Enumeration Time per run,.47
+Average Enumeration Time per query,.47
+Average Nodes before per query,805570.00
+Average Nodes after per query,226652.00
+Average number of solution tuples per query,5356.00
+Max Used Memory,3293.00 MB
+*****************************************************
