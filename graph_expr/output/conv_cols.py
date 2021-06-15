@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import csv, os, pdb
 
-directory = r'D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\output\badcol_outputs'
+directory = r'D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\output\__badcol_outputs'
 
 def output_goodcol(fn):
     input_fn = '__badcol_outputs/' + fn + '.csv'

@@ -1,0 +1,48 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_3Eviews_ovl_5_q10.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.21,.00,.21,39833,592,16450
+1,success,.28,.94,1.23,53133,8433,1233082
+2,success,1.48,2.07,3.55,53133,10222,1354518
+3,success,.70,1.78,2.48,53133,3646,417321
+4,success,.37,.52,.89,53133,9839,389807
+5,success,1.03,9.51,10.54,53133,10794,1868868
+6,success,.16,.21,.37,39844,1205,153229
+7,success,.25,2.97,3.22,53133,14961,1643659
+8,success,2.25,3.46,5.70,53133,3967,1185747
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.00,.09,.00,.09,53133,839,6318,26968
+0,success,.00,.01,.00,.02,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+0,success,.00,.01,.00,.01,53133,839,6318,26968
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.00,.02,.00,.02,53133,839,6318,26968
+
+Data loading Time,.69
+Index building Time,.17
+Average Eval Time per run,.15
+Average Eval Time per query,.15
+Average pruning Time per run,.00
+Average pruning Time per query,.00
+Average Matching Time per run,.14
+Average Matching Time per query,.14
+Average Enumeration Time per run,.01
+Average Enumeration Time per query,.01
+Average Nodes before per query,53133.00
+Average Nodes after per query,839.00
+Average number of solution tuples per query,6318.00
+Max Used Memory,1205.00 MB
+*****************************************************

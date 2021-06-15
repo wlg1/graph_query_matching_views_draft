@@ -59,9 +59,9 @@ public class combinedMain {
 //		theMain.run(dataFileN, queryFileN, viewFileN);
 		
 		//loop thru files in input list of inputs or inputs in folder
-//		String dataFileN = "Email_lb20.dag";
+		String dataFileN = "Email_lb20.dag";
 //		String dataFileN = "am_lb3.dag";
-		String dataFileN = "bs_lb5.dag";
+//		String dataFileN = "bs_lb5.dag";
 		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files";
 		  File dir = new File(myDirectoryPath);
 		  File[] directoryListing = dir.listFiles();
