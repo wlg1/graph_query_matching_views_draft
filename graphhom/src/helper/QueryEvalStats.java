@@ -301,7 +301,7 @@ public class QueryEvalStats {
 		opw.append("Queryset:" + qryFN + "\r\n");
 		opw.append("Algorithm:" + algN + "\r\n");
 		
-		DecimalFormat f = new DecimalFormat("##.00");
+		DecimalFormat f = new DecimalFormat("##.0000");
 
 		int totQs = qryEvalStats[0].size();
 		int numQs = totQs;
@@ -422,12 +422,12 @@ public class QueryEvalStats {
 		
 		opw.append("Average running time: \r\n");
 		opw.append("Algo" + " " + "id" + " " + "status" + " " + "preFiltTime" + " " + "SGbuildTime" + " " + "MIjoinTime"
-				+ " " + "totTime" + " " + "#DGNodes" + " " + "#NodesSG" + " " + "numSoln" + " "
+				+ " " + "totTime" + " " + "#SumInvL" + " " + "#NodesSG" + " " + "numSoln" + " "
 				+  "sizeOfSG" + " " + "#edgesSG" + "\r\n");
 	}
 	
 	public void printToFileCombined(PrintWriter opw, String algo) {
-		DecimalFormat f = new DecimalFormat("##.00");
+		DecimalFormat f = new DecimalFormat("##.0000");
 
 		int totQs = qryEvalStats[0].size();
 		int numQs = totQs;

@@ -6,23 +6,24 @@ import matplotlib.pyplot as plt
 import itertools
 import os
 
+#OUTPUT: in same dir, a folder of qry, views, infotxt, imgs
+
 #store both directed and undirected graphs. rand get subgraphs of size X
 #choose how many subgraphs of sizes 2 and 3 you want
 #at end, record how many edges overlap, and % of those over total # edges
 
 #user tunable parameters
-min_num_Vedges = 3
+min_num_Vedges = 4
 max_num_Vedges = min_num_Vedges
-num_queries = 13
-overlap_thres = 1 #avg overlap of edges needed
+num_queries = 1
+overlap_thres = None  #avg overlap of edges needed
 
-input_file = 'inst_lb20_cyc_m'
-# input_file = 'lb20_cyc_m_combQrys__6_7_8_v1'
-# input_file = 'inst_lb5_cyc_c'
+input_file = 'rand_numE_6'
 
-input_path = 'queries/' + input_file + '.qry'
+# input_path = 'queries/' + input_file + '.qry'
+input_path = input_file + '.qry'
 output_prefix = input_file.replace('inst_', '') + '_'+str(max_num_Vedges)+'Eviews'
-if overlap_thres != '':
+if overlap_thres != None:
     output_prefix = output_prefix + '_ovl_' + str(overlap_thres)
 if not os.path.exists(output_prefix):
     os.makedirs(output_prefix)
@@ -94,68 +95,64 @@ for querynum in range(num_queries):
 
     if not all_connected_subgraphs:
         continue
-                
-    #randomly choose views until all edges covered
-    # covered_edges = []
-    # views = []
-    # goFlag = True
-    # edges = list(G.edges())
-    # escCounter = 0
-    # # while goFlag and escCounter < 20:
-    # while goFlag:
-    #     vw = sample(all_connected_subgraphs, 1)[0]
-    #     if vw not in views:
-    #         views.append(vw)
-    #         # all_connected_subgraphs.remove(vw)
-    #         covered_edges += list(vw.edges())
-    #         if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
-    #             goFlag = False
-    #     escCounter += 1
-    #     if escCounter > 20:
-    #         x=1
     
-    #choose edges until avg total overlap is > overlap_threshold
-    pass_overlap_thres = True
-    covered_edges = []
-    views = []
-    goFlag = True
-    edges = list(G.edges())
-    escCounter = 0
-    # while goFlag and escCounter < 20:
-    while goFlag:
-        vw = sample(all_connected_subgraphs, 1)[0]
-        if vw not in views:
-            views.append(vw)
-            # all_connected_subgraphs.remove(vw)
-            covered_edges += list(vw.edges())
-            if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
-                goFlag = False
+    if overlap_thres == None:
+        #randomly choose views until all edges covered
+        covered_edges = []
+        views = []
+        goFlag = True
+        edges = list(G.edges())
+        while goFlag:
+            vw = sample(all_connected_subgraphs, 1)[0]
+            if vw not in views:
+                views.append(vw)
+                # all_connected_subgraphs.remove(vw)
+                covered_edges += list(vw.edges())
+                if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
+                    goFlag = False
+    else:
+        #choose edges until avg total overlap is > overlap_threshold
+        pass_overlap_thres = True
+        covered_edges = []
+        views = []
+        goFlag = True
+        edges = list(G.edges())
+        escCounter = 0
+        # while goFlag and escCounter < 20:
+        while goFlag:
+            vw = sample(all_connected_subgraphs, 1)[0]
+            if vw not in views:
+                views.append(vw)
+                # all_connected_subgraphs.remove(vw)
+                covered_edges += list(vw.edges())
+                if (all(x in covered_edges for x in edges)) or not all_connected_subgraphs:
+                    goFlag = False
+                    
+            num_edges = {} # (x,y) : num overlaps
+            tot_num_overlap = 0
+            for e in edges:
+                num_overlap = 0
+                for vw in views:
+                    if e in list(vw.edges()):
+                        num_overlap += 1
+                num_edges[e] = num_overlap
+                tot_num_overlap += num_overlap
+                avg_overlap = tot_num_overlap / len(edges)
                 
-        num_edges = {} # (x,y) : num overlaps
-        tot_num_overlap = 0
-        for e in edges:
-            num_overlap = 0
-            for vw in views:
-                if e in list(vw.edges()):
-                    num_overlap += 1
-            num_edges[e] = num_overlap
-            tot_num_overlap += num_overlap
-            avg_overlap = tot_num_overlap / len(edges)
+            if avg_overlap < overlap_thres:
+                goFlag = True
+                
+            escCounter += 1
+            if escCounter > len(all_connected_subgraphs)*30:
+                pass_overlap_thres = False
+                break
             
-        if avg_overlap < overlap_thres:
-            goFlag = True
-            
-        escCounter += 1
-        if escCounter > len(all_connected_subgraphs)*30:
-            pass_overlap_thres = False
-            break
-        
-    if not pass_overlap_thres:
-        continue
+        if not pass_overlap_thres:
+            continue
     
     #outputviews of this query set
-    outFN = output_name + "_q" + str(querynum+6)
-    # outFN = output_name
+    # outFN = output_name + "_q" + str(querynum+6)
+    outFN = output_name
     out_file = open(outFN + ".vw", "w")
     for q, qry in enumerate(views):
         if max_num_Vedges > 1:
@@ -217,6 +214,8 @@ for querynum in range(num_queries):
         tail = str(list(nodes.keys()).index(e[1]))
         out_file.write("e " + head + " " + tail + " " + edges[e] + '\n' )
     out_file.close()
+    
+f.close()
     
 # A = (unTemplates[0].subgraph(c) for c in nx.connected_components(unTemplates[0]))
 # x = list(A)[0]

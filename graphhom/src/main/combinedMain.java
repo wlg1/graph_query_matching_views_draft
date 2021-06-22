@@ -22,12 +22,12 @@ public class combinedMain {
 		ViewAnsGrMain2 demain7 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
 //		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);
 //		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false);
-//		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
+		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
 
 //		demain.run();
 //		demain2.run();
 //		demain3.run();
-//		demain4.run();
+		demain4.run();
 //		demain5.run();
 		demain6.run();
 		demain7.run();
@@ -44,7 +44,7 @@ public class combinedMain {
 			demain7.stats.printToFileCombined(opw, "View_sim");
 //			demain2.stats.printToFileCombined(opw, "FLTSIM");
 //			demain3.stats.printToFileCombined(opw, "FLT");
-//			demain4.stats.printToFileCombined(opw, "SIM");
+			demain4.stats.printToFileCombined(opw, "SIM");
 			
 			opw.close();
 		} catch (FileNotFoundException e) {
