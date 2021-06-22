@@ -1,8 +1,0 @@
-num views: 3
-tot num overlapping edges: 6
-avg num overlapping edges: 1.5
-edge : num overlaps
-('1_9', '2_9') : 3
-('1_9', '5_9') : 1
-('2_9', '4_9') : 1
-('2_9', '3_9') : 1

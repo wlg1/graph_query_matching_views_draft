@@ -7,28 +7,20 @@ import matplotlib.pyplot as plt
 #tunable params
 edgeTypeList = ['c']
 numqrys = 1
-totNumE = 3
-numVE = 2
-minOVL = 1
-maxOVL = 10
 qrySizes = [4,6,8]
-# qrySizes = [4,6]
-# dataType = 'Email_lb20_lb20_cyc'
-# dataType = 'am_lb3_lb3_cyc' 
-# dataType = 'bs_lb5_lb5_cyc'
-dataType = 'Email_lb20_lb20_cyc_c_combQrys__15'
+dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_2DE'
 
-def run(edgeType, dataType, qrySizes, numqrys, numVE, minOVL, maxOVL):
+def run(edgeType, dataType, qrySizes, numqrys):
     # algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
     # algoNames = ['View_sim_rmvEmp', 'View_sim']
     algoNames = ['View_sim_rmvEmp', 'View_sim', 'SIM']
     numSolns = [0] * len(qrySizes)
-    totTimes_ByEdge = []
-    for numE in qrySizes:
+    totTimes_ByEdge = []  #contains each x-axis tick's y-value
+    for numE in qrySizes: #loop thru x-axis. each x-axis tick is in diff folder
         algo_totTimes = []
         for i in range(len(algoNames)):
-            algo_totTimes.append([0] * numqrys)    
-        output_prefix = 'output/' + dataType +'_numE_'+ str(numE) + '_'+str(numVE)+'Eviews' + '_ovl_' + str(minOVL) + '_' + str(maxOVL)
+            algo_totTimes.append([0] * numqrys) #do this to avg at end
+        output_prefix = 'output/' + dataType+ '_'+ str(numE) +'numE'
         input_path = output_prefix + '/'
         os.listdir(input_path).sort()
         for filename in os.listdir(input_path):
@@ -70,4 +62,4 @@ def run(edgeType, dataType, qrySizes, numqrys, numVE, minOVL, maxOVL):
     #     plt.savefig(output_prefix+'_q'+str(qrynum+10)+'_Times.png', bbox_inches="tight")
             
 for edgeType in edgeTypeList:
-    run(edgeType, dataType, qrySizes, numqrys, numVE, minOVL, maxOVL)
+    run(edgeType, dataType, qrySizes, numqrys)
