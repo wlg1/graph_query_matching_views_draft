@@ -13,7 +13,7 @@ input_file = 'inst_lb20_cyc_c.qry'
 num_new_edges = 1
 qry_intv_len = 2
 minE = 3
-num_desc = 2
+num_desc = 6
 
 min_num_Vedges = 2
 max_num_Vedges = min_num_Vedges

@@ -8,13 +8,14 @@ import matplotlib.pyplot as plt
 edgeTypeList = ['c']
 numqrys = 1
 qrySizes = [4,6,8]
-dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_1DE'
+dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_3DE'
 
 def run(edgeType, dataType, qrySizes, numqrys):
     # algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
-    # algoNames = ['View_sim_rmvEmp', 'View_sim']
-    algoNames = ['View_sim_rmvEmp', 'View_sim', 'SIM']
+    algoNames = ['View_sim_rmvEmp', 'View_sim']
+    # algoNames = ['View_sim_rmvEmp', 'View_sim', 'SIM']
     numSolns = [0] * len(qrySizes)
+    # SGsizes = [0] * len(qrySizes)
     totTimes_ByEdge = []  #contains each x-axis tick's y-value
     for numE in qrySizes: #loop thru x-axis. each x-axis tick is in diff folder
         algo_totTimes = []
@@ -33,12 +34,15 @@ def run(edgeType, dataType, qrySizes, numqrys):
             for row in reader:
                 if row[0] in algoNames:
                     numSolns[qrySizes.index(numE) ] = (row[-3])
+                    # SGsizes[qrySizes.index(numE) ] = (row[-2])
                     algo_totTimes[algoNames.index(row[0])][0] = float(row[4])
         totTimes_ByEdge.append(algo_totTimes)
     
     #plot edges vs algoTotTime. each algo is a separate line in plot
     numSolns = ["{:,}".format(int(x)) for x in numSolns]
+    # SGsizes = ["{:,}".format(int(x)) for x in SGsizes]
     xAxis =  [str(x)+'E, '+numSolns[i] +'solns' for i, x in enumerate(qrySizes)]
+    # xAxis =  [str(x)+'E, '+SGsizes[i] +' SGsize' for i, x in enumerate(qrySizes)]
     plt.clf()
     for algoNum in range(len(algoNames)):
         yAxis = []

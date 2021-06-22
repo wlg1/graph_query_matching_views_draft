@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 edgeTypeList = ['c']
 numqrys = 1
 qrySizes = [4,6,8]
-dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_2DE'
+dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_6DE'
 
 def run(edgeType, dataType, qrySizes, numqrys):
     # algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']

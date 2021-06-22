@@ -1,0 +1,43 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_3DE_4numE.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.4460,4.6790,5.1250,39536,3419,892793
+1,success,.2660,4.0430,4.3090,39326,9940,1506793
+2,success,.2530,3.2620,3.5150,39326,9940,1506793
+3,success,.2260,.0010,.2270,39754,1200,2426
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,exceedLimit,.0000,.1610,.0000,12.2770,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0450,.0000,13.8800,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0430,.0000,13.7430,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0460,.0000,15.9070,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0570,.0000,13.4690,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0490,.0000,13.0880,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0450,.0000,13.9460,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0580,.0000,13.3270,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0490,.0000,17.4320,65990,3880,100000000,360511
+0,exceedLimit,.0000,.0720,.0000,13.9480,65990,3880,100000000,360511
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,exceedLimit,.0000,.0625,.0000,14.1017,65990,3880,100000000,360511
+
+Data loading Time,1.6190
+Index building Time,.2650
+Average Eval Time per run,75.9814
+Average Eval Time per query,75.9814
+Average pruning Time per run,.0000
+Average pruning Time per query,.0000
+Average Matching Time per run,.3792
+Average Matching Time per query,.3792
+Average Enumeration Time per run,.0000
+Average Enumeration Time per query,.0000
+Average Nodes before per query,65990.0000
+Average Nodes after per query,3880.0000
+Average number of solution tuples per query,100000000.0000
+Max Used Memory,1239.0000 MB
+*****************************************************
