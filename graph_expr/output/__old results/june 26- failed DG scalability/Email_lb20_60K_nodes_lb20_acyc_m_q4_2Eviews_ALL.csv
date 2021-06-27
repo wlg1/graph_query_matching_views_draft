@@ -1,0 +1,20 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:54715 E:16363 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q4_2Eviews.qry
+Algorithm:DagEval_simgr
+Average running time: 
+Algo id status preFiltTime SGbuildTime MIjoinTime totTime #SumInvL #NodesSG numSoln sizeOfSG #edgesSG
+View_sim_rmvEmp 0 success .0000 .0037 .0017 .0054 13,490 107 315 221 114
+View_sim 0 success .0000 .0011 .0006 .0017 13,490 342 315 456 114
+SIM 0 success .0355 .0006 .0008 .0369 13,490 106 315 220 114
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:54715 E:16363 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q4_2Eviews.qry
+Algorithm:DagEval_simgr
+Average running time: 
+Algo id status preFiltTime SGbuildTime MIjoinTime totTime #SumInvL #NodesSG numSoln sizeOfSG #edgesSG
+View_sim_rmvEmp 0 success .0000 .0017 .0006 .0023 13,490 107 315 221 114
+View_sim 0 success .0000 .0014 .0007 .0021 13,490 342 315 456 114
+SIM 0 success .0401 .0009 .0010 .0420 13,490 106 315 220 114

@@ -13,12 +13,12 @@ import os
 #at end, record how many edges overlap, and % of those over total # edges
 
 #user tunable parameters
-min_num_Vedges = 4
+min_num_Vedges = 2
 max_num_Vedges = min_num_Vedges
 num_queries = 1
 overlap_thres = None  #avg overlap of edges needed
 
-input_file = 'rand_numE_6'
+input_file = 'inst_lb20_acyc_m_q5'
 
 # input_path = 'queries/' + input_file + '.qry'
 input_path = input_file + '.qry'

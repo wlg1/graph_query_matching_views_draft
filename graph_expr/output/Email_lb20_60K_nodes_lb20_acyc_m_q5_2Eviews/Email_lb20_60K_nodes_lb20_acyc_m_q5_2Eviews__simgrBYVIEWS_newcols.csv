@@ -1,0 +1,43 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:60000,E:16780,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q5_2Eviews.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.0360,.0130,.0490,9107,403,2288
+1,success,.0240,.0910,.1150,9150,906,33930
+2,success,.0200,.0070,.0270,9167,424,2397
+3,success,.0180,.0010,.0190,9104,221,883
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.0000,.0040,.0170,.0210,15141,605,179364,1339
+0,success,.0000,.0020,.0180,.0200,15141,605,179364,1339
+0,success,.0000,.0030,.0180,.0210,15141,605,179364,1339
+0,success,.0000,.0020,.0160,.0180,15141,605,179364,1339
+0,success,.0000,.0020,.0190,.0210,15141,605,179364,1339
+0,success,.0000,.0010,.0170,.0180,15141,605,179364,1339
+0,success,.0000,.0010,.0170,.0180,15141,605,179364,1339
+0,success,.0000,.0010,.0170,.0180,15141,605,179364,1339
+0,success,.0000,.0020,.0170,.0190,15141,605,179364,1339
+0,success,.0000,.0020,.0170,.0190,15141,605,179364,1339
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.0000,.0020,.0173,.0193,15141,605,179364,1339
+
+Data loading Time,.1170
+Index building Time,.0310
+Average Eval Time per run,.1083
+Average Eval Time per query,.1083
+Average pruning Time per run,.0000
+Average pruning Time per query,.0000
+Average Matching Time per run,.0126
+Average Matching Time per query,.0126
+Average Enumeration Time per run,.0957
+Average Enumeration Time per query,.0957
+Average Nodes before per query,15141.0000
+Average Nodes after per query,605.0000
+Average number of solution tuples per query,179364.0000
+Max Used Memory,286.0000 MB
+*****************************************************

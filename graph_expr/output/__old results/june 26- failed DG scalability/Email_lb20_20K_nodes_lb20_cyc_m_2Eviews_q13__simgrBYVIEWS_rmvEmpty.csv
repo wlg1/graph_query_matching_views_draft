@@ -1,0 +1,47 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_20K_nodes.dag
+V:19633 E:2070 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q13.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View Build Times: 
+id status preTime matchTime totTime numNodesBefore numNodesAfter sizeOfAG
+0 success .0270 .0020 .0290 2,941 0 0
+1 success .0300 .0010 .0310 2,926 13 24
+2 success .0270 .0000 .0270 2,926 13 25
+3 success .0150 .0010 .0160 2,898 18 35
+4 success .0160 .0010 .0170 2,940 9 22
+5 success .0200 .0000 .0200 2,925 31 69
+6 success .0170 .0000 .0170 2,926 45 81
+7 success .0070 .0000 .0070 2,968 2 2
+8 success .0080 .0010 .0090 2,940 61 128
+*****************************************************
+id status preTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln sizeOfAG
+0 success .0000 .0020 .0000 .0020 4,895 2 0 2
+0 success .0000 .0020 .0010 .0030 4,895 2 0 2
+0 success .0000 .0020 .0010 .0030 4,895 2 0 2
+0 success .0000 .0020 .0010 .0030 4,895 2 0 2
+0 success .0000 .0010 .0010 .0020 4,895 2 0 2
+0 success .0000 .0010 .0010 .0020 4,895 2 0 2
+0 success .0000 .0010 .0000 .0010 4,895 2 0 2
+0 success .0000 .0010 .0010 .0020 4,895 2 0 2
+0 success .0000 .0010 .0000 .0010 4,895 2 0 2
+0 success .0000 .0010 .0000 .0010 4,895 2 0 2
+Average running time: 
+id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
+0 success .0000 .0014 .0006 .0020 4,895 2 0 2
+Data loading Time:.1710
+Index building Time:.0360
+Average Eval Time per run:.0127
+Average Eval Time per query:.0127
+Average pruning Time per run:.0000
+Average pruning Time per query:.0000
+Average Matching Time per run:.0089
+Average Matching Time per query:.0089
+Average Enumeration Time per run:.0038
+Average Enumeration Time per query:.0038
+Average Nodes before per query:4895.0000
+Average Nodes after per query:2.0000
+Average number of solution tuples per query:.0000
+Max Used Memory:70.0000 MB
+*****************************************************

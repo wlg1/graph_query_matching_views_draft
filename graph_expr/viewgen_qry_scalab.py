@@ -8,18 +8,18 @@ from random import sample
 
 #OUTPUT: in same dir, a new .qry and img
 
-qrys_to_combine = [15]  #or rand choice
-input_file = 'inst_lb20_cyc_c.qry'
+qrys_to_combine = [7]  #or rand choice
+input_file = 'inst_lb20_cyc_m.qry'
 num_new_edges = 1
 qry_intv_len = 2
-minE = 3
-num_desc = 6
+minE = 3  # min E for reduced graph
+num_desc = None  #None or an int
 
-min_num_Vedges = 2
+min_num_Vedges = 1
 max_num_Vedges = min_num_Vedges
 num_queries = 1
 min_overlap_thres = 1  #avg overlap of edges needed
-max_overlap_thres = 10
+max_overlap_thres = 1
 
 def get_edge_color(label):
     if label == '0':
@@ -48,8 +48,8 @@ while True:
     elif lineAsList[0] == 'e':
         head = lineAsList[1] + '_' + qryTempID
         tail = lineAsList[2] + '_' + qryTempID
-        # edgeLabel = lineAsList[3]
-        edgeLabel = '0'
+        edgeLabel = lineAsList[3]
+        # edgeLabel = '0'
         G.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
     if len(line) == 0:
         templates.append(G)
@@ -94,16 +94,16 @@ while True:
         F = tempF
 # """
 
-# F = templates[-1]
-
 #turn some edges into desc
-for i in range(num_desc):
-    randE = choice(list(F.edges()))
-    F.remove_edge(randE[0], randE[1])
-    edgeLabel = '1'
-    head = randE[0]
-    tail = randE[1]
-    F.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
+if num_desc != None:
+    edges = list(F.edges()).copy() #must make copy to loop thru all b/c changing list as loop thru it, so indices differ each time call list(F.edges())
+    for edgeNum in range(num_desc):
+        randE = edges[edgeNum]
+        F.remove_edge(randE[0], randE[1])
+        edgeLabel = '1'
+        head = randE[0]
+        tail = randE[1]
+        F.add_edge(head,tail, label = edgeLabel, color = get_edge_color(edgeLabel))
 
 #get graphs, each with diff num of edges
 qrys_diff_numE = [F]
@@ -112,8 +112,8 @@ q = 0
 while True and q < 500:
     cand_qry = F.copy()
     randE = choice(list(F.edges()))
-    if F.get_edge_data(randE[0], randE[1])['label'] == '1':
-        continue
+    # if F.get_edge_data(randE[0], randE[1])['label'] == '1':
+    #     continue
     cand_qry.remove_edge(randE[0], randE[1])
     for vert in list(cand_qry.degree()):
         if vert[1] == 0:
@@ -189,6 +189,7 @@ overlap for each query should be the same (not exactly, but approx)"""
 #at end, record how many edges overlap, and % of those over total # edges
 
 views = []
+views_as_edgeLists = []
 covered_edges = []
 for Gnum, G in enumerate(qrys_diff_numE):
     unG = G.to_undirected()
@@ -238,12 +239,20 @@ for Gnum, G in enumerate(qrys_diff_numE):
         escCounter = 0
         # while goFlag and escCounter < 20:
         while True:
+            if not all_connected_subgraphs:
+                break
+            
             vw = sample(all_connected_subgraphs, 1)[0]
-            if vw not in views:
+            view_as_eList = list(vw.edges())
+            view_as_eList.sort()
+            if view_as_eList not in views_as_edgeLists:
                 temp_views = views.copy()
                 temp_covered_edges = covered_edges.copy()
                 temp_views.append(vw)
                 temp_covered_edges += list(vw.edges())
+            else:
+                all_connected_subgraphs.remove(vw)
+                continue
                     
             num_edges = {} # (x,y) : num overlaps
             tot_num_overlap = 0
@@ -256,22 +265,25 @@ for Gnum, G in enumerate(qrys_diff_numE):
                 tot_num_overlap += num_overlap
                 avg_overlap = tot_num_overlap / len(edges)
                 
+            if (all(x in covered_edges for x in edges)) and avg_overlap > min_overlap_thres:
+                break
+            
             if avg_overlap > max_overlap_thres:
                 continue
             else:
                 views.append(vw)
+                views_as_edgeLists.append(view_as_eList)
                 covered_edges += list(vw.edges())
+                covered_edges = list(set(covered_edges))
+                all_connected_subgraphs.remove(vw)
                 
-            if (all(x in temp_covered_edges for x in edges)) and avg_overlap > min_overlap_thres:
-                break
-                
-            escCounter += 1
-            if escCounter > len(all_connected_subgraphs)*30:
-                pass_overlap_thres = False
-                break
+            # escCounter += 1
+            # if escCounter > len(all_connected_subgraphs)*30:
+            #     pass_overlap_thres = False
+            #     break
             
-        if not pass_overlap_thres:
-            continue
+        # if not pass_overlap_thres:
+        #     continue
     
     #outputviews of this query set based on input filename
     output_prefix = filenames[Gnum]

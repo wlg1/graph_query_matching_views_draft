@@ -1,0 +1,42 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_140K_nodes.dag
+V:140000,E:99450,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q4_2Eviews.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.3590,.0440,.4030,20942,852,5195
+1,success,.1580,.6670,.8250,21090,2881,83459
+2,success,.1980,.1810,.3790,20931,1992,13758
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.0000,.0130,.0530,.0660,34803,1961,438852,11606
+0,success,.0000,.0130,.0560,.0690,34803,1961,438852,11606
+0,success,.0000,.0100,.0550,.0650,34803,1961,438852,11606
+0,success,.0000,.0090,.0550,.0640,34803,1961,438852,11606
+0,success,.0000,.0110,.0500,.0610,34803,1961,438852,11606
+0,success,.0000,.0060,.0520,.0580,34803,1961,438852,11606
+0,success,.0000,.0070,.0500,.0570,34803,1961,438852,11606
+0,success,.0000,.0050,.0520,.0570,34803,1961,438852,11606
+0,success,.0000,.0090,.0610,.0700,34803,1961,438852,11606
+0,success,.0000,.0440,.0630,.1070,34803,1961,438852,11606
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.0000,.0127,.0547,.0674,34803,1961,438852,11606
+
+Data loading Time,.4360
+Index building Time,.0750
+Average Eval Time per run,.3551
+Average Eval Time per query,.3551
+Average pruning Time per run,.0000
+Average pruning Time per query,.0000
+Average Matching Time per run,.0591
+Average Matching Time per query,.0591
+Average Enumeration Time per run,.2960
+Average Enumeration Time per query,.2960
+Average Nodes before per query,34803.0000
+Average Nodes after per query,1961.0000
+Average number of solution tuples per query,438852.0000
+Max Used Memory,651.0000 MB
+*****************************************************

@@ -1,0 +1,43 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_80K_nodes.dag
+V:80000,E:30408,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q5_2Eviews.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.0440,.0310,.0750,12125,792,9826
+1,success,.0390,.6700,.7090,12185,1665,158999
+2,success,.0340,.0240,.0580,12114,784,9731
+3,success,.0310,.0130,.0440,12097,625,4464
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.0000,.0060,.5690,.5750,20164,1386,5828800,5764
+0,success,.0000,.0040,.6060,.6100,20164,1386,5828800,5764
+0,success,.0000,.0040,.5690,.5730,20164,1386,5828800,5764
+0,success,.0000,.0040,.5500,.5540,20164,1386,5828800,5764
+0,success,.0000,.0040,.5950,.5990,20164,1386,5828800,5764
+0,success,.0000,.0050,.5880,.5930,20164,1386,5828800,5764
+0,success,.0000,.0030,.5600,.5630,20164,1386,5828800,5764
+0,success,.0000,.0040,.5650,.5690,20164,1386,5828800,5764
+0,success,.0000,.0060,.5920,.5980,20164,1386,5828800,5764
+0,success,.0000,.0060,.5720,.5780,20164,1386,5828800,5764
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.0000,.0046,.5766,.5812,20164,1386,5828800,5764
+
+Data loading Time,.1270
+Index building Time,.0350
+Average Eval Time per run,3.1994
+Average Eval Time per query,3.1994
+Average pruning Time per run,.0000
+Average pruning Time per query,.0000
+Average Matching Time per run,.0247
+Average Matching Time per query,.0247
+Average Enumeration Time per run,3.1747
+Average Enumeration Time per query,3.1747
+Average Nodes before per query,20164.0000
+Average Nodes after per query,1386.0000
+Average number of solution tuples per query,5828800.0000
+Max Used Memory,460.0000 MB
+*****************************************************

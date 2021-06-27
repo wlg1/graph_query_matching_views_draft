@@ -1,0 +1,10 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:60000,E:16780,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q5_2Eviews.qry
+Algorithm:DagEval_simgr
+Average,running,time:,
+Algo,id,status,preFiltTime,SGbuildTime,MIjoinTime,totTime,#SumInvL,#NodesSG,numSoln,sizeOfSG,#edgesSG
+View_sim_rmvEmp,0,success,.0000,.0031,.0198,.0229,15141,432,179364,1166,734
+View_sim,0,success,.0000,.0020,.0173,.0193,15141,605,179364,1339,734
+SIM,0,success,.0292,.0015,.0357,.0664,15141,429,179364,1163,734

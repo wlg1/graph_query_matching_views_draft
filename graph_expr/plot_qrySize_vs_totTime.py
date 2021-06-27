@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 #tunable params
 edgeTypeList = ['c']
 numqrys = 1
-qrySizes = [4,6,8]
-dataType = 'Email_lb20_lb20_cyc_c_combQrys__15_2Eviews_ovl_1_10_6DE'
+qrySizes = [4,6,8, 10]
+dataType = 'Email_lb20_lb20_cyc_d_combQrys__12_1Eviews_ovl_1_1_10DE'
 
 def run(edgeType, dataType, qrySizes, numqrys):
     # algoNames = ['View_sim_rmvEmp', 'View_sim', 'FLTSIM', 'FLT', 'SIM']
@@ -37,7 +37,8 @@ def run(edgeType, dataType, qrySizes, numqrys):
         totTimes_ByEdge.append(algo_totTimes)
     
     #plot edges vs algoTotTime. each algo is a separate line in plot
-    numSolns = ["{:,}".format(int(x)) for x in numSolns]
+    # numSolns = ["{:,}".format(int(x)) for x in numSolns]
+    numSolns = ['100mil']*len(qrySizes)
     xAxis =  [str(x)+'E, '+numSolns[i] +'solns' for i, x in enumerate(qrySizes)]
     plt.clf()
     for algoNum in range(len(algoNames)):
@@ -46,6 +47,7 @@ def run(edgeType, dataType, qrySizes, numqrys):
             algoTimes = edgeTimes[algoNum]
             yAxis.append(sum(algoTimes) / len(algoTimes))
         plt.plot(xAxis, yAxis, label = algoNames[algoNum])
+    plt.title('qrySize vs totTime')
     plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
     plt.savefig(output_prefix+'_avgTimes.png', bbox_inches="tight")
     

@@ -1,0 +1,72 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:54715 E:16363 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q4_2Eviews.qry
+Algorithm:DagEval_IE
+id status preTime planTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln numPlans sizeOfAG
+0 success .16 .00 .00 .00 .16 13,490 106 315 0 220
+0 success .04 .00 .00 .00 .04 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .02 .00 .00 .00 .02 13,490 106 315 0 220
+0 success .02 .00 .00 .00 .02 13,490 106 315 0 220
+0 success .02 .00 .00 .00 .02 13,490 106 315 0 220
+0 success .02 .00 .00 .00 .02 13,490 106 315 0 220
+0 success .02 .00 .00 .00 .02 13,490 106 315 0 220
+0 success .01 .00 .00 .00 .02 13,490 106 315 0 220
+Average running time: 
+id status preTime planTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples numPlans sizeOfAG
+0 success .04 .00 .00 .00 .04 13,490 106 315 0 220
+Data loading Time:.35
+Index building Time:.07
+Average Eval Time per run:.28
+Average Eval Time per query:.28
+Average pruning Time per run:.00
+Average pruning Time per query:.00
+Average Plan Time per run:.00
+Average Plan Time per query:.00
+Average Matching Time per run:.00
+Average Matching Time per query:.00
+Average Enumeration Time per run:.01
+Average Enumeration Time per query:.01
+Average Nodes before per query:13490.00
+Average Nodes after per query:106.00
+Average number of solution tuples per query:315.00
+Max Used Memory:60.00 MB
+*****************************************************
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20_60K_nodes.dag
+V:54715 E:16363 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_acyc_m_q4_2Eviews.qry
+Algorithm:DagEval_IE
+id status preTime planTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln numPlans sizeOfAG
+0 success .10 .00 .00 .00 .10 13,490 106 315 0 220
+0 success .05 .00 .00 .00 .06 13,490 106 315 0 220
+0 success .04 .00 .00 .00 .04 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .04 .00 .00 .00 .04 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+0 success .03 .00 .00 .00 .03 13,490 106 315 0 220
+Average running time: 
+id status preTime planTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples numPlans sizeOfAG
+0 success .04 .00 .00 .00 .04 13,490 106 315 0 220
+Data loading Time:.42
+Index building Time:.07
+Average Eval Time per run:.27
+Average Eval Time per query:.27
+Average pruning Time per run:.00
+Average pruning Time per query:.00
+Average Plan Time per run:.00
+Average Plan Time per query:.00
+Average Matching Time per run:.01
+Average Matching Time per query:.01
+Average Enumeration Time per run:.01
+Average Enumeration Time per query:.01
+Average Nodes before per query:13490.00
+Average Nodes after per query:106.00
+Average number of solution tuples per query:315.00
+Max Used Memory:39.00 MB
+*****************************************************

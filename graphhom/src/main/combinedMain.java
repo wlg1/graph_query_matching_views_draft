@@ -59,9 +59,11 @@ public class combinedMain {
 //		theMain.run(dataFileN, queryFileN, viewFileN);
 		
 		//loop thru files in input list of inputs or inputs in folder
-		String dataFileN = "Email_lb20.dag";
+		String dataFileN = "Email_lb20_160K_nodes.dag";
+//		String dataFileN = "Email_lb20.dag";
 //		String dataFileN = "am_lb3.dag";
 //		String dataFileN = "bs_lb5.dag";
+		String[] splitDataFileName = dataFileN.split("[.]", 0);
 		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files";
 		  File dir = new File(myDirectoryPath);
 		  File[] directoryListing = dir.listFiles();
@@ -72,7 +74,7 @@ public class combinedMain {
 		    	if (ext.equals("qry")) {
 		    		String queryFileN = splitFileName[0] + ".qry";
 		    		String viewFileN = splitFileName[0] + ".vw";
-		    		String allFileN = splitFileName[0] + "_ALL";
+		    		String allFileN = splitDataFileName[0] + "_" + splitFileName[0] + "_ALL";
 		    		combinedMain theMain = new combinedMain();
 					theMain.run(dataFileN, queryFileN, viewFileN, allFileN);
 		    	}
