@@ -36,7 +36,11 @@ def run(dataGraphType, queryType, nodeSizes, numqrys):
             for row in reader:
                 if row[0] in algoNames:
                     numSolns[nodeSizes.index(numNodes) ] = (row[-3])
-                    algo_totTimes[algoNames.index(row[0])][0] = float(row[6])
+                    if row[2] != 'success':
+                        enumTime = float(row[6]) - (float(row[4]) + float(row[3]))
+                    else:
+                        enumTime = float(row[5])
+                    algo_totTimes[algoNames.index(row[0])][0] = enumTime
         totTimes_ByEdge.append(algo_totTimes)
     
     #plot edges vs algoTotTime. each algo is a separate line in plot
@@ -51,9 +55,9 @@ def run(dataGraphType, queryType, nodeSizes, numqrys):
             algoTimes = edgeTimes[algoNum]
             yAxis.append(sum(algoTimes) / len(algoTimes))
         plt.plot(xAxis, yAxis, label = algoNames[algoNum])
-    plt.title('#DGnodes vs totTime (secs)')
+    plt.title('#DGnodes vs _enumTimes (secs)')
     plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
-    plt.savefig(output_prefix+'_avgTimes.png', bbox_inches="tight")
+    plt.savefig(output_prefix+'_enumTimes.png', bbox_inches="tight")
     
     # for qrynum in range(numqrys):
     #     plt.figure()

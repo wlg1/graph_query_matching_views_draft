@@ -1,9 +1,0 @@
-*****************************************************
-Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
-V:265214 E:345203 lbs:20
-Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_c_q12_numE_8.qry
-Algorithm:DagEval_simgr
-Average running time: 
-Algo id status preFiltTime SGbuildTime MIjoinTime totTime #DGNodes #NodesSG numSoln sizeOfSG #edgesSG
-View_sim_rmvEmp 0 success .00 .00 .00 .00 66,267 118 1 816 698
-View_sim 0 success .00 .00 .00 .00 66,267 148 1 909 761
