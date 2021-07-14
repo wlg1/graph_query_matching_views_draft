@@ -44,7 +44,7 @@ public class DagHomIEFltSimMain {
 	Digraph g;
 	boolean simfilter;
 
-	public DagHomIEFltSimMain(String dataFN, String queryFN, boolean simfilter) {
+	public DagHomIEFltSimMain(String dataFN, String queryFN, boolean INsimfilter) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -53,6 +53,7 @@ public class DagHomIEFltSimMain {
 //		outFileN = Consts.OUTDIR + "sum_" + fn + "dag_IEfltsim" + suffix;
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
 		stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_IEfltsim");
+		simfilter = INsimfilter;
 		
 		String algotype;
 		if (simfilter) {

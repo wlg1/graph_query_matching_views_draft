@@ -6,11 +6,8 @@ import java.util.Map;
 
 import org.roaringbitmap.RoaringBitmap;
 
-import answerGraph.HybAnsGraphBuilder;
 import answerGraph.HybAnsGraphBuilderViews;
-import answerGraph.HybAnsGraphBuilderViews2;
-import answerGraph.HybAnsGraphBuilderViews3;
-import answerGraph.ViewsRIsumGraph;
+import answerGraph.HybAnsGraphBuilderViews4;
 import dao.BFLIndex;
 import dao.MatArray;
 import dao.Pool;
@@ -26,9 +23,7 @@ import query.graph.QEdge;
 import query.graph.QNode;
 import query.graph.Query;
 import simfilter.DagSimGraFilter;
-import tupleEnumerator.HybTupleEnumCache;
 import tupleEnumerator.HybTupleEnumer;
-import views.MIjoinExclViews;
 import views.nodeset;
 
 public class PartialViewAnsGr {
@@ -91,22 +86,23 @@ public class PartialViewAnsGr {
 		
 		tt = new TimeTracker();
 		tt.Start();
-		ArrayList<Pool> partialPool;
-		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
+//		ArrayList<Pool> partialPool;
+//		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViews3 BuildViews = new HybAnsGraphBuilderViews3(query, viewsOfQuery, qid_Ansgr, posToGN);	
-			partialPool = BuildViews.run();
-			uncoveredEdges = BuildViews.getUncoveredEdges();
+			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, posToGN, mCandLists, mBFL, nodes);	
+//			partialPool = BuildViews.run();
+//			uncoveredEdges = BuildViews.getUncoveredEdges();
+			mPool = BuildViews.run();
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
-			partialPool = BuildViews.run(stat);
+//			partialPool = BuildViews.run(stat);
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
 		}
 		
 		//send mPool to ViewsRIsumGraph. get the uncovered edges
 		//this modifies partialPool globally as it turns it into mPool
-		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, posToGN);
-		mPool = finishSG.run();
+//		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, posToGN);
+//		mPool = finishSG.run();
 		
 		double buildtm = tt.Stop() / 1000;
 		stat.setMatchTime(buildtm);

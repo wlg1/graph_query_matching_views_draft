@@ -126,7 +126,7 @@ public class HybTupleEnumer {
 		    
 			if (depth == max_depth - 1) {
 				tupleCount++;
-//				printMatchGNpos();
+				printMatchGNpos();
 				
 				// add to occ list of each query vertex i
 				for (i = 0; i < match.length; i++) { 

@@ -12,13 +12,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 
-import answerGraph.HybAnsGraphBuilderViews;
-import answerGraph.HybAnsGraphBuilderViews2;
 import dao.BFLIndex;
 import dao.DaoController;
-import dao.MatArray;
-import dao.Pool;
-import evaluator.DagHomIEFltSim;
 import evaluator.PartialViewAnsGr;
 import global.Consts;
 import global.Consts.AxisType;
@@ -37,7 +32,6 @@ import query.graph.Query;
 import query.graph.QueryDirectedCycle;
 import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
-import views.MIjoinExclViews;
 import views.getAnsGrViews;
 import views.nodeset;
 
@@ -56,7 +50,7 @@ public class PartialViewAnsGrMain {
 	boolean simfilter;
 	
 	public PartialViewAnsGrMain(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, 
-			boolean INrmvEmpty, boolean simfilter) {
+			boolean INrmvEmpty, boolean INsimfilter) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -66,6 +60,8 @@ public class PartialViewAnsGrMain {
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
 		useAnsGr = INuseAnsGr;
 		rmvEmpty = INrmvEmpty;
+		simfilter = INsimfilter;
+		
 		if (useAnsGr) {
 			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
