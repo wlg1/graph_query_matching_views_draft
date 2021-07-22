@@ -46,9 +46,11 @@ public class getAnsGrViews {
 	HybTupleEnumer tenum;
 	ArrayList<MatArray> mCandLists;
 	public HashMap<Integer, GraphNode> posToGN;
+	public HashMap<Integer, GraphNode> LintToGN;
 	boolean useAnsGr;
 
-	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN, boolean INuseAnsGr) {
+	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN, boolean INuseAnsGr,
+			HashMap<Integer, GraphNode> INLintToGN) {
 
 		mQuery = query;
 		mBFL = bfl;
@@ -57,6 +59,7 @@ public class getAnsGrViews {
 		posToGN = INposToGN;
 		tt = new TimeTracker();
 		useAnsGr = INuseAnsGr;
+		LintToGN = INLintToGN;
 	}
 
 	public ArrayList<nodeset> run(QueryEvalStat stat) throws Exception {
@@ -114,19 +117,23 @@ public class getAnsGrViews {
 			nodeset ns = new nodeset();
 			for (PoolEntry pe : pl.elist()) {
 				GraphNode gn = pe.mValue;
-				posToGN.put(gn.pos, gn);
-				ns.gnodesBits.add(gn.pos);
+//				posToGN.put(gn.pos, gn);
+				LintToGN.put(gn.L_interval.mStart, gn);
+//				ns.gnodesBits.add(gn.pos);
+				ns.gnodesBits.add(gn.L_interval.mStart);
 				if (pe.mFwdEntries != null){
 					HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
 					for (Integer key : pe.mFwdEntries.keySet()) {
 						RoaringBitmap newBitmap = new RoaringBitmap();
 						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
 						for (PoolEntry peTo : nodeFwd) {
-							newBitmap.add(peTo.mValue.pos);
+//							newBitmap.add(peTo.mValue.pos);
+							newBitmap.add(peTo.mValue.L_interval.mStart);
 						}
 						fal.put(key, newBitmap);
 					}
-					ns.fwdAdjLists.put(gn.pos, fal);
+//					ns.fwdAdjLists.put(gn.pos, fal);
+					ns.fwdAdjLists.put(gn.L_interval.mStart, fal);
 				} else {
 					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
 				}

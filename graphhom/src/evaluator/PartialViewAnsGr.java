@@ -43,10 +43,12 @@ public class PartialViewAnsGr {
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
 	HashMap<Integer, GraphNode> posToGN;
+	HashMap<Integer, GraphNode> LintToGN;
 
 	public PartialViewAnsGr(Query INquery, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN,
-			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter) {
+			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter,
+			HashMap<Integer, GraphNode> INLintToGN) {
 
 		query = INquery;
 		mBFL = bfl;
@@ -58,6 +60,7 @@ public class PartialViewAnsGr {
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
 		posToGN = INposToGN;
+		LintToGN = INLintToGN;
 
 	}
 
@@ -89,7 +92,8 @@ public class PartialViewAnsGr {
 //		ArrayList<Pool> partialPool;
 //		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, posToGN, mCandLists, mBFL, nodes);	
+			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, posToGN, 
+					mCandLists, mBFL, nodes, LintToGN);	
 //			partialPool = BuildViews.run();
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
 			mPool = BuildViews.run();

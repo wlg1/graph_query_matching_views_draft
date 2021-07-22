@@ -33,9 +33,7 @@ def output_goodcol(fn, newFolder):
 
 for file in os.listdir(directory):
     fn = file.split('.')[0]
-    newFolder = fn.replace('__simgrBYVIEWS_rmvEmpty', '')
-    newFolder = newFolder.replace('__simgrBYVIEWS', '')
-    newFolder = newFolder.replace('__IESIM', '')
+    newFolder = fn.split('__')[0]
     newFolder = newFolder.replace('_ALL', '')
     if not os.path.exists(newFolder):
         os.makedirs(newFolder)

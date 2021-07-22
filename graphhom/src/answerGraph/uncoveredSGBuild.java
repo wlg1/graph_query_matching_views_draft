@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.roaringbitmap.RoaringBitmap;
+import org.roaringbitmap.RoaringBatchIterator;
 
 import dao.BFLIndex;
 import dao.MatArray;
@@ -27,15 +28,20 @@ public class uncoveredSGBuild {
 	ArrayList<QEdge> uncoveredEdges;
 	HashMap<Integer, GraphNode> posToGN;
 	ArrayList<Integer> nodesToCompute;
+	ArrayList<nodeset> intersectedAnsGr;
+	HashMap<Integer, GraphNode> LintToGN;
 	
-	public uncoveredSGBuild(Query query, BFLIndex bfl,
-			ArrayList<MatArray> candLsts, ArrayList<QEdge> INuncoveredEdges, HashMap<Integer, GraphNode> INposToGN) {
+	public uncoveredSGBuild(Query query, BFLIndex bfl, ArrayList<MatArray> candLsts, 
+			ArrayList<QEdge> INuncoveredEdges, HashMap<Integer, GraphNode> INposToGN, 
+			ArrayList<nodeset> INintersectedAnsGr, HashMap<Integer, GraphNode> INLintToGN) {
 
 		mQuery = query;
 		mBFL = bfl;
 		mCandLists = candLsts;
 		uncoveredEdges = INuncoveredEdges;
 		posToGN = INposToGN;
+		intersectedAnsGr = INintersectedAnsGr;
+		LintToGN = INLintToGN;
 	}
 
 	public ArrayList<nodeset> run() {
@@ -43,7 +49,6 @@ public class uncoveredSGBuild {
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
 		initPool(tBitsIdxArr);
 
-//		for(QEdge edge: mQuery.edges){
 		for(QEdge edge: uncoveredEdges){
 			linkOneStep(edge,tBitsIdxArr);
 		}
@@ -53,19 +58,23 @@ public class uncoveredSGBuild {
 			nodeset ns = new nodeset();
 			for (PoolEntry pe : pl.elist()) {
 				GraphNode gn = pe.mValue;
-				posToGN.put(gn.pos, gn);
-				ns.gnodesBits.add(gn.pos);
+//				posToGN.put(gn.pos, gn);
+				LintToGN.put(gn.L_interval.mStart, gn);
+//				ns.gnodesBits.add(gn.pos);
+				ns.gnodesBits.add(gn.L_interval.mStart);
 				if (pe.mFwdEntries != null){
 					HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
 					for (Integer key : pe.mFwdEntries.keySet()) {
 						RoaringBitmap newBitmap = new RoaringBitmap();
 						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
 						for (PoolEntry peTo : nodeFwd) {
-							newBitmap.add(peTo.mValue.pos);
+//							newBitmap.add(peTo.mValue.pos);
+							newBitmap.add(peTo.mValue.L_interval.mStart);
 						}
 						fal.put(key, newBitmap);
 					}
-					ns.fwdAdjLists.put(gn.pos, fal);
+//					ns.fwdAdjLists.put(gn.pos, fal);
+					ns.fwdAdjLists.put(gn.L_interval.mStart, fal);
 				} else {
 					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
 				}
@@ -143,20 +152,61 @@ public class uncoveredSGBuild {
 			if (!nodesToCompute.contains(i)) {
 				continue;
 			}
-			MatArray mli = mCandLists.get(i);
-			ArrayList<GraphNode> elist = mli.elist();
+			
 			QNode qn = qnodes[i];
 			RoaringBitmap t_bits = new RoaringBitmap();
 			tBitsIdxArr[i] = t_bits;
 			int pos = 0; 
-			for (GraphNode n : elist) {
-				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
-				qAct.addEntry(actEntry);
-				t_bits.add(actEntry.getValue().L_interval.mStart);
+			
+//			MatArray mli = mCandLists.get(i);
+//			ArrayList<GraphNode> elist = mli.elist();
+//			for (GraphNode gn : elist) {
+//				if (posToGN.containsKey(gn.pos)) {
+//					System.out.println("RIGHT L_interval.mStart");
+//					System.out.println(gn.pos);
+//					System.out.println(gn.L_interval.mStart);
+//					GraphNode gn1 = LintToGN.get(gn.L_interval.mStart);
+//					System.out.println(gn1.pos);
+//					PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
+//					qAct.addEntry(actEntry);
+//					t_bits.add(actEntry.getValue().L_interval.mStart);
+//				}
+//			}
+//			
+//			nodeset intersectedNS = intersectedAnsGr.get(i);
+//			for (int n : intersectedNS.gnodesBits) {
+//				System.out.println("WRONG L_interval.mStart");
+//				System.out.println(n);
+//				GraphNode gn = posToGN.get(n);
+//				System.out.println(gn.L_interval.mStart);
+//				GraphNode gn1 = LintToGN.get(gn.L_interval.mStart);
+//				System.out.println(gn1.pos);
+//			}
+//			
+//			GraphNode A1 = LintToGN.get(124);
+//			GraphNode A2 = LintToGN.get(23); //from pos 1 in 
+//			
+//			int x=1;
+			
+			nodeset intersectedNS = intersectedAnsGr.get(i);
+			if (intersectedNS.GNtoPE != null) {
+				for (int n : intersectedNS.gnodesBits) { 
+//					GraphNode gn = posToGN.get(n);
+					GraphNode gn = LintToGN.get(n);
+					PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
+					qAct.addEntry(actEntry);
+					t_bits.add(actEntry.getValue().L_interval.mStart);
+				}
+			} else {
+				MatArray mli = mCandLists.get(i);
+				ArrayList<GraphNode> elist = mli.elist();
+				for (GraphNode n : elist) {
+					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+					qAct.addEntry(actEntry);
+					t_bits.add(actEntry.getValue().L_interval.mStart);
+				}
 			}
-
 		}
-
 	}
 
 	private void linkOneStep(QEdge edge, RoaringBitmap[] tBitsIdxArr) {
@@ -241,10 +291,25 @@ public class uncoveredSGBuild {
 		if (rs_and.isEmpty())
 			return false;
 
-		for (int ti : rs_and) {
-			PoolEntry e = list.get(t_bits.rank(ti) - 1);
-			r.addChild(e);
-			e.addParent(r);
+//		for (int ti : rs_and) {
+//			PoolEntry e = list.get(t_bits.rank(ti) - 1);
+//			r.addChild(e);
+//			e.addParent(r);
+//		}
+		
+		RoaringBatchIterator it = rs_and.getBatchIterator();
+		int[] buffer = new int[256];
+
+		while (it.hasNext()) {
+
+			int batch = it.nextBatch(buffer);
+			for(int i = 0; i<batch; ++i) {
+				PoolEntry e = list.get(t_bits.rank(buffer[i]) - 1);
+				r.addChild(e);
+				e.addParent(r);
+				
+			}
+
 		}
 
 		return true;

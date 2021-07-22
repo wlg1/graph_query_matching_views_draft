@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import global.Consts;
-import helper.QueryEvalStats;
 
 public class combinedMain {
 	
@@ -16,6 +14,8 @@ public class combinedMain {
 	}
 	
 	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN) throws Exception {
+		String partialViewFileN = "lb20_cyc_m_2Eviews_q13_partial.vw";
+		
 //		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true);
 //		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
 		ViewAnsGrMain2 demain6 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true);
@@ -23,28 +23,33 @@ public class combinedMain {
 		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);
 		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false);
 		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
+		PartialViewAnsGrMain demain8 = new PartialViewAnsGrMain(dataFileN, queryFileN, partialViewFileN, 
+				false, true, true);
 
 //		demain.run();
 		demain2.run();
-		demain3.run();
-		demain4.run();
+//		demain3.run();
+//		demain4.run();
 //		demain5.run();
 		demain6.run();
-		demain7.run();
+//		demain7.run();
+		demain8.run();
 		
 		PrintWriter opw;
 		String outFileN = Consts.OUTDIR + allFileN + ".csv";
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			demain6.stats.printToFileCombinedHeader(opw);
+			demain2.stats.printToFileCombinedHeader(opw);
 //			demain.stats.printToFileCombined(opw, "View_ans_rmvEmp");
 //			demain5.stats.printToFileCombined(opw, "View_ans");
 			demain6.stats.printToFileCombined(opw, "View_sim_rmvEmp");
-			demain7.stats.printToFileCombined(opw, "View_sim");
+//			demain7.stats.printToFileCombined(opw, "View_sim");
+			demain8.stats.printToFileCombined(opw, "View_partial");
 			demain2.stats.printToFileCombined(opw, "FLTSIM");
-			demain3.stats.printToFileCombined(opw, "FLT");
-			demain4.stats.printToFileCombined(opw, "SIM");
+//			demain3.stats.printToFileCombined(opw, "FLT");
+//			demain4.stats.printToFileCombined(opw, "SIM");
+			
 			
 			opw.close();
 		} catch (FileNotFoundException e) {
@@ -59,7 +64,7 @@ public class combinedMain {
 //		theMain.run(dataFileN, queryFileN, viewFileN);
 		
 		//loop thru files in input list of inputs or inputs in folder
-		String dataFileN = "Email_lb40_v2.dag";
+		String dataFileN = "Email_lb20.dag";
 		String[] splitDataFileName = dataFileN.split("[.]", 0);
 		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files";
 		  File dir = new File(myDirectoryPath);

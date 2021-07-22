@@ -63,22 +63,22 @@ public class PartialViewAnsGrMain {
 		simfilter = INsimfilter;
 		
 		if (useAnsGr) {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS";
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS_PARTIAL";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 		} else {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS";
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS_PARTIAL";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_simgr");
 		}
 		
-		if (rmvEmpty) {
-			outFileN = outFileN + "_rmvEmpty";
-		}
-		
-		if (simfilter) {
-			outFileN = outFileN + "_FLTSIM";
-		} else {
-			outFileN = outFileN + "_FLT";
-		}
+//		if (rmvEmpty) {
+//			outFileN = outFileN + "_rmvEmpty";
+//		}
+//		
+//		if (simfilter) {
+//			outFileN = outFileN + "_FLTSIM";
+//		} else {
+//			outFileN = outFileN + "_FLT";
+//		}
 		outFileN = outFileN + suffix;
 	}
 
@@ -158,6 +158,7 @@ public class PartialViewAnsGrMain {
 	private void evaluate() throws Exception {
 		
 //		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
+		HashMap<Integer, GraphNode> LintToGN = new HashMap<Integer, GraphNode>(); 
 		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
@@ -167,10 +168,10 @@ public class PartialViewAnsGrMain {
 			sV.totNodesBefore = totNodes_before;
 			
 			FilterBuilder fbV = new FilterBuilder(g, view);
-			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr);
+			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr, LintToGN);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
-			posToGN = ansgrBuilder.posToGN;
+//			posToGN = ansgrBuilder.posToGN;
 			
 			stat = new QueryEvalStat(sV);
 			stats.addView(stat);
@@ -205,7 +206,7 @@ public class PartialViewAnsGrMain {
 				
 				FilterBuilder fb = new FilterBuilder(g, query);
 				PartialViewAnsGr eva = new PartialViewAnsGr(query, viewsOfQuery, qid_Ansgr, posToGN,
-						fb, bfl, rmvEmpty, simfilter);
+						fb, bfl, rmvEmpty, simfilter, LintToGN);
 				
 //				queryAnsGraphs.add(mPool);
 				try {
