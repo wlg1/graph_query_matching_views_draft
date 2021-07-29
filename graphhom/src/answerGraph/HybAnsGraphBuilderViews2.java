@@ -261,7 +261,8 @@ public class HybAnsGraphBuilderViews2 {
 		for (PoolEntry e_f : pl_f.elist()) {
 			GraphNode headGN = e_f.getValue();
 			nodeset headNS = intersectedAnsGr.get(from);
-			RoaringBitmap ToAdjList = headNS.fwdAdjLists.get(headGN.pos).get(to);
+//			RoaringBitmap ToAdjList = headNS.fwdAdjLists.get(headGN.pos).get(to);
+			RoaringBitmap ToAdjList = headNS.fwdAdjLists.get(headGN.L_interval.mStart).get(to);
 			
 			//ASSUME LOOPING THRU BITMAP GETS POSITIONS OF BITMAP, WHICH IS GN POS
 //			for (GraphNode tailGN : ToAdjList ) {

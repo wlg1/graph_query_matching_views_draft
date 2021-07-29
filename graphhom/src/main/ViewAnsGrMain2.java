@@ -163,7 +163,7 @@ public class ViewAnsGrMain2 {
 			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
-			posToGN = ansgrBuilder.posToGN;
+//			posToGN = ansgrBuilder.posToGN;
 			
 			stat = new QueryEvalStat(sV);
 			stats.addView(stat);

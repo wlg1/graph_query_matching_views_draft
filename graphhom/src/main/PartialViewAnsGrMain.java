@@ -159,7 +159,7 @@ public class PartialViewAnsGrMain {
 		
 //		ArrayList<ArrayList<Query>> viewsOfQueries = new ArrayList<ArrayList<Query>>();
 		HashMap<Integer, GraphNode> LintToGN = new HashMap<Integer, GraphNode>(); 
-		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
+//		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
 			QueryEvalStat stat = null;
@@ -168,7 +168,7 @@ public class PartialViewAnsGrMain {
 			sV.totNodesBefore = totNodes_before;
 			
 			FilterBuilder fbV = new FilterBuilder(g, view);
-			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, posToGN, useAnsGr, LintToGN);
+			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, LintToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
 //			posToGN = ansgrBuilder.posToGN;
@@ -205,8 +205,8 @@ public class PartialViewAnsGrMain {
 				s.totNodesBefore = totNodes_before;
 				
 				FilterBuilder fb = new FilterBuilder(g, query);
-				PartialViewAnsGr eva = new PartialViewAnsGr(query, viewsOfQuery, qid_Ansgr, posToGN,
-						fb, bfl, rmvEmpty, simfilter, LintToGN);
+				PartialViewAnsGr eva = new PartialViewAnsGr(query, viewsOfQuery, qid_Ansgr, LintToGN,
+						fb, bfl, rmvEmpty, simfilter);
 				
 //				queryAnsGraphs.add(mPool);
 				try {

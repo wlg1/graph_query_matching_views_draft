@@ -145,41 +145,43 @@ public class ViewsRIsumGraph {
 		
 //		mPool = new ArrayList<Pool>(mQuery.V);
 		//mPool already contains a Pool for every query node, but a Pool may be empty
-		for (int i = 0; i < mQuery.V; i++) {
-//		for (Integer i : nodesToCompute) {
+//		for (int i = 0; i < mQuery.V; i++) {
+		for (Integer i : nodesToCompute) {
 			Pool qAct = mPool.get(i);
+			if (!qAct.isEmpty()) {
+				continue;
+			}
 //			Pool qAct = new Pool();
 //			mPool.add(qAct);
 			MatArray mli = mCandLists.get(i);
 			ArrayList<GraphNode> elist = mli.elist();
 			QNode qn = qnodes[i];
-//			RoaringBitmap t_bits = new RoaringBitmap();
-//			tBitsIdxArr[i] = t_bits;
-			int pos = qAct.size();
-//			int pos = 0;
+//			int pos = qAct.size();
+			int pos = 0;
 //			System.out.println(qAct.elist().size());
 //			System.out.println(elist.size());
 			for (GraphNode n : elist) {
-				boolean addNode = true;
-				for (PoolEntry pe : qAct.elist()) {
-					Integer gnPos = pe.mValue.pos;
-					if (gnPos == n.pos) {
-						addNode = false;
-					}
-				}
-				if (addNode) {
-					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
-					qAct.addEntry(actEntry);
-//					t_bits.add(actEntry.getValue().L_interval.mStart);
-				}
-//				if (!posToGN.containsKey(n.pos)) { // only add new node if it doesn't already exist 
+//				boolean addNode = true;
+//				for (PoolEntry pe : qAct.elist()) {
+////					Integer gnPos = pe.mValue.pos;
+////					if (gnPos == n.pos) {
+//					Integer gnPos = pe.mValue.L_interval.mStart;
+//					if (gnPos == n.L_interval.mStart) {
+//						addNode = false;
+//					}
+//				}
+//				if (addNode) {
 //					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
 //					qAct.addEntry(actEntry);
-////					t_bits.add(actEntry.getValue().L_interval.mStart);
-//				} else {
-//					GraphNode x= posToGN.get(n.pos);
-//					int w = 1;
 //				}
+				
+//				if (!posToGN.containsKey(n.L_interval.mStart)) { // only add new node if it doesn't already exist 
+//					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+//					qAct.addEntry(actEntry);
+//				}
+				
+				PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+				qAct.addEntry(actEntry);
 			}
 
 		}
@@ -188,14 +190,14 @@ public class ViewsRIsumGraph {
 			Pool qAct = mPool.get(i);
 			RoaringBitmap t_bits = new RoaringBitmap();
 			tBitsIdxArr[i] = t_bits;
-//			for (PoolEntry actEntry : qAct.elist()) {
-//				t_bits.add(actEntry.getValue().L_interval.mStart);
-//			}
-			for (int pos=0; pos < qAct.size(); pos++) {
-				PoolEntry actEntry = qAct.elist().get(pos);
-//				System.out.println(actEntry.getValue().L_interval);
+			for (PoolEntry actEntry : qAct.elist()) {
 				t_bits.add(actEntry.getValue().L_interval.mStart);
 			}
+//			for (int pos=0; pos < qAct.size(); pos++) {
+//				PoolEntry actEntry = qAct.elist().get(pos);
+////				System.out.println(actEntry.getValue().L_interval);
+//				t_bits.add(actEntry.getValue().L_interval.mStart);
+//			}
 		}
 		
 //		mPool = new ArrayList<Pool>(mQuery.V);

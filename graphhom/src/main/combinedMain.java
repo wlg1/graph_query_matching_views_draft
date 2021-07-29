@@ -13,8 +13,8 @@ public class combinedMain {
 		
 	}
 	
-	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN) throws Exception {
-		String partialViewFileN = "lb20_cyc_m_2Eviews_q13_partial.vw";
+	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN, String prefix) throws Exception {
+		String partialViewFileN =  prefix + "_partial.vw";
 		
 //		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true);
 //		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
@@ -72,13 +72,14 @@ public class combinedMain {
 		  if (directoryListing != null) {
 		    for (File child : directoryListing) {
 		    	String[] splitFileName = child.getName().split("[.]", 0);
+		    	String prefix = splitFileName[0];
 		    	String ext = splitFileName[1];
 		    	if (ext.equals("qry")) {
 		    		String queryFileN = splitFileName[0] + ".qry";
 		    		String viewFileN = splitFileName[0] + ".vw";
 		    		String allFileN = splitDataFileName[0] + "_" + splitFileName[0] + "_ALL";
 		    		combinedMain theMain = new combinedMain();
-					theMain.run(dataFileN, queryFileN, viewFileN, allFileN);
+					theMain.run(dataFileN, queryFileN, viewFileN, allFileN, prefix);
 		    	}
 		    }
 		  } else {

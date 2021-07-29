@@ -31,7 +31,7 @@ public class HybAnsGraphBuilderViews4 {
 	ArrayList<Pool> mPool;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
-	HashMap<Integer, GraphNode> posToGN;
+//	HashMap<Integer, GraphNode> posToGN;
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	ArrayList<nodeset> intersectedAnsGr;
 	TimeTracker tt;
@@ -42,14 +42,13 @@ public class HybAnsGraphBuilderViews4 {
 	HashMap<Integer, GraphNode> LintToGN;
 	
 	public HybAnsGraphBuilderViews4(Query query, ArrayList<Query> viewsOfQuery_in,
-			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN,
-			ArrayList<MatArray> CandLists, BFLIndex bfl, GraphNode[] INnodes, 
-			HashMap<Integer, GraphNode> INLintToGN) {
+			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
+			ArrayList<MatArray> CandLists, BFLIndex bfl, GraphNode[] INnodes) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
-		posToGN = INposToGN;
+//		posToGN = INposToGN;
 		uncoveredEdges = new ArrayList<QEdge>();
 		for (QEdge edge : query.edges) {
 			uncoveredEdges.add(edge);
@@ -61,6 +60,11 @@ public class HybAnsGraphBuilderViews4 {
 	}
 
 	public ArrayList<Pool> run() {
+		
+		TimeTracker tt;
+		tt = new TimeTracker();
+		tt.Start();
+		
 		//each view can have more than 1 hom to the query
 		viewHoms = new HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>();
 		//store hom for every view used in this query
@@ -84,6 +88,9 @@ public class HybAnsGraphBuilderViews4 {
 									continue;
 								}
 								if (Vedge.from == covVhead && Vedge.to == covVtail && uncoveredEdges.contains(edge)) {
+									if (edge.from == 0 && edge.to == 2) {
+										int x= 1;
+									}
 									uncoveredEdges.remove(edge);
 								}
 							}
@@ -100,10 +107,10 @@ public class HybAnsGraphBuilderViews4 {
 		initNodes(); 
 
 		//send uncoveredEdges to uncoveredSGBuild to get "view" for them
-		uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, posToGN, 
-				intersectedAnsGr, LintToGN);
+		//THIS IS FAST
+		uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, LintToGN, 
+				intersectedAnsGr);
 		qid_Ansgr.put(-1, partialSG.run() );  //add uncovered SG
-//		posToGN = partialSG.posToGN;
 		
 		// since mQuery is the input in, the mapping is the same but is null for nodes not in uncovered edges
 		ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
@@ -117,6 +124,12 @@ public class HybAnsGraphBuilderViews4 {
 		viewHoms.put(-1, homsList);
 		
 		intersectUncovered(); 
+		
+		for (int i = 0; i < mQuery.V; i++) { //init fwdadjlist data structure
+			nodeset intersectedNS = intersectedAnsGr.get(i);
+			intersectedNS.createFwdAL();
+		}
+		
 		initEdges(); 
 
 		mPool = new ArrayList<Pool>(mQuery.V);
@@ -141,6 +154,10 @@ public class HybAnsGraphBuilderViews4 {
 		for(QEdge edge: mQuery.edges){  
 			linkOneStep(edge);
 		}
+		
+		double midTM = tt.Stop() / 1000;
+		System.out.printf("%.5f", midTM);
+		System.out.println(" mid time");
 
 		return mPool;
 	}
@@ -163,6 +180,7 @@ public class HybAnsGraphBuilderViews4 {
 				for (HashMap<Integer, Integer> hom : viewHoms.get(key)) {
 					Integer viewNodesetID = hom.get(i);
 					if (viewNodesetID == null) {  //this view doesn't cover this query's node
+						intersectedNS.hasNodes = false;
 						continue;
 					}
 					ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
@@ -174,7 +192,7 @@ public class HybAnsGraphBuilderViews4 {
 					}
 				}
 			}
-			intersectedNS.createFwdAL();
+//			intersectedNS.createFwdAL();
 			intersectedAnsGr.add(intersectedNS);
 		}
 
@@ -192,14 +210,15 @@ public class HybAnsGraphBuilderViews4 {
 			}
 			ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(-1); //node sets of view
 			RoaringBitmap coveringNSbits = viewAnsgr.get(viewNodesetID).gnodesBits;
+			if (coveringNSbits.isEmpty()) { //this view's nodeset is empty despite covering it
+				continue;
+			}
 			if (intersectedNS.gnodesBits.isEmpty()) {
 				intersectedNS.gnodesBits = getGNList(coveringNSbits);
 			} else {
 				intersectedNS.gnodesBits.and(coveringNSbits);
 			}
 			
-			intersectedNS.createFwdAL();
-			intersectedAnsGr.add(intersectedNS);
 		}
 
 	}
@@ -207,6 +226,11 @@ public class HybAnsGraphBuilderViews4 {
 	private void initEdges() {
 		for (QEdge qEdge : mQuery.edges ) {
 			for (Integer viewID : viewHoms.keySet()) {
+				
+				if (!uncoveredEdges.contains(qEdge) && viewID == -1) {
+					continue;
+				}
+				
 				for (HashMap<Integer, Integer> hom : viewHoms.get(viewID)) {
 					int from = qEdge.from, to = qEdge.to;
 					Integer vHead = hom.get(from), vTail = hom.get(to);
@@ -216,8 +240,7 @@ public class HybAnsGraphBuilderViews4 {
 					}
 					
 					ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(viewID); //node sets of view
-					Integer viewHeadNodesetID = hom.get(from);
-					nodeset viewHeadNS = viewAnsgr.get(viewHeadNodesetID);
+					nodeset viewHeadNS = viewAnsgr.get(vHead);
 					
 					//intersectedAnsGr's nodesets contain candCoveringEdges, or cos
 					//intersectedAnsGr.get(vHead) is nodeset of head graph nodes
@@ -239,6 +262,10 @@ public class HybAnsGraphBuilderViews4 {
 						}
 						
 						HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+//						if (queryEdgesHM == null) {
+//							continue;
+//						}
+						
 						if (!queryEdgesHM.containsKey(to)) {
 							//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
 							//issue: cannot just do edgesHM.put(to, intersectedAnsGr.get(to).gnodes);
@@ -269,6 +296,10 @@ public class HybAnsGraphBuilderViews4 {
 				nodeset newNS = new nodeset();
 				for (int gn : queryHeadNS.gnodesBits) {
 					HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+					if (queryEdgesHM == null) {
+						continue;
+					}
+					
 					if (queryEdgesHM.containsKey(to)) {
 						RoaringBitmap queryToGNs = queryEdgesHM.get(to);
 						RoaringBitmap toGNs = intersectedAnsGr.get(to).gnodesBits;

@@ -13,6 +13,7 @@ public class nodeset {
 	public RoaringBitmap gnodesBits;
 	public HashMap<Integer, HashMap<Integer, RoaringBitmap>> fwdAdjLists;
 	public HashMap<Integer, PoolEntry> GNtoPE;
+	public boolean hasNodes = true;
 	
 	public nodeset() {  //init new so not null when adding in
 		gnodesBits = new RoaringBitmap();

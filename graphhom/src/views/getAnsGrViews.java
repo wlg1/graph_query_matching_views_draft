@@ -45,18 +45,17 @@ public class getAnsGrViews {
 	boolean simfilter = true;
 	HybTupleEnumer tenum;
 	ArrayList<MatArray> mCandLists;
-	public HashMap<Integer, GraphNode> posToGN;
+//	public HashMap<Integer, GraphNode> posToGN;
 	public HashMap<Integer, GraphNode> LintToGN;
 	boolean useAnsGr;
 
-	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INposToGN, boolean INuseAnsGr,
-			HashMap<Integer, GraphNode> INLintToGN) {
+	public getAnsGrViews(Query query, FilterBuilder fb, BFLIndex bfl, HashMap<Integer, GraphNode> INLintToGN, boolean INuseAnsGr) {
 
 		mQuery = query;
 		mBFL = bfl;
 		nodes = mBFL.getGraphNodes();
 		mFB = fb;
-		posToGN = INposToGN;
+//		posToGN = INposToGN;
 		tt = new TimeTracker();
 		useAnsGr = INuseAnsGr;
 		LintToGN = INLintToGN;

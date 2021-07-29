@@ -126,7 +126,7 @@ public class DagHomIEFltSimMain {
 				FilterBuilder fb = new FilterBuilder(g, query);
 				java.util.concurrent.ExecutorService executor = Executors.newSingleThreadExecutor();
 				SimpleTimeLimiter timeout = new SimpleTimeLimiter(executor);
-				DagHomIEFltSim eva = new DagHomIEFltSim(query, fb, bfl);
+				final DagHomIEFltSim eva = new DagHomIEFltSim(query, fb, bfl);
 				
 				QueryEvalStat stat = null;
 				final QueryEvalStat s = new QueryEvalStat();

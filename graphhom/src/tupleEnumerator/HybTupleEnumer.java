@@ -115,14 +115,14 @@ public class HybTupleEnumer {
 			//when get err: Index 25 out of bounds for length 21, do elist.size() == 21... and breakpt
 			//if this happens, that means neigh adj list contains gn not in cur_V nodeset
 			//soln: when build SG, incl those in nodeset, or rmv them from neigh adj list by intersection w/ nodeset
-			if (elist.size() == 9 && i == 9){ 
-				System.out.println(i);
-			}
+//			if (elist.size() == 9 && i == 9){ 
+//				System.out.println(i);
+//			}
 			
 			
 			PoolEntry e = elist.get(i); //the graph node at i's bit
 			match[cur_vertex] = e;  //try this graph node as a match to this query vertex
-			matchGNpos[cur_vertex] = e.getValue().pos;
+//			matchGNpos[cur_vertex] = e.getValue().L_interval.mStart;
 		    
 			if (depth == max_depth - 1) {
 				tupleCount++;

@@ -12,6 +12,7 @@ import dao.Pool;
 import dao.PoolEntry;
 import global.Consts.AxisType;
 import graph.GraphNode;
+import helper.TimeTracker;
 import query.graph.QEdge;
 import query.graph.QNode;
 import query.graph.Query;
@@ -26,32 +27,37 @@ public class uncoveredSGBuild {
 	BFLIndex mBFL;
 	ArrayList<MatArray> mCandLists;
 	ArrayList<QEdge> uncoveredEdges;
-	HashMap<Integer, GraphNode> posToGN;
+	HashMap<Integer, GraphNode> LintToGN;
 	ArrayList<Integer> nodesToCompute;
 	ArrayList<nodeset> intersectedAnsGr;
-	HashMap<Integer, GraphNode> LintToGN;
 	
 	public uncoveredSGBuild(Query query, BFLIndex bfl, ArrayList<MatArray> candLsts, 
-			ArrayList<QEdge> INuncoveredEdges, HashMap<Integer, GraphNode> INposToGN, 
-			ArrayList<nodeset> INintersectedAnsGr, HashMap<Integer, GraphNode> INLintToGN) {
+			ArrayList<QEdge> INuncoveredEdges, HashMap<Integer, GraphNode> INLintToGN, 
+			ArrayList<nodeset> INintersectedAnsGr) {
 
 		mQuery = query;
 		mBFL = bfl;
 		mCandLists = candLsts;
 		uncoveredEdges = INuncoveredEdges;
-		posToGN = INposToGN;
 		intersectedAnsGr = INintersectedAnsGr;
 		LintToGN = INLintToGN;
 	}
 
 	public ArrayList<nodeset> run() {
+		
+//		TimeTracker tt;
+//		tt = new TimeTracker();
+//		tt.Start();
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
 		initPool(tBitsIdxArr);
 
 		for(QEdge edge: uncoveredEdges){
+//		for (QEdge edge : mQuery.edges ) {
 			linkOneStep(edge,tBitsIdxArr);
 		}
+		
+
 		
 		ArrayList<nodeset> matView = new ArrayList<nodeset>();
 		for (Pool pl : mPool) {
@@ -81,6 +87,9 @@ public class uncoveredSGBuild {
 			}
 			matView.add(ns);
 		}
+//		double midTM = tt.Stop() / 1000;
+//		System.out.printf("%.5f", midTM);
+//		System.out.println(" mid time");
 		
 		return matView;
 
@@ -189,7 +198,7 @@ public class uncoveredSGBuild {
 //			int x=1;
 			
 			nodeset intersectedNS = intersectedAnsGr.get(i);
-			if (intersectedNS.GNtoPE != null) {
+			if (intersectedNS.hasNodes) {
 				for (int n : intersectedNS.gnodesBits) { 
 //					GraphNode gn = posToGN.get(n);
 					GraphNode gn = LintToGN.get(n);

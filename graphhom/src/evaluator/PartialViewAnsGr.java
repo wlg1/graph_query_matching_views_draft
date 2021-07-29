@@ -8,6 +8,7 @@ import org.roaringbitmap.RoaringBitmap;
 
 import answerGraph.HybAnsGraphBuilderViews;
 import answerGraph.HybAnsGraphBuilderViews4;
+import answerGraph.ViewsRIsumGraph;
 import dao.BFLIndex;
 import dao.MatArray;
 import dao.Pool;
@@ -42,13 +43,11 @@ public class PartialViewAnsGr {
 	boolean simfilter;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
-	HashMap<Integer, GraphNode> posToGN;
 	HashMap<Integer, GraphNode> LintToGN;
 
 	public PartialViewAnsGr(Query INquery, ArrayList<Query> viewsOfQuery_in,
-			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INposToGN,
-			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter,
-			HashMap<Integer, GraphNode> INLintToGN) {
+			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
+			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter) {
 
 		query = INquery;
 		mBFL = bfl;
@@ -59,7 +58,6 @@ public class PartialViewAnsGr {
 		simfilter = INsimfilter;
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
-		posToGN = INposToGN;
 		LintToGN = INLintToGN;
 
 	}
@@ -89,23 +87,23 @@ public class PartialViewAnsGr {
 		
 		tt = new TimeTracker();
 		tt.Start();
-//		ArrayList<Pool> partialPool;
+//		ArrayList<Pool> partialPool = new ArrayList<Pool>();
 //		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, posToGN, 
-					mCandLists, mBFL, nodes, LintToGN);	
+			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, LintToGN, 
+					mCandLists, mBFL, nodes);	
 //			partialPool = BuildViews.run();
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
 			mPool = BuildViews.run();
 		} else {
-			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, posToGN);
+			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
 //			partialPool = BuildViews.run(stat);
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
 		}
 		
 		//send mPool to ViewsRIsumGraph. get the uncovered edges
 		//this modifies partialPool globally as it turns it into mPool
-//		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, posToGN);
+//		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, LintToGN);
 //		mPool = finishSG.run();
 		
 		double buildtm = tt.Stop() / 1000;
