@@ -14,26 +14,26 @@ public class combinedMain {
 	}
 	
 	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN, String prefix) throws Exception {
-		String partialViewFileN =  prefix + "_partial.vw";
+//		String partialViewFileN =  prefix + "_partial.vw";
 		
-//		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true);
+//		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true); //answer graph
 //		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
-		ViewAnsGrMain2 demain6 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true);
-		ViewAnsGrMain2 demain7 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
-		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);
-		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false);
-		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN);
-		PartialViewAnsGrMain demain8 = new PartialViewAnsGrMain(dataFileN, queryFileN, partialViewFileN, 
-				false, true, true);
+//		ViewAnsGrMain2 demain6 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true); //rmvEmpty
+//		ViewAnsGrMain2 demain7 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
+		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);  //FLTSIM
+		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false); //FLT
+		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN); //SIM
+//		PartialViewAnsGrMain demain8 = new PartialViewAnsGrMain(dataFileN, queryFileN, partialViewFileN, 
+//				false, true, true);
 
 //		demain.run();
 		demain2.run();
-//		demain3.run();
-//		demain4.run();
+		demain3.run();
+		demain4.run();
 //		demain5.run();
-		demain6.run();
+//		demain6.run();
 //		demain7.run();
-		demain8.run();
+//		demain8.run();
 		
 		PrintWriter opw;
 		String outFileN = Consts.OUTDIR + allFileN + ".csv";
@@ -43,12 +43,12 @@ public class combinedMain {
 			demain2.stats.printToFileCombinedHeader(opw);
 //			demain.stats.printToFileCombined(opw, "View_ans_rmvEmp");
 //			demain5.stats.printToFileCombined(opw, "View_ans");
-			demain6.stats.printToFileCombined(opw, "View_sim_rmvEmp");
+//			demain6.stats.printToFileCombined(opw, "View_sim_rmvEmp");
 //			demain7.stats.printToFileCombined(opw, "View_sim");
-			demain8.stats.printToFileCombined(opw, "View_partial");
+//			demain8.stats.printToFileCombined(opw, "View_partial");
 			demain2.stats.printToFileCombined(opw, "FLTSIM");
-//			demain3.stats.printToFileCombined(opw, "FLT");
-//			demain4.stats.printToFileCombined(opw, "SIM");
+			demain3.stats.printToFileCombined(opw, "FLT");
+			demain4.stats.printToFileCombined(opw, "SIM");
 			
 			
 			opw.close();

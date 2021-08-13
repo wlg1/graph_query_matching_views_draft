@@ -14,7 +14,7 @@ import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 import dao.BFLIndex;
 import dao.DaoController;
-import evaluator.PartialViewAnsGr;
+import evaluator.PartialViewAnsGrUNCOVprefilt;
 import global.Consts;
 import global.Consts.AxisType;
 import global.Consts.status_vals;
@@ -35,7 +35,7 @@ import query.graph.TransitiveReduction;
 import views.getAnsGrViews;
 import views.nodeset;
 
-public class PartialViewAnsGrMain {
+public class PartialViewAnsGrMainUNCOVprefilt {
 
 	ArrayList<Query> queries, views;
 	HashMap<String, Integer> l2iMap;
@@ -48,10 +48,12 @@ public class PartialViewAnsGrMain {
 	boolean useAnsGr;
 	boolean rmvEmpty;
 	boolean simfilter;
+	String uncovFileN;
+	ArrayList<Query> uncov;
 	
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	
-	public PartialViewAnsGrMain(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, 
+	public PartialViewAnsGrMainUNCOVprefilt(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, 
 			boolean INrmvEmpty, boolean INsimfilter) {
 
 		queryFileN = Consts.INDIR + queryFN;
@@ -82,6 +84,8 @@ public class PartialViewAnsGrMain {
 //			outFileN = outFileN + "_FLT";
 //		}
 		outFileN = outFileN + suffix;
+		
+//		uncovFileN = Consts.INDIR + uncovFN; 
 	}
 
 	public void run() throws Exception {
@@ -98,6 +102,8 @@ public class PartialViewAnsGrMain {
 		readQueries();
 		
 		readViews();
+		
+//		readUncovered();
 
 		System.out.println("\nEvaluating queries from " + queryFileN + " ...");
 		tt.Start();
@@ -151,15 +157,18 @@ public class PartialViewAnsGrMain {
 		QueryParser queryParser = new QueryParser(viewFileN, l2iMap);
 		Query view = null;
 		while ((view = queryParser.readNextQuery()) != null) {
-//			TransitiveReduction tr = new TransitiveReduction(view);
-//			tr.reduce();
+			TransitiveReduction tr = new TransitiveReduction(view);
+			tr.reduce();
 			views.add(view);
 		}
 	}
+	
+
 
 	private void evaluate() throws Exception {
 		
-		HashMap<Integer, GraphNode> LintToGN = new HashMap<Integer, GraphNode>();
+		HashMap<Integer, GraphNode> LintToGN = new HashMap<Integer, GraphNode>(); 
+//		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
 			QueryEvalStat stat = null;
@@ -171,6 +180,7 @@ public class PartialViewAnsGrMain {
 			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, LintToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
+//			posToGN = ansgrBuilder.posToGN;
 			
 			stat = new QueryEvalStat(sV);
 			stats.addView(stat);
@@ -201,50 +211,9 @@ public class PartialViewAnsGrMain {
 				final QueryEvalStat s = new QueryEvalStat();
 				s.totNodesBefore = totNodes_before;
 				
-//				ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
-//				for (QEdge edge : query.edges) {
-//					uncoveredEdges.add(edge);
-//				}
-//				
-//				for (int i1 = 0; i1 < query.V; i1++) { // i is query node ID. for each node in query
-//					for (int v = 0; v < viewsOfQuery.size(); v++) {
-//						Query view = viewsOfQuery.get(v);
-//						ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
-//						viewHoms.put(view.Qid, homsList);
-//						while (true) {
-//							HashMap<Integer, Integer> hom = getHom(view, query);  //key is query nodeset, value is view nodeset
-//							if (!hom.isEmpty()){  //only empty if there doesn't exist any more homs
-//								homsList.add(hom);
-//								
-//								for (QEdge edge : query.getEdges() ) {
-//									for (QEdge Vedge : view.getEdges() ) {
-//										Integer covVhead = hom.get(edge.from);
-//										Integer covVtail = hom.get(edge.to);
-//										if (covVhead == null || covVtail == null) {
-//											continue;
-//										}
-//										if (Vedge.from == covVhead && Vedge.to == covVtail && uncoveredEdges.contains(edge)) {
-//											if (edge.from == 0 && edge.to == 2) {
-//												int x= 1;
-//											}
-//											uncoveredEdges.remove(edge);
-//										}
-//									}
-//								}
-//								
-//							} else {  //exit finding homs from v to q b/c no more
-//								break;
-//							}
-//						}
-//						viewHoms.put(view.Qid, homsList);
-//					}
-//				}
-				
-				
-				
 				FilterBuilder fb = new FilterBuilder(g, query);
-				PartialViewAnsGr eva = new PartialViewAnsGr(query, viewsOfQuery, qid_Ansgr, LintToGN,
-						fb, bfl, rmvEmpty, simfilter);
+				PartialViewAnsGrUNCOVprefilt eva = new PartialViewAnsGrUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
+						fb, bfl, rmvEmpty, simfilter, l2iMap);
 				
 				try {
 					tt.Start();
@@ -586,7 +555,7 @@ public class PartialViewAnsGrMain {
 		boolean useAnsGr = false;
 		boolean rmvEmpty = true;
 		boolean simfilter = true;
-		PartialViewAnsGrMain demain = new PartialViewAnsGrMain(dataFileN, queryFileN, viewFileN, 
+		PartialViewAnsGrMainUNCOVprefilt demain = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, viewFileN, 
 				useAnsGr, rmvEmpty, simfilter);
 
 		demain.run();

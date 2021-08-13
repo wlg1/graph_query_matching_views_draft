@@ -7,8 +7,7 @@ import java.util.Map;
 import org.roaringbitmap.RoaringBitmap;
 
 import answerGraph.HybAnsGraphBuilderViews;
-import answerGraph.HybAnsGraphBuilderViews4;
-import answerGraph.ViewsRIsumGraph;
+import answerGraph.HybAnsGraphBuilderViewsUNCOVprefilt;
 import dao.BFLIndex;
 import dao.MatArray;
 import dao.Pool;
@@ -28,7 +27,7 @@ import simfilter.DagSimGraFilter;
 import tupleEnumerator.HybTupleEnumer;
 import views.nodeset;
 
-public class PartialViewAnsGr {
+public class PartialViewAnsGrUNCOVprefilt {
 
 	Query query;
 	ArrayList<ArrayList<GraphNode>> mInvLsts;
@@ -45,10 +44,11 @@ public class PartialViewAnsGr {
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
 	HashMap<Integer, GraphNode> LintToGN;
+	HashMap<String, Integer> l2iMap;
 
-	public PartialViewAnsGr(Query INquery, ArrayList<Query> viewsOfQuery_in,
+	public PartialViewAnsGrUNCOVprefilt(Query INquery, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter) {
+			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter, HashMap<String, Integer> INl2iMap) {
 
 		query = INquery;
 		mBFL = bfl;
@@ -60,39 +60,20 @@ public class PartialViewAnsGr {
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
 		LintToGN = INLintToGN;
+		l2iMap = INl2iMap;
 
 	}
 
 	public boolean run(QueryEvalStat stat) throws LimitExceededException {
-		
-		mFB.oneRun();
-		double prunetm = mFB.getBuildTime();
-		stat.setPreTime(prunetm);
-		
-		System.out.println("PrePrune time:" + prunetm + " sec.");
-		ArrayList<MatArray> mCandLists = null; 
-
-		if (simfilter) {
-			tt.Start();
-			mInvLstsByID = mFB.getInvLstsByID();
-			mBitsByIDArr = mFB.getBitsByIDArr();
-			DagSimGraFilter filter = new DagSimGraFilter(query, nodes, mInvLstsByID, mBitsByIDArr, mBFL, true);
-			filter.prune();
-			mCandLists = filter.getCandList();
-			prunetm += tt.Stop() / 1000;
-			stat.setPreTime(prunetm);
-			System.out.println("Prune time:" + prunetm + " sec.");
-		}
-		else
-			mCandLists = mFB.getCandLists();
 		
 		tt = new TimeTracker();
 		tt.Start();
 //		ArrayList<Pool> partialPool = new ArrayList<Pool>();
 //		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViews4 BuildViews = new HybAnsGraphBuilderViews4(query, viewsOfQuery, qid_Ansgr, LintToGN, 
-					mCandLists, mBFL, nodes);	
+			HybAnsGraphBuilderViewsUNCOVprefilt BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
+					mBFL, nodes, l2iMap);
+//					mCandLists, mBFL, nodes);
 //			partialPool = BuildViews.run();
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
 			mPool = BuildViews.run();

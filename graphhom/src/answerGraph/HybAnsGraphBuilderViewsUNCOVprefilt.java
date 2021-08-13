@@ -1,5 +1,8 @@
 package answerGraph;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,7 @@ import prefilter.FilterBuilder;
 import query.graph.QEdge;
 import query.graph.QNode;
 import query.graph.Query;
+import query.graph.QueryParser;
 import query.graph.TransitiveReduction;
 import queryPlan.PlanGenerator;
 import simfilter.DagSimGraFilter;
@@ -26,24 +30,28 @@ import answerGraph.uncoveredSGBuild;
 
 //only add edge to nodes if covering edge has it
 
-public class HybAnsGraphBuilderViews4 {
+public class HybAnsGraphBuilderViewsUNCOVprefilt {
 
 	Query mQuery;
 	ArrayList<Pool> mPool;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
+//	HashMap<Integer, GraphNode> posToGN;
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	ArrayList<nodeset> intersectedAnsGr;
 	TimeTracker tt;
 	ArrayList<QEdge> uncoveredEdges;
 	BFLIndex mBFL;
 	ArrayList<MatArray> mCandLists;
-	GraphNode[] nodes;
+	GraphNode[] Gnodes;
 	HashMap<Integer, GraphNode> LintToGN;
+	Query uncov;
+	HashMap<String, Integer> l2iMap;
 	
-	public HybAnsGraphBuilderViews4(Query query, ArrayList<Query> viewsOfQuery_in,
+	public HybAnsGraphBuilderViewsUNCOVprefilt(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			ArrayList<MatArray> CandLists, BFLIndex bfl, GraphNode[] INnodes) {
+			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap) {
+//			ArrayList<MatArray> CandLists, BFLIndex bfl, GraphNode[] INnodes) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
@@ -53,16 +61,20 @@ public class HybAnsGraphBuilderViews4 {
 			uncoveredEdges.add(edge);
 		}
 		mBFL = bfl;
-		mCandLists = CandLists;
-		nodes = INnodes;
+//		mCandLists = CandLists;
+		Gnodes = INnodes;
 		LintToGN = INLintToGN;
+		l2iMap = INl2iMap;
 	}
 
 	public ArrayList<Pool> run() {
 		
-		TimeTracker tt;
-		tt = new TimeTracker();
-		tt.Start();
+//		TimeTracker tt;
+//		tt = new TimeTracker();
+//		tt.Start();
+//		double midTM = tt.Stop() / 1000;
+//		System.out.printf("%.5f", midTM);
+//		System.out.println(" mid time");
 		
 		//each view can have more than 1 hom to the query
 		viewHoms = new HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>();
@@ -87,9 +99,6 @@ public class HybAnsGraphBuilderViews4 {
 									continue;
 								}
 								if (Vedge.from == covVhead && Vedge.to == covVtail && uncoveredEdges.contains(edge)) {
-									if (edge.from == 0 && edge.to == 2) {
-										int x= 1;
-									}
 									uncoveredEdges.remove(edge);
 								}
 							}
@@ -104,11 +113,140 @@ public class HybAnsGraphBuilderViews4 {
 		}
 		
 		initNodes(); 
+		
+		HashMap<Integer,Integer> oldNewVertices = new HashMap<Integer,Integer>();
+		HashMap<Integer,Integer> newOldVertices = new HashMap<Integer,Integer>();
+		Integer newVertNum = 0;
+		
+		ArrayList<Integer> nodesToCompute = new ArrayList<Integer>();  
+		for (QEdge edge : uncoveredEdges) {
+			if (!nodesToCompute.contains(edge.from)) {
+				nodesToCompute.add(edge.from);
+				oldNewVertices.put(edge.from, newVertNum);
+				newOldVertices.put(newVertNum, edge.from);
+				newVertNum += 1;
+			}
+			if (!nodesToCompute.contains(edge.to)) {
+				nodesToCompute.add(edge.to);
+				oldNewVertices.put(edge.to, newVertNum);
+				newOldVertices.put(newVertNum, edge.to);
+				newVertNum += 1;
+			}
+		}
+		
+		//use cand occ list from nodeset
+		ArrayList<ArrayList<GraphNode>> cand_occ_lsts = new ArrayList<ArrayList<GraphNode>>();
+		for (int i=0; i < nodesToCompute.size(); i++) {
+			Integer nsNum = newOldVertices.get(i);
+			nodeset ns = intersectedAnsGr.get(nsNum);
+			ArrayList<GraphNode> cand_occ_l = new ArrayList<GraphNode>();
+			for (int lint : ns.gnodesBits) {
+				GraphNode graphN = LintToGN.get(lint);
+				cand_occ_l.add(graphN);
+			}
+			cand_occ_lsts.add(cand_occ_l);
+		}
+		
+		int V = nodesToCompute.size();
+		
+		QNode[] mQNodes = mQuery.getNodes();
+		
+		QNode[] uncvNodes = new QNode[V];
+		for (int i = 0; i < V; i++) {
+			Integer newVert = newOldVertices.get(i);
+			QNode oldNode = mQNodes[newVert];
+			QNode newNode = new QNode();
+			newNode.id = i;
+			newNode.lb = oldNode.lb;
+//			newNode.N_O_SZ = oldNode.N_O_SZ;
+//			newNode.N_I_SZ = oldNode.N_I_SZ;
+//			newNode.N_O = oldNode.N_O;
+//			newNode.N_I = oldNode.N_I;
+//			newNode.N_I = oldNode.N_I;
+//			newNode.E_I = oldNode.E_I;
+//			newNode.E_O = oldNode.E_O;
+			uncvNodes[i] = newNode;
+		}
+		
+		ArrayList<RoaringBitmap> bitsByIDArr = new ArrayList<RoaringBitmap>(V);
+		for (QNode q : uncvNodes) {
+			RoaringBitmap bits = new RoaringBitmap();
+			ArrayList<GraphNode> invLst = cand_occ_lsts.get(q.id);
+			for (GraphNode n : invLst) {
+				bits.add(n.id);
+			}
+			bitsByIDArr.add(bits);
+		}
+		
+		int E = uncoveredEdges.size();		
+		
+		QEdge[] uncvEdges = new QEdge[E];
+		int ueIndex = 0;
+		for (QEdge oldEdge : uncoveredEdges) {
+			Integer newFrom = oldNewVertices.get(oldEdge.from);
+			Integer newTo = oldNewVertices.get(oldEdge.to);
+			int ax = 1;
+			if(oldEdge.axis == AxisType.child)
+				ax = 0;
+			QEdge newEdge = new QEdge(newFrom, newTo, ax);
+			newEdge.eid = oldEdge.eid;
+			uncvEdges[ueIndex] = newEdge;
+			ueIndex += 1;
+		}
+		
+//		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files\\";
+//	    try {
+//	        File myObj = new File(myDirectoryPath+"uncovered.vw");
+//	        if (myObj.createNewFile()) {
+//	          System.out.println("File created: " + myObj.getName());
+//	        } else {
+//	          System.out.println("File already exists.");
+//	        }
+//	        
+//	        FileWriter myWriter = new FileWriter(myDirectoryPath+"uncovered.vw");
+//	        myWriter.write("q # 0" + "\r\n");
+//	        int vNum = 0;
+//	        for (QNode node : uncvNodes) {
+//	        	String s1 = Integer.toString(vNum);
+//	        	String s2 = Integer.toString(node.lb);
+//	        	myWriter.write("v " + s1 + " " + s2 + "\r\n");
+//	        	vNum += 1;
+//	        }
+//	        
+//	        for (QEdge edge : uncvEdges) {
+//	        	String s1 = Integer.toString(edge.from);
+//	        	String s2 = Integer.toString(edge.to);
+//				int ax = 1;
+//				if(edge.axis == AxisType.child)
+//					ax = 0;
+//	        	String s3 = Integer.toString(ax);
+//	        	myWriter.write("e " + s1 + " " + s2 + " " + s3 + "\r\n");
+//	        	vNum += 1;
+//	        }
+//	        
+//	        myWriter.close();
+//	        System.out.println("Successfully wrote to the file.");
+//	        
+//	      } catch (IOException e) {
+//	        System.out.println("An error occurred.");
+//	        e.printStackTrace();
+//	      }
+//	    
+//	    readUncovered(myDirectoryPath+"uncovered.vw");
+				
+		Query uncovQ = new Query(V, E, uncvNodes, uncvEdges);
+		
+		DagSimGraFilter filter = new DagSimGraFilter(uncovQ, Gnodes, cand_occ_lsts, bitsByIDArr, mBFL, true);
+		filter.prune();
+		ArrayList<MatArray> mCandLists = filter.getCandList();
+//		double prunetm = tt.Stop() / 1000;
+//		stat.setPreTime(prunetm);
+//		System.out.println("Prune time:" + prunetm + " sec.");
 
 		//send uncoveredEdges to uncoveredSGBuild to get "view" for them
 		//THIS IS FAST
 		uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, LintToGN, 
-				intersectedAnsGr);
+				intersectedAnsGr, oldNewVertices);
 		qid_Ansgr.put(-1, partialSG.run() );  //add uncovered SG
 		
 		// since mQuery is the input in, the mapping is the same but is null for nodes not in uncovered edges
@@ -140,6 +278,7 @@ public class HybAnsGraphBuilderViews4 {
 			mPool.add(qAct);
 			nodeset intersectedNS = intersectedAnsGr.get(i);
 			for (int n : intersectedNS.gnodesBits) { 
+//				GraphNode gn = posToGN.get(n);
 				GraphNode gn = LintToGN.get(n);
 				PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
 				qAct.addEntry(actEntry);
@@ -153,11 +292,17 @@ public class HybAnsGraphBuilderViews4 {
 			linkOneStep(edge);
 		}
 		
-		double midTM = tt.Stop() / 1000;
-		System.out.printf("%.5f", midTM);
-		System.out.println(" mid time");
+
 
 		return mPool;
+	}
+	
+	private void readUncovered(String uncovFileN) {
+		QueryParser queryParser = new QueryParser(uncovFileN, l2iMap);
+		Query view = null;
+		uncov = queryParser.readNextQuery();
+		TransitiveReduction tr = new TransitiveReduction(uncov);
+		tr.reduce();
 	}
 
 	public ArrayList<QEdge> getUncoveredEdges(){
@@ -260,6 +405,9 @@ public class HybAnsGraphBuilderViews4 {
 						}
 						
 						HashMap<Integer, RoaringBitmap> queryEdgesHM = queryHeadNS.fwdAdjLists.get(gn);
+//						if (queryEdgesHM == null) {
+//							continue;
+//						}
 						
 						if (!queryEdgesHM.containsKey(to)) {
 							//first, intersect every headGN's adj list by tail NS to ensure only points to nodes inside query ansgr
