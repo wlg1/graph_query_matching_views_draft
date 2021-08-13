@@ -36,13 +36,12 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 	ArrayList<Pool> mPool;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
-//	HashMap<Integer, GraphNode> posToGN;
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	ArrayList<nodeset> intersectedAnsGr;
 	TimeTracker tt;
 	ArrayList<QEdge> uncoveredEdges;
 	BFLIndex mBFL;
-	ArrayList<MatArray> mCandLists;
+	ArrayList<ArrayList<GraphNode>> mInvLstsByID;
 	GraphNode[] Gnodes;
 	HashMap<Integer, GraphNode> LintToGN;
 	Query uncov;
@@ -50,8 +49,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 	
 	public HybAnsGraphBuilderViewsUNCOVprefilt(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap) {
-//			ArrayList<MatArray> CandLists, BFLIndex bfl, GraphNode[] INnodes) {
+			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap, ArrayList<ArrayList<GraphNode>> InvLstsByID) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
@@ -61,7 +59,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 			uncoveredEdges.add(edge);
 		}
 		mBFL = bfl;
-//		mCandLists = CandLists;
+		mInvLstsByID = InvLstsByID;
 		Gnodes = INnodes;
 		LintToGN = INLintToGN;
 		l2iMap = INl2iMap;
@@ -144,6 +142,10 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 				GraphNode graphN = LintToGN.get(lint);
 				cand_occ_l.add(graphN);
 			}
+			if (cand_occ_l.isEmpty()) {
+				cand_occ_l = mInvLstsByID.get(nsNum);
+			}
+			
 			cand_occ_lsts.add(cand_occ_l);
 		}
 		

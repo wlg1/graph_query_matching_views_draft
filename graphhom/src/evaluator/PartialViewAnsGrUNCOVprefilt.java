@@ -70,9 +70,13 @@ public class PartialViewAnsGrUNCOVprefilt {
 		tt.Start();
 //		ArrayList<Pool> partialPool = new ArrayList<Pool>();
 //		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
+		
+		mFB.oneRun();
+		ArrayList<ArrayList<GraphNode>> mInvLstsByID = mFB.getInvLstsByID();
+		
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViewsUNCOVprefilt BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
-					mBFL, nodes, l2iMap);
+					mBFL, nodes, l2iMap, mInvLstsByID);
 //					mCandLists, mBFL, nodes);
 //			partialPool = BuildViews.run();
 //			uncoveredEdges = BuildViews.getUncoveredEdges();
