@@ -47,16 +47,21 @@ public class uncoveredSGBuild {
 
 	public ArrayList<nodeset> run() {
 		
-//		TimeTracker tt;
-//		tt = new TimeTracker();
-//		tt.Start();
+		TimeTracker tt;
+		tt = new TimeTracker();
+		tt.Start();
 
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
 		initPool(tBitsIdxArr);
 
+		// THIS IS THE MOST COSTLY STEP
 		for(QEdge edge: uncoveredEdges){
 			linkOneStep(edge,tBitsIdxArr);
 		}
+		
+//		double midTM = tt.Stop() / 1000;
+//		System.out.printf("%.5f", midTM);
+//		System.out.println(" mid time");
 		
 		ArrayList<nodeset> matView = new ArrayList<nodeset>();
 		for (Pool pl : mPool) {

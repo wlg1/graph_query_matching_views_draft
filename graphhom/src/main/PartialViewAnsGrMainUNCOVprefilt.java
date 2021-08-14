@@ -213,7 +213,7 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 				
 				FilterBuilder fb = new FilterBuilder(g, query);
 				PartialViewAnsGrUNCOVprefilt eva = new PartialViewAnsGrUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
-						fb, bfl, rmvEmpty, simfilter, l2iMap);
+						fb, bfl, rmvEmpty, simfilter, l2iMap, invLsts);
 				
 				try {
 					tt.Start();

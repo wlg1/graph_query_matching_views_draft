@@ -45,10 +45,12 @@ public class PartialViewAnsGrUNCOVprefilt {
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
 	HashMap<Integer, GraphNode> LintToGN;
 	HashMap<String, Integer> l2iMap;
+	ArrayList<ArrayList<GraphNode>> invLsts;
 
 	public PartialViewAnsGrUNCOVprefilt(Query INquery, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter, HashMap<String, Integer> INl2iMap) {
+			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter, 
+			HashMap<String, Integer> INl2iMap, ArrayList<ArrayList<GraphNode>> INinvLsts) {
 
 		query = INquery;
 		mBFL = bfl;
@@ -61,52 +63,42 @@ public class PartialViewAnsGrUNCOVprefilt {
 		qid_Ansgr = qid_Ansgr_in;
 		LintToGN = INLintToGN;
 		l2iMap = INl2iMap;
+		invLsts = INinvLsts;
 
 	}
 
 	public boolean run(QueryEvalStat stat) throws LimitExceededException {
 		
 		tt = new TimeTracker();
-		tt.Start();
-//		ArrayList<Pool> partialPool = new ArrayList<Pool>();
-//		ArrayList<QEdge> uncoveredEdges = new ArrayList<QEdge>();
+//		tt.Start();
 		
-		mFB.oneRun();
-		ArrayList<ArrayList<GraphNode>> mInvLstsByID = mFB.getInvLstsByID();
+//		mFB.oneRun();
+//		ArrayList<ArrayList<GraphNode>> mInvLstsByID = mFB.getInvLstsByID();
+//		double prunetm = mFB.getBuildTime();
+//		stat.setPreTime(prunetm);
 		
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViewsUNCOVprefilt BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
-					mBFL, nodes, l2iMap, mInvLstsByID);
-//					mCandLists, mBFL, nodes);
-//			partialPool = BuildViews.run();
-//			uncoveredEdges = BuildViews.getUncoveredEdges();
+					mBFL, nodes, l2iMap, invLsts, stat);
+//					mBFL, nodes, l2iMap, mInvLstsByID, stat);
 			mPool = BuildViews.run();
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
-//			partialPool = BuildViews.run(stat);
-//			uncoveredEdges = BuildViews.getUncoveredEdges();
 		}
 		
-		//send mPool to ViewsRIsumGraph. get the uncovered edges
-		//this modifies partialPool globally as it turns it into mPool
-//		ViewsRIsumGraph finishSG = new ViewsRIsumGraph(query, mBFL, mCandLists, partialPool, uncoveredEdges, LintToGN);
-//		mPool = finishSG.run();
-		
-		double buildtm = tt.Stop() / 1000;
-		stat.setMatchTime(buildtm);
+//		double buildtm = tt.Stop() / 1000;
+//		stat.setMatchTime(buildtm);
 		stat.calAnsGraphSize(mPool);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
-//		System.out.println("Answer graph build time:" + buildtm + " sec.");
 
 		double numOutTuples;
-
 		tt.Start();
 		tenum = new HybTupleEnumer(query, mPool);
 		numOutTuples = tenum.enumTuples();
 
 		double enumtm = tt.Stop() / 1000;
 		stat.setEnumTime(enumtm);
-		System.out.println("Tuple enumeration time:" + enumtm + " sec.");
+//		System.out.println("Tuple enumeration time:" + enumtm + " sec.");
 
 		stat.setNumSolns(numOutTuples);
 		clear();

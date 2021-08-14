@@ -46,10 +46,12 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 	HashMap<Integer, GraphNode> LintToGN;
 	Query uncov;
 	HashMap<String, Integer> l2iMap;
+	QueryEvalStat stat;
 	
 	public HybAnsGraphBuilderViewsUNCOVprefilt(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap, ArrayList<ArrayList<GraphNode>> InvLstsByID) {
+			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap, 
+			ArrayList<ArrayList<GraphNode>> InvLstsByID, QueryEvalStat INstat) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
@@ -63,16 +65,13 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		Gnodes = INnodes;
 		LintToGN = INLintToGN;
 		l2iMap = INl2iMap;
+		stat = INstat;
 	}
 
 	public ArrayList<Pool> run() {
 		
-//		TimeTracker tt;
-//		tt = new TimeTracker();
-//		tt.Start();
-//		double midTM = tt.Stop() / 1000;
-//		System.out.printf("%.5f", midTM);
-//		System.out.println(" mid time");
+		tt = new TimeTracker();
+		tt.Start();
 		
 		//each view can have more than 1 hom to the query
 		viewHoms = new HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>();
@@ -111,6 +110,12 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		}
 		
 		initNodes(); 
+		
+		double buildtm = tt.Stop() / 1000;
+		System.out.println("initNodes time:" + buildtm + " sec.");
+		
+		/// FILTER ///
+		tt.Start();
 		
 		HashMap<Integer,Integer> oldNewVertices = new HashMap<Integer,Integer>();
 		HashMap<Integer,Integer> newOldVertices = new HashMap<Integer,Integer>();
@@ -241,15 +246,19 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		DagSimGraFilter filter = new DagSimGraFilter(uncovQ, Gnodes, cand_occ_lsts, bitsByIDArr, mBFL, true);
 		filter.prune();
 		ArrayList<MatArray> mCandLists = filter.getCandList();
-//		double prunetm = tt.Stop() / 1000;
-//		stat.setPreTime(prunetm);
-//		System.out.println("Prune time:" + prunetm + " sec.");
+		double prunetm = tt.Stop() / 1000;
+		stat.setPreTime(prunetm);
 
+		/// END FILTER ///
+		
+		tt.Start();
+		
 		//send uncoveredEdges to uncoveredSGBuild to get "view" for them
 		//THIS IS FAST
 		uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, LintToGN, 
 				intersectedAnsGr, oldNewVertices);
-		qid_Ansgr.put(-1, partialSG.run() );  //add uncovered SG
+		qid_Ansgr.put(-1, partialSG.run() );  //add uncovered SG 
+		// RUNNING UNCOVERED IS THE MOST COSTLY STEP
 		
 		// since mQuery is the input in, the mapping is the same but is null for nodes not in uncovered edges
 		ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
@@ -264,12 +273,18 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		
 		intersectUncovered(); 
 		
+//		double midtm = tt.Stop() / 1000;
+//		System.out.println("intUnc time:" + midtm + " sec.");
+		
 		for (int i = 0; i < mQuery.V; i++) { //init fwdadjlist data structure
 			nodeset intersectedNS = intersectedAnsGr.get(i);
 			intersectedNS.createFwdAL();
 		}
 		
 		initEdges(); 
+		
+//		midtm = tt.Stop() / 1000;
+//		System.out.println("initEdges time:" + midtm + " sec.");
 
 		mPool = new ArrayList<Pool>(mQuery.V);
 		QNode[] qnodes = mQuery.nodes;
@@ -294,7 +309,9 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 			linkOneStep(edge);
 		}
 		
-
+		buildtm += tt.Stop() / 1000;
+		stat.setMatchTime(buildtm);
+		
 
 		return mPool;
 	}

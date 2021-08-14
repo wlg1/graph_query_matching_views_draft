@@ -6,25 +6,25 @@ Algorithm:DagEval_simgr
 *****************************************************
 View Build Times: 
 id status preTime matchTime totTime numNodesBefore numNodesAfter sizeOfAG
-0 success .5770 2.1850 2.7620 40,065 3,740 735,412
+0 success .4550 .0550 .5100 53,443 947 20,930
 *****************************************************
 id status preTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln sizeOfAG
-0 success .0000 .8310 .0380 .8690 53,443 3,022 50,083 81,775
+0 success .0020 .1850 .0220 .2090 53,443 684 50,083 23,679
 Average running time: 
 id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
-0 success .0000 .8310 .0380 .8690 53,443 3,022 50,083 81,775
-Data loading Time:1.4100
-Index building Time:.4870
-Average Eval Time per run:.8690
-Average Eval Time per query:.8690
+0 success .0020 .1850 .0220 .2090 53,443 684 50,083 23,679
+Data loading Time:1.3650
+Index building Time:.5630
+Average Eval Time per run:.2090
+Average Eval Time per query:.2090
 Average pruning Time per run:.0000
 Average pruning Time per query:.0000
-Average Matching Time per run:.8310
-Average Matching Time per query:.8310
-Average Enumeration Time per run:.0380
-Average Enumeration Time per query:.0380
+Average Matching Time per run:.1850
+Average Matching Time per query:.1850
+Average Enumeration Time per run:.0220
+Average Enumeration Time per query:.0220
 Average Nodes before per query:53443.0000
-Average Nodes after per query:3022.0000
+Average Nodes after per query:684.0000
 Average number of solution tuples per query:50083.0000
-Max Used Memory:532.0000 MB
+Max Used Memory:340.0000 MB
 *****************************************************
