@@ -8,6 +8,7 @@ import org.roaringbitmap.RoaringBitmap;
 
 import answerGraph.HybAnsGraphBuilderViews;
 import answerGraph.HybAnsGraphBuilderViewsUNCOVprefilt;
+import answerGraph.HybAnsGraphBuilderViewsUNCOVprefilt2;
 import dao.BFLIndex;
 import dao.MatArray;
 import dao.Pool;
@@ -30,13 +31,11 @@ import views.nodeset;
 public class PartialViewAnsGrUNCOVprefilt {
 
 	Query query;
-	ArrayList<ArrayList<GraphNode>> mInvLsts;
 	BFLIndex mBFL;
 	TimeTracker tt;
 	GraphNode[] nodes;
 	FilterBuilder mFB;
 	ArrayList<Pool> mPool;
-	ArrayList<ArrayList<GraphNode>> mInvLstsByID;
 	ArrayList<RoaringBitmap> mBitsByIDArr;
 	boolean rmvEmpty;
 	HybTupleEnumer tenum;
@@ -72,15 +71,17 @@ public class PartialViewAnsGrUNCOVprefilt {
 		tt = new TimeTracker();
 //		tt.Start();
 		
+		double prunetm;
 //		mFB.oneRun();
-//		ArrayList<ArrayList<GraphNode>> mInvLstsByID = mFB.getInvLstsByID();
-//		double prunetm = mFB.getBuildTime();
-//		stat.setPreTime(prunetm);
+//		invLsts = mFB.getInvLstsByID();
+//		prunetm = mFB.getBuildTime();  //if using FLT
+//		stat.nodesAfterPreFilt = calcTotNodesAfterPreFilt();
+		
+		prunetm = 0;  //all nodes covered
 		
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViewsUNCOVprefilt BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
-					mBFL, nodes, l2iMap, invLsts, stat);
-//					mBFL, nodes, l2iMap, mInvLstsByID, stat);
+			HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
+					mBFL, nodes, prunetm, invLsts, stat);
 			mPool = BuildViews.run();
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
@@ -119,33 +120,14 @@ public class PartialViewAnsGrUNCOVprefilt {
 			return tenum.getTupleCount();
 		return 0;
 	}
-
-	private double calTotInvNodes() {
-
-		double totNodes_before = 0.0;
-
-		for (QNode q : query.nodes) {
-
-			ArrayList<GraphNode> invLst = mInvLstsByID.get(q.lb);
-			totNodes_before += invLst.size();
-		}
-
-		return totNodes_before;
-	}
-
-	private boolean descendantOnly() {
-		QEdge[] edges = query.edges;
-		for (QEdge edge : edges) {
-			AxisType axis = edge.axis;
-			if (axis == Consts.AxisType.child) {
-
-				return false;
-			}
+	
+	private double calcTotNodesAfterPreFilt() {
+		double totNodes = 0.0;
+		for (ArrayList<GraphNode> invL : invLsts) {
+			totNodes += invL.size();
 
 		}
-
-		return true;
-
+		return totNodes;
 	}
 
 	private double calTotCandSolnNodes() {
@@ -157,22 +139,6 @@ public class PartialViewAnsGrUNCOVprefilt {
 
 		}
 		return totNodes;
-	}
-
-	private double calTotTreeSolns() {
-
-		QNode root = query.getSources().get(0);
-		Pool rPool = mPool.get(root.id);
-		double totTuples = 0;
-		ArrayList<PoolEntry> elist = rPool.elist();
-		for (PoolEntry r : elist) {
-
-			totTuples += r.size();
-
-		}
-		System.out.println("total number of solution tuples: " + totTuples);
-		return totTuples;
-
 	}
 
 	public void printSolutions(ArrayList<PoolEntry> elist) {

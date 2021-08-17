@@ -30,11 +30,12 @@ public class uncoveredSGBuild {
 	HashMap<Integer, GraphNode> LintToGN;
 	ArrayList<Integer> nodesToCompute;
 	ArrayList<nodeset> intersectedAnsGr;
-	HashMap<Integer,Integer> oldNewVertices;
+//	HashMap<Integer,Integer> oldNewVertices;
 	
 	public uncoveredSGBuild(Query query, BFLIndex bfl, ArrayList<MatArray> candLsts, 
 			ArrayList<QEdge> INuncoveredEdges, HashMap<Integer, GraphNode> INLintToGN, 
-			ArrayList<nodeset> INintersectedAnsGr, HashMap<Integer,Integer> INoldNewVertices) {
+//			ArrayList<nodeset> INintersectedAnsGr, HashMap<Integer,Integer> INoldNewVertices) {
+			ArrayList<nodeset> INintersectedAnsGr) {
 
 		mQuery = query;
 		mBFL = bfl;
@@ -42,15 +43,10 @@ public class uncoveredSGBuild {
 		uncoveredEdges = INuncoveredEdges;
 		intersectedAnsGr = INintersectedAnsGr;
 		LintToGN = INLintToGN;
-		oldNewVertices = INoldNewVertices;
+//		oldNewVertices = INoldNewVertices;
 	}
 
-	public ArrayList<nodeset> run() {
-		
-		TimeTracker tt;
-		tt = new TimeTracker();
-		tt.Start();
-
+	public ArrayList<Pool> run() {
 		RoaringBitmap[] tBitsIdxArr = new RoaringBitmap[mQuery.V];
 		initPool(tBitsIdxArr);
 
@@ -59,39 +55,7 @@ public class uncoveredSGBuild {
 			linkOneStep(edge,tBitsIdxArr);
 		}
 		
-//		double midTM = tt.Stop() / 1000;
-//		System.out.printf("%.5f", midTM);
-//		System.out.println(" mid time");
-		
-		ArrayList<nodeset> matView = new ArrayList<nodeset>();
-		for (Pool pl : mPool) {
-			nodeset ns = new nodeset();
-			for (PoolEntry pe : pl.elist()) {
-				GraphNode gn = pe.mValue;
-				LintToGN.put(gn.L_interval.mStart, gn);
-				ns.gnodesBits.add(gn.L_interval.mStart);
-				if (pe.mFwdEntries != null){
-					HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
-					for (Integer key : pe.mFwdEntries.keySet()) {
-						RoaringBitmap newBitmap = new RoaringBitmap();
-						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
-						for (PoolEntry peTo : nodeFwd) {
-							newBitmap.add(peTo.mValue.L_interval.mStart);
-						}
-						fal.put(key, newBitmap);
-					}
-					ns.fwdAdjLists.put(gn.L_interval.mStart, fal);
-				} else {
-					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
-				}
-			}
-			matView.add(ns);
-		}
-//		double midTM = tt.Stop() / 1000;
-//		System.out.printf("%.5f", midTM);
-//		System.out.println(" mid time");
-		
-		return matView;
+		return mPool;
 
 	}
 	
@@ -128,8 +92,8 @@ public class uncoveredSGBuild {
 			
 			nodeset intersectedNS = intersectedAnsGr.get(i);
 			
-//			MatArray mli = mCandLists.get(i);
-			MatArray mli = mCandLists.get(oldNewVertices.get(i));
+			MatArray mli = mCandLists.get(i);
+//			MatArray mli = mCandLists.get(oldNewVertices.get(i));
 			ArrayList<GraphNode> elist = mli.elist();
 			
 			if (intersectedNS.hasNodes && intersectedNS.gnodesBits.getCardinality() < elist.size()) {

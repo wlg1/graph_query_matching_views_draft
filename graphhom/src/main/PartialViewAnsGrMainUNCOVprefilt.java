@@ -168,7 +168,6 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 	private void evaluate() throws Exception {
 		
 		HashMap<Integer, GraphNode> LintToGN = new HashMap<Integer, GraphNode>(); 
-//		HashMap<Integer, GraphNode> posToGN = new HashMap<Integer, GraphNode>(); 
 		Map<Integer, ArrayList<nodeset>> qid_Ansgr = new HashMap<>(); //look up table for view answer graph using Qid of view
 		for (Query view : this.views) {
 			QueryEvalStat stat = null;
@@ -180,7 +179,6 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 			getAnsGrViews ansgrBuilder = new getAnsGrViews(view, fbV, bfl, LintToGN, useAnsGr);
 			//add view to list, then assoc it with an Qid. Add Qid to viewsOfQuery
 			qid_Ansgr.put(view.Qid, ansgrBuilder.run(sV) );
-//			posToGN = ansgrBuilder.posToGN;
 			
 			stat = new QueryEvalStat(sV);
 			stats.addView(stat);
@@ -290,7 +288,7 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			stats.printToFileViews(opw);
+			stats.printToFilePartialViews(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

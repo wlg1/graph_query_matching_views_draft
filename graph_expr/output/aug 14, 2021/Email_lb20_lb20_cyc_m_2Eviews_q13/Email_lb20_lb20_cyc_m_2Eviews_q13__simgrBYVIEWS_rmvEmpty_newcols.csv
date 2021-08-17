@@ -1,0 +1,48 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214,E:345203,lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q13.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View,Build,Times:,
+id,status,preTime,matchTime,totTime,numNodesBefore,numNodesAfter,sizeOfAG
+0,success,.1810,.0010,.1820,40021,1056,2125
+1,success,.2030,2.3140,2.5170,40152,3767,1412181
+2,success,.6300,1.7170,2.3470,40152,9975,1387163
+3,success,.2460,.1130,.3590,40265,7669,416451
+4,success,.2100,4.9990,5.2090,40188,4010,1610291
+5,success,.2340,2.1480,2.3820,40319,10284,1559072
+6,success,.1870,2.1140,2.3010,40152,8917,1270664
+7,success,.1980,.3940,.5920,40075,3540,72849
+8,success,.2210,3.0580,3.2790,40188,8900,1643236
+*****************************************************
+id,status,preTime,matchTime,enumTime,totTime,numNodesBefore,numNodesAfter,numSoln,sizeOfAG
+0,success,.0000,.0390,.2340,.2730,66962,1562,709258,133130
+0,success,.0000,.0270,.1600,.1870,66962,1562,709258,133130
+0,success,.0000,.0260,.1620,.1880,66962,1562,709258,133130
+0,success,.0000,.0250,.1610,.1860,66962,1562,709258,133130
+0,success,.0000,.0260,.2250,.2510,66962,1562,709258,133130
+0,success,.0000,.0250,.1990,.2240,66962,1562,709258,133130
+0,success,.0000,.0260,.2250,.2510,66962,1562,709258,133130
+0,success,.0000,.0340,.2990,.3330,66962,1562,709258,133130
+0,success,.0000,.0270,.2050,.2320,66962,1562,709258,133130
+0,success,.0000,.0430,.2640,.3070,66962,1562,709258,133130
+Average,running,time:,
+id,status,preTime,matchTime,enumTime,totTime,totNodesBefore,totNodesAfter,numOfTuples,sizeOfAG
+0,success,.0000,.0298,.2134,.2432,66962,1562,709258,133130
+
+Data loading Time,.7560
+Index building Time,.2280
+Average Eval Time per run,1.2619
+Average Eval Time per query,1.2619
+Average pruning Time per run,.0000
+Average pruning Time per query,.0000
+Average Matching Time per run,.1600
+Average Matching Time per query,.1600
+Average Enumeration Time per run,1.1019
+Average Enumeration Time per query,1.1019
+Average Nodes before per query,66962.0000
+Average Nodes after per query,1562.0000
+Average number of solution tuples per query,709258.0000
+Max Used Memory,1780.0000 MB
+*****************************************************

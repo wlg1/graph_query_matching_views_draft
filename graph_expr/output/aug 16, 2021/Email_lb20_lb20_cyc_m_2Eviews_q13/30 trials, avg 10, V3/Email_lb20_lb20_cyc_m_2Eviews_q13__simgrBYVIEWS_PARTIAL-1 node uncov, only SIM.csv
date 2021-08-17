@@ -1,0 +1,62 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_m_2Eviews_q13.qry
+Algorithm:DagEval_simgr
+*****************************************************
+View Build Times: 
+id status preTime matchTime totTime numNodesBefore numNodesAfter sizeOfAG
+0 success .6120 .0540 .6660 40,021 1,056 2,125
+1 success .2850 3.1090 3.3940 40,152 3,767 1,412,181
+2 success .8800 3.3620 4.2420 40,152 9,975 1,387,163
+3 success .1960 .1200 .3160 40,265 7,669 416,451
+*****************************************************
+id status preTime matchTime enumTime totTime numNodesBefore numNodesAfter numSoln sizeOfAG
+0 success .2050 .4710 .5790 1.2550 66,962 1,547 709,258 131,764
+0 success .2600 .3000 .1920 .7520 66,962 1,547 709,258 131,764
+0 success .1790 .3630 .2690 .8110 66,962 1,547 709,258 131,764
+0 success .1920 .2340 .1810 .6070 66,962 1,547 709,258 131,764
+0 success .2190 .2990 .1810 .6990 66,962 1,547 709,258 131,764
+0 success .1530 .3890 .2810 .8230 66,962 1,547 709,258 131,764
+0 success .2920 .4280 .2140 .9340 66,962 1,547 709,258 131,764
+0 success .1630 .3000 .2340 .6970 66,962 1,547 709,258 131,764
+0 success .2250 .4450 .2950 .9650 66,962 1,547 709,258 131,764
+0 success .3000 .5280 .2310 1.0590 66,962 1,547 709,258 131,764
+0 success .2170 .3440 .2330 .7940 66,962 1,547 709,258 131,764
+0 success .3420 .4210 .1920 .9550 66,962 1,547 709,258 131,764
+0 success .1470 .3950 .2840 .8260 66,962 1,547 709,258 131,764
+0 success .1440 .3060 .2270 .6770 66,962 1,547 709,258 131,764
+0 success .2010 .5480 .2490 .9980 66,962 1,547 709,258 131,764
+0 success .1550 .3610 .2340 .7500 66,962 1,547 709,258 131,764
+0 success .1800 .3440 .2550 .7790 66,962 1,547 709,258 131,764
+0 success .1670 .4370 .1810 .7850 66,962 1,547 709,258 131,764
+0 success .1410 .2990 .1960 .6360 66,962 1,547 709,258 131,764
+0 success .1470 .2590 .1970 .6030 66,962 1,547 709,258 131,764
+0 success .1640 .2820 .1930 .6390 66,962 1,547 709,258 131,764
+0 success .1540 .2490 .1780 .5810 66,962 1,547 709,258 131,764
+0 success .1400 .2590 .1740 .5730 66,962 1,547 709,258 131,764
+0 success .1360 .2660 .1640 .5660 66,962 1,547 709,258 131,764
+0 success .1360 .2360 .1820 .5540 66,962 1,547 709,258 131,764
+0 success .2150 .3510 .1850 .7510 66,962 1,547 709,258 131,764
+0 success .1460 .2380 .1750 .5590 66,962 1,547 709,258 131,764
+0 success .1310 .1970 .1680 .4960 66,962 1,547 709,258 131,764
+0 success .1300 .1900 .1680 .4880 66,962 1,547 709,258 131,764
+0 success .1390 .2170 .1630 .5190 66,962 1,547 709,258 131,764
+Average running time: 
+id status preTime matchTime enumTime totTime totNodesBefore totNodesAfter numOfTuples sizeOfAG
+0 success .1840 .3319 .2218 .7377 66,962 1,547 709,258 131,764
+Data loading Time:1.5950
+Index building Time:.4230
+Average Eval Time per run:12.4893
+Average Eval Time per query:12.4893
+Average pruning Time per run:.0000
+Average pruning Time per query:.0000
+Average Matching Time per run:5.5825
+Average Matching Time per query:5.5825
+Average Enumeration Time per run:3.7985
+Average Enumeration Time per query:3.7985
+Average Nodes before per query:66962.0000
+Average Nodes after per query:1547.0000
+Average number of solution tuples per query:709258.0000
+Max Used Memory:1177.0000 MB
+*****************************************************

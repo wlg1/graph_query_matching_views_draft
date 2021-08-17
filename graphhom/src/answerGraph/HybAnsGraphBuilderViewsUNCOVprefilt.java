@@ -45,12 +45,12 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 	GraphNode[] Gnodes;
 	HashMap<Integer, GraphNode> LintToGN;
 	Query uncov;
-	HashMap<String, Integer> l2iMap;
+	double prunetm;
 	QueryEvalStat stat;
 	
 	public HybAnsGraphBuilderViewsUNCOVprefilt(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			BFLIndex bfl, GraphNode[] INnodes, HashMap<String, Integer> INl2iMap, 
+			BFLIndex bfl, GraphNode[] INnodes, double INprunetm, 
 			ArrayList<ArrayList<GraphNode>> InvLstsByID, QueryEvalStat INstat) {
 		
 		mQuery = query;
@@ -64,7 +64,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		mInvLstsByID = InvLstsByID;
 		Gnodes = INnodes;
 		LintToGN = INLintToGN;
-		l2iMap = INl2iMap;
+		prunetm = INprunetm;
 		stat = INstat;
 	}
 
@@ -112,11 +112,11 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		initNodes(); 
 		
 		double buildtm = tt.Stop() / 1000;
-		System.out.println("initNodes time:" + buildtm + " sec.");
+//		System.out.println("initNodes time:" + buildtm + " sec.");
 		
 		/// FILTER ///
-		tt.Start();
-		
+//		tt.Start();
+//		
 		HashMap<Integer,Integer> oldNewVertices = new HashMap<Integer,Integer>();
 		HashMap<Integer,Integer> newOldVertices = new HashMap<Integer,Integer>();
 		Integer newVertNum = 0;
@@ -148,8 +148,14 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 				cand_occ_l.add(graphN);
 			}
 			if (cand_occ_l.isEmpty()) {
-				cand_occ_l = mInvLstsByID.get(nsNum);
+				cand_occ_l = mInvLstsByID.get(mQuery.getNodes()[nsNum].lb);
+//				cand_occ_l = mInvLstsByID.get(nsNum);  //if using FLT
 			}
+			
+//			if (ns.gnodesBits.getCardinality() < mInvLstsByID.get(nsNum).size()) {
+//			if (cand_occ_l.size() < mInvLstsByID.get(nsNum).size()) {
+//				cand_occ_l = mInvLstsByID.get(nsNum);
+//			}
 			
 			cand_occ_lsts.add(cand_occ_l);
 		}
@@ -245,9 +251,40 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		
 		DagSimGraFilter filter = new DagSimGraFilter(uncovQ, Gnodes, cand_occ_lsts, bitsByIDArr, mBFL, true);
 		filter.prune();
-		ArrayList<MatArray> mCandLists = filter.getCandList();
-		double prunetm = tt.Stop() / 1000;
+		ArrayList<MatArray> mCandLists = null;
+		mCandLists = filter.getCandList();
+
+		prunetm += tt.Stop() / 1000;
 		stat.setPreTime(prunetm);
+		
+		ArrayList<ArrayList<GraphNode>> cand_occ_lsts2 = new ArrayList<ArrayList<GraphNode>>();
+		for (int i=0; i < mQuery.V; i++) {
+			nodeset ns = intersectedAnsGr.get(i);
+			ArrayList<GraphNode> cand_occ_l = new ArrayList<GraphNode>();
+			for (int lint : ns.gnodesBits) {
+				GraphNode graphN = LintToGN.get(lint);
+				cand_occ_l.add(graphN);
+			}
+			if (cand_occ_l.isEmpty()) {
+				cand_occ_l = mInvLstsByID.get(mQuery.getNodes()[i].lb);
+			}
+			cand_occ_lsts2.add(cand_occ_l);
+		}
+		
+		ArrayList<RoaringBitmap> bitsByIDArr2 = new ArrayList<RoaringBitmap>(V);
+		for (QNode q : mQuery.getNodes()) {
+			RoaringBitmap bits = new RoaringBitmap();
+			ArrayList<GraphNode> invLst = cand_occ_lsts2.get(q.id);
+			for (GraphNode n : invLst) {
+				bits.add(n.id);
+			}
+			bitsByIDArr2.add(bits);
+		}
+		
+		DagSimGraFilter filter2 = new DagSimGraFilter(mQuery, Gnodes, cand_occ_lsts2, bitsByIDArr2, mBFL, true);
+		filter2.prune();
+		ArrayList<MatArray> mCandLists2 = null;
+		mCandLists2 = filter2.getCandList();
 
 		/// END FILTER ///
 		
@@ -316,13 +353,13 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt {
 		return mPool;
 	}
 	
-	private void readUncovered(String uncovFileN) {
-		QueryParser queryParser = new QueryParser(uncovFileN, l2iMap);
-		Query view = null;
-		uncov = queryParser.readNextQuery();
-		TransitiveReduction tr = new TransitiveReduction(uncov);
-		tr.reduce();
-	}
+//	private void readUncovered(String uncovFileN) {
+//		QueryParser queryParser = new QueryParser(uncovFileN, l2iMap);
+//		Query view = null;
+//		uncov = queryParser.readNextQuery();
+//		TransitiveReduction tr = new TransitiveReduction(uncov);
+//		tr.reduce();
+//	}
 
 	public ArrayList<QEdge> getUncoveredEdges(){
 		return uncoveredEdges;

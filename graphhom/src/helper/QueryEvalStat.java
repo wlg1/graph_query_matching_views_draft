@@ -8,8 +8,9 @@ import global.Consts.status_vals;
 
 public class QueryEvalStat {
 
-	public double sizeOfAnsGraph = 0.0, numSolns = 0.0, totNodesBefore = 0.0, totNodesAfter = 0.0, totSolnNodes = 0.0;
-	public double preTime = 0.0, planTime = 0.0, matchTime = 0.0, enumTime,  totTime = 0.0;
+	public double sizeOfAnsGraph = 0.0, numSolns = 0.0, totNodesBefore = 0.0, totNodesAfter = 0.0, totSolnNodes = 0.0,
+			nodesAfterPreFilt = 0.0, nodesAfterVinter = 0.0, sizeOfUncovAnsGraph;
+	public double preTime = 0.0, planTime = 0.0, matchTime = 0.0, enumTime,  totTime = 0.0, vInterTime = 0.0;
     public status_vals status = status_vals.success;
 	public double numPlans = 0.0;
 	
@@ -19,22 +20,25 @@ public class QueryEvalStat {
 	
 	public QueryEvalStat(QueryEvalStat s){
 		
-		setFields(s.preTime, s.planTime, s.matchTime, s.enumTime, s.numSolns, s.numPlans, s.sizeOfAnsGraph);
+		setFields(s.vInterTime, s.preTime, s.planTime, s.matchTime, s.enumTime, s.numSolns, s.numPlans, s.sizeOfAnsGraph,
+				s.nodesAfterPreFilt, s.nodesAfterVinter, s.sizeOfUncovAnsGraph);
 		setTotNodesBefore(s.totNodesBefore);
 		setTotNodesAfter(s.totNodesAfter);
 	}
 	
-	public QueryEvalStat(double pt, double lt, double mt, double et, double solns) {
-		setFields(pt, lt, mt, et, solns, 0.0, 0.0);
+	public QueryEvalStat(double vt, double pt, double lt, double mt, double et, double solns) {
+		setFields(vt, pt, lt, mt, et, solns, 0.0, 0.0, 0.0, 0.0, 0.0);
 	}
 	
-	public QueryEvalStat(double pt, double lt, double mt, double et, double solns, double pls) {
-	       
-		setFields(pt, lt, mt, et, solns, pls, 0.0);
-	}
+//	public QueryEvalStat(double vt, double pt, double lt, double mt, double et, double solns, double pls) {
+//	       
+//		setFields(vt, pt, lt, mt, et, solns, pls, 0.0, 0.0, 0.0);
+//	}
 	
-	private void setFields(double pt, double lt, double mt, double et, double solns, double pls, double agsz){
+	private void setFields(double vt, double pt, double lt, double mt, double et, double solns, double pls, double agsz,
+			double napf, double navi, double sou){
 		
+		vInterTime = vt;
 		preTime = pt;
 		planTime = lt;
 		matchTime = mt;
@@ -43,6 +47,9 @@ public class QueryEvalStat {
 		numSolns = solns;
 		numPlans = pls;
 		sizeOfAnsGraph = agsz;
+		nodesAfterPreFilt = napf;
+		nodesAfterVinter = navi;
+		sizeOfUncovAnsGraph = sou;
 	}
 	
 	public void setTotNodesBefore(double n){
@@ -65,6 +72,12 @@ public class QueryEvalStat {
 	public void setPlanTime(double lt){
 		planTime = lt;
 		totTime+=lt;
+		
+	}
+	
+	public void setvInterTime(double vt){
+		vInterTime = vt;
+		totTime+=vt;
 		
 	}
 	
@@ -102,6 +115,20 @@ public class QueryEvalStat {
 			sizeOfAnsGraph +=pl.elist().size(); //nodes
 			for (PoolEntry e :pl.elist()){
 				sizeOfAnsGraph+=e.getNumChildEnties(); //out edges
+				//sizeOfAnsGraph+=e.getNumParEnties(); //in edges. dont use b/c redundant w/ outedges
+			}
+			
+		}
+		
+		
+	}
+	
+	public void calUncovAnsGraphSize(ArrayList<Pool> poolArr){
+		
+		for(Pool pl:poolArr){
+			sizeOfUncovAnsGraph +=pl.elist().size(); //nodes
+			for (PoolEntry e :pl.elist()){
+				sizeOfUncovAnsGraph+=e.getNumChildEnties(); //out edges
 				//sizeOfAnsGraph+=e.getNumParEnties(); //in edges
 			}
 			

@@ -14,7 +14,7 @@ public class QueryEvalStats {
 	public double avgQSize = 0.0;
 	// public double totmem = 0.0;
 	ArrayList<QueryEvalStat>[] qryEvalStats;
-	public double[] totTimes, totMatchTimes, totEnumTimes, totPreTimes, totPlanTimes;
+	public double[] totTimes, totMatchTimes, totEnumTimes, totPreTimes, totPlanTimes, totvInterTimes;
 	ArrayList<QueryEvalStat> viewEvalStatList;
 
 	public QueryEvalStats() {
@@ -25,6 +25,7 @@ public class QueryEvalStats {
 		totEnumTimes = new double[Flags.REPEATS];
 		totPreTimes = new double[Flags.REPEATS];
 		totPlanTimes = new double[Flags.REPEATS];
+		totvInterTimes = new double[Flags.REPEATS];
 	}
 
 	public QueryEvalStats(String dataFN, String qryFN, String algN) {
@@ -35,6 +36,7 @@ public class QueryEvalStats {
 		totEnumTimes = new double[Flags.REPEATS];
 		totPreTimes = new double[Flags.REPEATS];
 		totPlanTimes = new double[Flags.REPEATS];
+		totvInterTimes = new double[Flags.REPEATS];
 		this.dataFN = dataFN;
 		this.qryFN = qryFN;
 		this.algN = algN;
@@ -65,9 +67,9 @@ public class QueryEvalStats {
 		bldTime = bt;
 	}
 
-	public void add(int iter, int qid, double pt, double lt, double mt, double et, double solns) {
+	public void add(int iter, int qid, double vt, double pt, double lt, double mt, double et, double solns) {
 
-		QueryEvalStat qst = new QueryEvalStat(pt, lt, mt, et, solns);
+		QueryEvalStat qst = new QueryEvalStat(vt, pt, lt, mt, et, solns);
 		// add(qst);
 		add(iter, qid, qst);
 	}
@@ -92,7 +94,7 @@ public class QueryEvalStats {
 		opw.append("Queryset:" + qryFN + "\r\n");
 		opw.append("Algorithm:" + algN + "\r\n");
 		
-		DecimalFormat f = new DecimalFormat("##.00");
+		DecimalFormat f = new DecimalFormat("##.0000");
 
 		int totQs = qryEvalStats[0].size();
 		int numQs = totQs;
@@ -386,6 +388,134 @@ public class QueryEvalStats {
 					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
 					+ new DecimalFormat(",###").format(stat.numSolns) + " "
 					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+
+		}
+
+		opw.append("Data loading Time:" + f.format(loadTime) + "\r\n");
+		opw.append("Index building Time:" + f.format(bldTime) + "\r\n");
+
+		double avgExeTime = calAvg(totTimes);
+		double avgMatTime = calAvg(totMatchTimes);
+		double avgPreTime = calAvg(totPreTimes);
+		double avgEnumTime = calAvg(totEnumTimes);
+
+		opw.append("Average Eval Time per run:" + f.format(avgExeTime) + "\r\n");
+		opw.append("Average Eval Time per query:" + f.format(avgExeTime / numQs) + "\r\n");
+		opw.append("Average pruning Time per run:" + f.format(avgPreTime) + "\r\n");
+		opw.append("Average pruning Time per query:" + f.format(avgPreTime / numQs) + "\r\n");
+		opw.append("Average Matching Time per run:" + f.format(avgMatTime) + "\r\n");
+		opw.append("Average Matching Time per query:" + f.format(avgMatTime / numQs) + "\r\n");
+		opw.append("Average Enumeration Time per run:" + f.format(avgEnumTime) + "\r\n");
+		opw.append("Average Enumeration Time per query:" + f.format(avgEnumTime / numQs) + "\r\n");
+		opw.append("Average Nodes before per query:" + f.format(totNodesBefore / numQs) + "\r\n");
+		opw.append("Average Nodes after per query:" + f.format(totNodesAfter / numQs) + "\r\n");
+		opw.append("Average number of solution tuples per query:" + f.format(totSolns / numQs) + "\r\n");
+		opw.append("Max Used Memory:" + f.format(Flags.mt.getMaxUsedMem()) + " MB\r\n");
+		opw.append("*****************************************************\r\n");
+	
+	}
+	
+	public void printToFilePartialViews(PrintWriter opw) {
+		opw.append("*****************************************************\r\n");
+		opw.append("Dataset:" + dataFN + "\r\n");
+		opw.append("V:" + V + " " + "E:" + E + " " + "lbs:" + numLbs + "\r\n");
+		opw.append("Queryset:" + qryFN + "\r\n");
+		opw.append("Algorithm:" + algN + "\r\n");
+		
+		DecimalFormat f = new DecimalFormat("##.0000");
+
+		int totQs = qryEvalStats[0].size();
+		int numQs = totQs;
+		double[] evalTimes, matchTimes, enumTimes, preTimes, vInterTimes;
+		evalTimes = new double[numQs];
+		matchTimes = new double[numQs];
+		enumTimes = new double[numQs];
+		preTimes = new double[numQs];
+		vInterTimes = new double[numQs];
+
+		double totNodesBefore = 0.0, totNodesAfter = 0.0;
+		double totSolns = 0.0;
+		
+		opw.append("*****************************************************\r\n");
+		opw.append("View Build Times: \r\n");
+		opw.append("id" + " " + "status" + " " + "filtTime" + " " + "matchTime" + " "
+				+ "totTime" + " " + "\"nodesSumInvL" + " " + "nodesSG" + " "
+				+ "sizeOfSG"
+				+ "\r\n");
+		int totVs = viewEvalStatList.size();
+		for (int q = 0; q < totVs; q++) {
+			QueryEvalStat stat = viewEvalStatList.get(q);
+			opw.append(q + " " + stat.status + " " + f.format(stat.preTime) + " "
+					+ f.format(stat.matchTime) + " " + f.format(stat.totTime) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + "\r\n");
+		}
+		
+		opw.append("*****************************************************\r\n");
+
+		opw.append("id" + " " + "status" + " " + "vInterTimes" + " " + "filtTime" + " " + "SGbuildTime" + " " + "joinTime"
+				+ " " + "totTime" + " " + "nodesSumInvL" + " " + "nodesAfterPreFilt" + " " + "nodesAfterVinter" + " " 
+				+ "nodesSG" + " " + "numSoln" + " " +  "sizeOfSG" + " " + "sizeUncovSG" + "\r\n");
+
+		for (int i = 0; i < Flags.REPEATS; i++) {
+			numQs = totQs;
+			ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[i];
+			for (int q = 0; q < totQs; q++) {
+				QueryEvalStat stat = qryEvalStatList.get(q);
+				//if (stat.status != Consts.status_vals.success) {
+				//	numQs--;
+
+				//} else {
+					matchTimes[q] += stat.matchTime;
+					enumTimes[q] += stat.enumTime;
+					preTimes[q] += stat.preTime;
+					evalTimes[q] += stat.totTime;
+					vInterTimes[q] += stat.vInterTime;
+					
+					totTimes[i] += evalTimes[q];  // for use at very end, not to calc avg
+					totMatchTimes[i] += matchTimes[q]; // for use at very end, not to calc avg
+					totEnumTimes[i] += enumTimes[q]; // for use at very end, not to calc avg
+					if (i == 0) {
+						totNodesBefore += stat.totNodesBefore;
+						totNodesAfter += stat.totNodesAfter;
+						totSolns += stat.numSolns;
+					}
+				//}
+
+				opw.append(q + " " + stat.status + " " + f.format(stat.vInterTime) + " " + f.format(stat.preTime) + " "
+						+ f.format(stat.matchTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
+						+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+						+ new DecimalFormat(",###").format(stat.nodesAfterPreFilt) + " "
+						+ new DecimalFormat(",###").format(stat.nodesAfterVinter) + " "
+						+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+						+ new DecimalFormat(",###").format(stat.numSolns) + " "
+						+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + " "
+						+ new DecimalFormat(",###").format(stat.sizeOfUncovAnsGraph) + "\r\n");
+
+			}
+		}
+
+		opw.append("Average running time: \r\n");
+		opw.append("id" + " " + "status" + " " + "vInterTimes" + " " + "filtTime" + " " + "SGbuildTime" + " " + "joinTime"
+				+ " " + "totTime" + " " + "nodesSumInvL" + " " + "nodesAfterPreFilt" + " " + "nodesAfterVinter" + " " 
+				+ "nodesSG" + " " + "numSoln" + " " +  "sizeOfSG" + " " + "sizeUncovSG" + "\r\n");
+		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
+		for (int q = 0; q < totQs; q++) {
+			QueryEvalStat stat = qryEvalStatList.get(q);
+
+			opw.append(q + " " + stat.status + " " 
+					+ f.format(vInterTimes[q] / Flags.REPEATS) + " "
+					+ f.format(preTimes[q] / Flags.REPEATS) + " "
+					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
+					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+					+ new DecimalFormat(",###").format(stat.nodesAfterPreFilt) + " "
+					+ new DecimalFormat(",###").format(stat.nodesAfterVinter) + " "
+					+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+					+ new DecimalFormat(",###").format(stat.numSolns) + " "
+					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + " "
+					+ new DecimalFormat(",###").format(stat.sizeOfUncovAnsGraph) + "\r\n");
 
 		}
 
