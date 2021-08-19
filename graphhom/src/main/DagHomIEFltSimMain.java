@@ -219,7 +219,8 @@ public class DagHomIEFltSimMain {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			stats.printToFile(opw);
+//			stats.printToFile(opw);
+			stats.printToFilePartialViews(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

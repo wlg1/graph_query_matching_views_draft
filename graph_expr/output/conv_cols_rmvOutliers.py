@@ -30,23 +30,24 @@ def output_goodcol(fn):
         if len(new_row) > 1:
             if new_row[0] == 'id':
                 temp_row = new_row[2:]
-                if len(new_row) > 10:
-                    header = [''] + [temp_row[0]] + temp_row[2:-2] + [temp_row[-1]]
-                else:
-                    header = [''] + temp_row
+                # if len(new_row) > 10:
+                #     header = [''] + [temp_row[0]] + temp_row[2:-2] + [temp_row[-1]]
+                # else:
+                #     header = [''] + temp_row
+                header = [''] + temp_row
             if new_row[0] == 'Average':
                 calc_avg_flag = False
             if calc_avg_flag and new_row[1] == 'success':
                 temp_row = [float(x) for x in new_row[2:]]
-                if len(new_row) > 10:
-                    temp_row = [temp_row[0]] + temp_row[2:-2] + [temp_row[-1]]
+                # if len(new_row) > 10:
+                #     temp_row = [temp_row[0]] + temp_row[2:-2] + [temp_row[-1]]
                 total_times_byRow.append(temp_row)
     
     # if len(total_times_byRow[0]) > 10:
     #     total_times_byRow.sort(key=lambda x: x[4])
     # else:
     #     total_times_byRow.sort(key=lambda x: x[3])
-    total_times_byRow.sort(key=lambda x: x[3])
+    total_times_byRow.sort(key=lambda x: x[4])
     
     # pruned_total_times = total_times_byRow[5:25]
     # pruned_total_times = total_times_byRow[10:20]

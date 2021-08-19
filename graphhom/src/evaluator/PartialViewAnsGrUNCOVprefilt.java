@@ -71,17 +71,9 @@ public class PartialViewAnsGrUNCOVprefilt {
 		tt = new TimeTracker();
 //		tt.Start();
 		
-		double prunetm;
-//		mFB.oneRun();
-//		invLsts = mFB.getInvLstsByID();
-//		prunetm = mFB.getBuildTime();  //if using FLT
-//		stat.nodesAfterPreFilt = calcTotNodesAfterPreFilt();
-		
-		prunetm = 0;  //all nodes covered
-		
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
-					mBFL, nodes, prunetm, invLsts, stat);
+					mBFL, nodes, mFB, invLsts, stat, simfilter);
 			mPool = BuildViews.run();
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
@@ -119,15 +111,6 @@ public class PartialViewAnsGrUNCOVprefilt {
 		if (tenum != null)
 			return tenum.getTupleCount();
 		return 0;
-	}
-	
-	private double calcTotNodesAfterPreFilt() {
-		double totNodes = 0.0;
-		for (ArrayList<GraphNode> invL : invLsts) {
-			totNodes += invL.size();
-
-		}
-		return totNodes;
 	}
 
 	private double calTotCandSolnNodes() {

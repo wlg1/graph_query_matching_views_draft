@@ -67,9 +67,9 @@ public class QueryEvalStats {
 		bldTime = bt;
 	}
 
-	public void add(int iter, int qid, double vt, double pt, double lt, double mt, double et, double solns) {
+	public void add(int iter, int qid, double vt, double pt, double st, double eit, double mt, double et, double solns) {
 
-		QueryEvalStat qst = new QueryEvalStat(vt, pt, lt, mt, et, solns);
+		QueryEvalStat qst = new QueryEvalStat(vt, pt, st, eit, mt, et, solns);
 		// add(qst);
 		add(iter, qid, qst);
 	}
@@ -98,12 +98,12 @@ public class QueryEvalStats {
 
 		int totQs = qryEvalStats[0].size();
 		int numQs = totQs;
-		double[] evalTimes, matchTimes, enumTimes, preTimes, planTimes;
+		double[] evalTimes, matchTimes, enumTimes, preTimes, simTimes;
 		evalTimes = new double[numQs];
 		matchTimes = new double[numQs];
 		enumTimes = new double[numQs];
 		preTimes = new double[numQs];
-		planTimes = new double[numQs];
+		simTimes = new double[numQs];
 
 		double totNodesBefore = 0.0, totNodesAfter = 0.0;
 		double totSolns = 0.0;
@@ -125,7 +125,7 @@ public class QueryEvalStats {
 					matchTimes[q] += stat.matchTime;
 					enumTimes[q] += stat.enumTime;
 					preTimes[q] += stat.preTime;
-					planTimes[q] += stat.planTime;
+					simTimes[q] += stat.simTime;
 					evalTimes[q] += stat.totTime;
 					totTimes[i] += evalTimes[q];
 					totMatchTimes[i] += matchTimes[q];
@@ -137,7 +137,7 @@ public class QueryEvalStats {
 					}
 				//}
 
-				opw.append(q + " " + stat.status + " " + f.format(stat.preTime) + " " + f.format(stat.planTime) + " "
+				opw.append(q + " " + stat.status + " " + f.format(stat.preTime) + " " + f.format(stat.simTime) + " "
 						+ f.format(stat.matchTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
 						+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
 						+ new DecimalFormat(",###").format(stat.totNodesAfter) + " "
@@ -157,7 +157,7 @@ public class QueryEvalStats {
 			QueryEvalStat stat = qryEvalStatList.get(q);
 
 			opw.append(q + " " + stat.status + " " 
-					+ f.format(preTimes[q] / Flags.REPEATS) + " " + f.format(planTimes[q] / Flags.REPEATS) + " "
+					+ f.format(preTimes[q] / Flags.REPEATS) + " " + f.format(simTimes[q] / Flags.REPEATS) + " "
 					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
 					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
 					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
@@ -426,12 +426,14 @@ public class QueryEvalStats {
 
 		int totQs = qryEvalStats[0].size();
 		int numQs = totQs;
-		double[] evalTimes, matchTimes, enumTimes, preTimes, vInterTimes;
+		double[] evalTimes, matchTimes, enumTimes, preTimes, vInterTimes, simTimes, eInterTimes;
 		evalTimes = new double[numQs];
 		matchTimes = new double[numQs];
 		enumTimes = new double[numQs];
 		preTimes = new double[numQs];
 		vInterTimes = new double[numQs];
+		simTimes = new double[numQs];
+		eInterTimes = new double[numQs];
 
 		double totNodesBefore = 0.0, totNodesAfter = 0.0;
 		double totSolns = 0.0;
@@ -454,7 +456,8 @@ public class QueryEvalStats {
 		
 		opw.append("*****************************************************\r\n");
 
-		opw.append("id" + " " + "status" + " " + "vInterTimes" + " " + "filtTime" + " " + "SGbuildTime" + " " + "joinTime"
+		opw.append("id" + " " + "status" + " " + "vInterTime" + " " + "preFTime" + " " + "simFTime" + " " + "SGbuildTime"
+				+ " " + "eInterTime" + " " + "joinTime"
 				+ " " + "totTime" + " " + "nodesSumInvL" + " " + "nodesAfterPreFilt" + " " + "nodesAfterVinter" + " " 
 				+ "nodesSG" + " " + "numSoln" + " " +  "sizeOfSG" + " " + "sizeUncovSG" + "\r\n");
 
@@ -472,6 +475,8 @@ public class QueryEvalStats {
 					preTimes[q] += stat.preTime;
 					evalTimes[q] += stat.totTime;
 					vInterTimes[q] += stat.vInterTime;
+					eInterTimes[q] += stat.eInterTime;
+					simTimes[q] += stat.simTime;
 					
 					totTimes[i] += evalTimes[q];  // for use at very end, not to calc avg
 					totMatchTimes[i] += matchTimes[q]; // for use at very end, not to calc avg
@@ -484,7 +489,8 @@ public class QueryEvalStats {
 				//}
 
 				opw.append(q + " " + stat.status + " " + f.format(stat.vInterTime) + " " + f.format(stat.preTime) + " "
-						+ f.format(stat.matchTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
+						+ f.format(stat.simTime) + " " + f.format(stat.matchTime) + " " 
+						+ f.format(stat.eInterTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
 						+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
 						+ new DecimalFormat(",###").format(stat.nodesAfterPreFilt) + " "
 						+ new DecimalFormat(",###").format(stat.nodesAfterVinter) + " "
@@ -497,7 +503,8 @@ public class QueryEvalStats {
 		}
 
 		opw.append("Average running time: \r\n");
-		opw.append("id" + " " + "status" + " " + "vInterTimes" + " " + "filtTime" + " " + "SGbuildTime" + " " + "joinTime"
+		opw.append("id" + " " + "status" + " " + "vInterTime" + " " + "preFTime" + " " + "simFTime" + " " + "SGbuildTime"
+				+ " " + "eInterTime" + " " + "joinTime"
 				+ " " + "totTime" + " " + "nodesSumInvL" + " " + "nodesAfterPreFilt" + " " + "nodesAfterVinter" + " " 
 				+ "nodesSG" + " " + "numSoln" + " " +  "sizeOfSG" + " " + "sizeUncovSG" + "\r\n");
 		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
@@ -507,7 +514,8 @@ public class QueryEvalStats {
 			opw.append(q + " " + stat.status + " " 
 					+ f.format(vInterTimes[q] / Flags.REPEATS) + " "
 					+ f.format(preTimes[q] / Flags.REPEATS) + " "
-					+ f.format(matchTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
+					+ f.format(simTimes[q] / Flags.REPEATS) + " " + f.format(matchTimes[q] / Flags.REPEATS) + " "
+					+ f.format(eInterTimes[q] / Flags.REPEATS) + " " + f.format(enumTimes[q] / Flags.REPEATS) + " "
 					+ f.format(evalTimes[q] / Flags.REPEATS) + " "
 					+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "
 					+ new DecimalFormat(",###").format(stat.nodesAfterPreFilt) + " "
@@ -640,7 +648,7 @@ public class QueryEvalStats {
 				matchTimes[q] += stat.matchTime;
 				enumTimes[q] += stat.enumTime;
 				preTimes[q] += stat.preTime;
-				planTimes[q] += stat.planTime;
+				planTimes[q] += stat.simTime;
 				evalTimes[q] += stat.totTime;
 				totTimes[i] += evalTimes[q];
 				totMatchTimes[i] += matchTimes[q];
@@ -651,7 +659,7 @@ public class QueryEvalStats {
 					totSolns += stat.numSolns;
 				}
 
-				sb.append(q + " " + f.format(stat.preTime) + " " + f.format(stat.planTime) + " "
+				sb.append(q + " " + f.format(stat.preTime) + " " + f.format(stat.simTime) + " "
 						+ f.format(stat.matchTime) + " " + f.format(stat.enumTime) + " " + f.format(stat.totTime) + " "
 						+ new DecimalFormat(",###").format(stat.numSolns) + " "
 						+ new DecimalFormat(",###").format(stat.totNodesBefore) + " "

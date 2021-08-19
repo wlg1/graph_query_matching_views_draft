@@ -1,19 +1,17 @@
 package views;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.roaringbitmap.RoaringBitmap;
 
 import dao.PoolEntry;
-import graph.GraphNode;
 
 public class nodeset {
 	
 	public RoaringBitmap gnodesBits;
 	public HashMap<Integer, HashMap<Integer, RoaringBitmap>> fwdAdjLists;
 	public HashMap<Integer, PoolEntry> GNtoPE;
-	public boolean hasNodes = true;
+//	public boolean hasNodes = true;
 	
 	public nodeset() {  //init new so not null when adding in
 		gnodesBits = new RoaringBitmap();

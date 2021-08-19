@@ -56,8 +56,10 @@ public class DagHomIEFltSim {
 		// double totNodes_after = mFB.getTotNodes();
 		stat.setPreTime(prunetm);
 		// stat.setTotNodesAfter(totNodes_after);
+		mInvLstsByID = mFB.getInvLstsByID();
+		stat.nodesAfterPreFilt = calcTotNodesAfterPreFilt();	
 		
-		System.out.println("PrePrune time:" + prunetm + " sec.");
+//		System.out.println("PrePrune time:" + prunetm + " sec.");
 		ArrayList<MatArray> mCandLists = null; 
 
 		if (simfilter) {
@@ -67,9 +69,11 @@ public class DagHomIEFltSim {
 			DagSimGraFilter filter = new DagSimGraFilter(mQuery, nodes, mInvLstsByID, mBitsByIDArr, mBFL, true);
 			filter.prune();
 			mCandLists = filter.getCandList();
-			prunetm += tt.Stop() / 1000;
-			stat.setPreTime(prunetm);
-			System.out.println("Prune time:" + prunetm + " sec.");
+//			prunetm += tt.Stop() / 1000;
+			double simtm = tt.Stop() / 1000;
+//			stat.setPreTime(prunetm);
+			stat.setsimTime(simtm);
+//			System.out.println("Prune time:" + prunetm + " sec.");
 		}
 		else
 			mCandLists = mFB.getCandLists();
@@ -116,6 +120,16 @@ public class DagHomIEFltSim {
 			return tenum.getTupleCount();
 		return 0;
 	}
+	
+	private double calcTotNodesAfterPreFilt() {
+		double totNodes = 0.0;
+		for (ArrayList<GraphNode> invL : mInvLstsByID) {
+			totNodes += invL.size();
+
+		}
+		return totNodes;
+	}
+
 
 	private double calTotInvNodes() {
 

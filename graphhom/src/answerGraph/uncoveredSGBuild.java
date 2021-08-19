@@ -92,20 +92,30 @@ public class uncoveredSGBuild {
 			
 			nodeset intersectedNS = intersectedAnsGr.get(i);
 			
-			MatArray mli = mCandLists.get(i);
-//			MatArray mli = mCandLists.get(oldNewVertices.get(i));
-			ArrayList<GraphNode> elist = mli.elist();
-			
-			if (intersectedNS.hasNodes && intersectedNS.gnodesBits.getCardinality() < elist.size()) {
+			if (mCandLists != null) {  // there exist nodes uncovered
+				MatArray mli = mCandLists.get(i);
+//				MatArray mli = mCandLists.get(oldNewVertices.get(i));
+				ArrayList<GraphNode> elist = mli.elist();
+				
+				if (intersectedNS.gnodesBits.getCardinality() > 0 && intersectedNS.gnodesBits.getCardinality() < elist.size()) {
+					for (int n : intersectedNS.gnodesBits) {
+						GraphNode gn = LintToGN.get(n);
+						PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
+						qAct.addEntry(actEntry);
+						t_bits.add(actEntry.getValue().L_interval.mStart);
+					}
+				} else {
+					for (GraphNode n : elist) {
+						PoolEntry actEntry = new PoolEntry(pos++, qn, n);
+						qAct.addEntry(actEntry);
+						t_bits.add(actEntry.getValue().L_interval.mStart);
+					}
+				}
+				
+			} else {  // all nodes covered
 				for (int n : intersectedNS.gnodesBits) {
 					GraphNode gn = LintToGN.get(n);
 					PoolEntry actEntry = new PoolEntry(pos++, qn, gn);
-					qAct.addEntry(actEntry);
-					t_bits.add(actEntry.getValue().L_interval.mStart);
-				}
-			} else {
-				for (GraphNode n : elist) {
-					PoolEntry actEntry = new PoolEntry(pos++, qn, n);
 					qAct.addEntry(actEntry);
 					t_bits.add(actEntry.getValue().L_interval.mStart);
 				}
