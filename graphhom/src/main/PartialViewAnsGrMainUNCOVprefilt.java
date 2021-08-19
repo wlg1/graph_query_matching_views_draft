@@ -47,14 +47,14 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 	Digraph g;
 	boolean useAnsGr;
 	boolean rmvEmpty;
-	boolean simfilter;
+	boolean prefilter;
 	String uncovFileN;
 	ArrayList<Query> uncov;
 	
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	
 	public PartialViewAnsGrMainUNCOVprefilt(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, 
-			boolean INrmvEmpty, boolean INsimfilter) {
+			boolean INrmvEmpty, boolean INprefilter) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -64,7 +64,7 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 		String datafn = dataFN.substring(0, dataFN.lastIndexOf('.'));
 		useAnsGr = INuseAnsGr;
 		rmvEmpty = INrmvEmpty;
-		simfilter = INsimfilter;
+		prefilter = INprefilter;
 		
 		if (useAnsGr) {
 			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS_PARTIAL";
@@ -211,7 +211,7 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 				
 				FilterBuilder fb = new FilterBuilder(g, query);
 				PartialViewAnsGrUNCOVprefilt eva = new PartialViewAnsGrUNCOVprefilt(query, viewsOfQuery, qid_Ansgr, LintToGN,
-						fb, bfl, rmvEmpty, simfilter, l2iMap, invLsts);
+						fb, bfl, rmvEmpty, prefilter, l2iMap, invLsts);
 				
 				try {
 					tt.Start();
@@ -552,9 +552,9 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 		String dataFileN = args[0], queryFileN = args[1], viewFileN = args[2];
 		boolean useAnsGr = false;
 		boolean rmvEmpty = true;
-		boolean simfilter = true;
+		boolean prefilter = true;
 		PartialViewAnsGrMainUNCOVprefilt demain = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, viewFileN, 
-				useAnsGr, rmvEmpty, simfilter);
+				useAnsGr, rmvEmpty, prefilter);
 
 		demain.run();
 	}

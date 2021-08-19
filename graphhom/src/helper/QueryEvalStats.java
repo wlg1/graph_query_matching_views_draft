@@ -441,7 +441,7 @@ public class QueryEvalStats {
 		opw.append("*****************************************************\r\n");
 		opw.append("View Build Times: \r\n");
 		opw.append("id" + " " + "status" + " " + "filtTime" + " " + "matchTime" + " "
-				+ "totTime" + " " + "\"nodesSumInvL" + " " + "nodesSG" + " "
+				+ "totTime" + " " + "nodesSumInvL" + " " + "nodesSG" + " "
 				+ "sizeOfSG"
 				+ "\r\n");
 		int totVs = viewEvalStatList.size();

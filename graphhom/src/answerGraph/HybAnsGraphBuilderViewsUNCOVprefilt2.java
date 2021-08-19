@@ -47,12 +47,12 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 	Query uncov;
 	FilterBuilder mFB;
 	QueryEvalStat stat;
-	boolean simfilter;
+	boolean prefilter;
 	
 	public HybAnsGraphBuilderViewsUNCOVprefilt2(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
 			BFLIndex bfl, GraphNode[] INnodes, FilterBuilder INFB, 
-			ArrayList<ArrayList<GraphNode>> InvLstsByID, QueryEvalStat INstat, boolean INsimfilter) {
+			ArrayList<ArrayList<GraphNode>> InvLstsByID, QueryEvalStat INstat, boolean INprefilter) {
 		
 		mQuery = query;
 		viewsOfQuery = viewsOfQuery_in;
@@ -67,7 +67,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 		LintToGN = INLintToGN;
 		mFB = INFB;
 		stat = INstat;
-		simfilter = INsimfilter;
+		prefilter = INprefilter;
 	}
 
 	public ArrayList<Pool> run() {
@@ -131,7 +131,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 		ArrayList<MatArray> mCandLists = null;
 		if ( !uncoveredNodes.isEmpty() ){
 			double prunetm;
-			if (simfilter) {
+			if (prefilter) {
 				mFB.oneRun();
 				mInvLstsByID = mFB.getInvLstsByID();
 				prunetm = mFB.getBuildTime();  //if using FLT
@@ -141,8 +141,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 			
 			/// Get Cand Occ Lists by Intersection ///
 			tt.Start();
-	
-			//use cand occ list from nodeset
+
 			ArrayList<ArrayList<GraphNode>> cand_occ_lsts = new ArrayList<ArrayList<GraphNode>>();
 			for (int i=0; i < mQuery.V; i++) {
 				nodeset ns = intersectedAnsGr.get(i);
@@ -150,7 +149,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 				
 	//			if (true) { //make COL use only preFilt's output, or the invLists
 				if (ns.gnodesBits.getCardinality() > mInvLstsByID.get(i).size()) {
-					if (simfilter) {
+					if (prefilter) {
 						cand_occ_l = mInvLstsByID.get(i);  //if using FLT
 					} else {
 						cand_occ_l = mInvLstsByID.get(mQuery.getNodes()[i].lb);
@@ -161,7 +160,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 						cand_occ_l.add(graphN);
 					}
 					if (cand_occ_l.isEmpty()) {
-						if (simfilter) {
+						if (prefilter) {
 							cand_occ_l = mInvLstsByID.get(i);  //if using FLT
 						} else {
 							cand_occ_l = mInvLstsByID.get(mQuery.getNodes()[i].lb);
@@ -171,18 +170,15 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 				cand_occ_lsts.add(cand_occ_l);
 			}
 			
-	//		double totNodesBef = 0.0;
-	//		for (ArrayList<GraphNode> invL : cand_occ_lsts) {
-	//			totNodesBef += invL.size();
-	//		}
-			
-	//		ArrayList<ArrayList<GraphNode>> newCandOccLsts = interPreFilt(cand_occ_lsts);
-			cand_occ_lsts = interPreFilt(cand_occ_lsts);  //intersect cand occ lists w/ preFilt or invLists
+			ArrayList<ArrayList<GraphNode>> newCandOccLsts = cand_occ_lsts;
+			if (prefilter) {
+				newCandOccLsts = interPreFilt(cand_occ_lsts);  //intersect cand occ lists w/ preFilt or invLists
+			} 
 			
 			ArrayList<RoaringBitmap> bitsByIDArr = new ArrayList<RoaringBitmap>(mQuery.V);
 			for (QNode q : mQuery.getNodes()) {
 				RoaringBitmap bits = new RoaringBitmap();
-				ArrayList<GraphNode> invLst = cand_occ_lsts.get(q.id);
+				ArrayList<GraphNode> invLst = newCandOccLsts.get(q.id);
 				for (GraphNode n : invLst) {
 					bits.add(n.id);
 				}
@@ -193,12 +189,10 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 			
 			tt.Start();  // filtTime. do it here b/c this is what FLTSIM does; it doesn't count time to construct inputs
 			
-			DagSimGraFilter filter = new DagSimGraFilter(mQuery, Gnodes, cand_occ_lsts, bitsByIDArr, mBFL, true);
+			DagSimGraFilter filter = new DagSimGraFilter(mQuery, Gnodes, newCandOccLsts, bitsByIDArr, mBFL, true);
 			filter.prune();
 			mCandLists = filter.getCandList();
 	
-	//		prunetm += tt.Stop() / 1000;
-	//		stat.setPreTime(prunetm);
 			double simtm = tt.Stop() / 1000;
 			stat.setsimTime(simtm);
 			
@@ -213,59 +207,65 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 		stat.setvInterTime(vInterTime);
 		
 		/// GET UNCOVERED ///
-		tt.Start(); // uncovered SGbuildTime
-		
-		//send uncoveredEdges to uncoveredSGBuild to get "view" for them
-		uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, LintToGN, 
-				intersectedAnsGr);
-		ArrayList<Pool> partial_mPool = partialSG.run(); 		//RUNNING UNCOVERED IS THE MOST COSTLY STEP
-		
-		double buildtm = tt.Stop() / 1000;
-		stat.setMatchTime(buildtm);
-		
-		stat.calUncovAnsGraphSize(partial_mPool);
-		
-		/// INTERSECT WITH VIEW EDGES ///
-		tt.Start();  // eInterTime
-		
-		ArrayList<nodeset> matView = new ArrayList<nodeset>();
-		for (Pool pl : partial_mPool) {
-			nodeset ns = new nodeset();
-			for (PoolEntry pe : pl.elist()) {
-				GraphNode gn = pe.mValue;
-				LintToGN.put(gn.L_interval.mStart, gn);
-				ns.gnodesBits.add(gn.L_interval.mStart);
-				if (pe.mFwdEntries != null){
-					HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
-					for (Integer key : pe.mFwdEntries.keySet()) {
-						RoaringBitmap newBitmap = new RoaringBitmap();
-						ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
-						for (PoolEntry peTo : nodeFwd) {
-							newBitmap.add(peTo.mValue.L_interval.mStart);
+		double eInterTime = 0;
+		if (!uncoveredEdges.isEmpty() ) {
+			tt.Start(); // uncovered SGbuildTime
+			
+			//send uncoveredEdges to uncoveredSGBuild to get "view" for them
+			uncoveredSGBuild partialSG = new uncoveredSGBuild(mQuery, mBFL, mCandLists, uncoveredEdges, LintToGN, 
+					intersectedAnsGr);
+			ArrayList<Pool> partial_mPool = partialSG.run(); 		//RUNNING UNCOVERED IS THE MOST COSTLY STEP
+			
+			double buildtm = tt.Stop() / 1000;
+			stat.setMatchTime(buildtm);
+			
+			stat.calUncovAnsGraphSize(partial_mPool);
+			
+			/// INTERSECT WITH VIEW EDGES ///
+			tt.Start();  // eInterTime
+			
+			ArrayList<nodeset> matView = new ArrayList<nodeset>();
+			for (Pool pl : partial_mPool) {
+				nodeset ns = new nodeset();
+				for (PoolEntry pe : pl.elist()) {
+					GraphNode gn = pe.mValue;
+					LintToGN.put(gn.L_interval.mStart, gn);
+					ns.gnodesBits.add(gn.L_interval.mStart);
+					if (pe.mFwdEntries != null){
+						HashMap<Integer, RoaringBitmap> fal = new HashMap<Integer, RoaringBitmap>();
+						for (Integer key : pe.mFwdEntries.keySet()) {
+							RoaringBitmap newBitmap = new RoaringBitmap();
+							ArrayList<PoolEntry> nodeFwd = pe.mFwdEntries.get(key);
+							for (PoolEntry peTo : nodeFwd) {
+								newBitmap.add(peTo.mValue.L_interval.mStart);
+							}
+							fal.put(key, newBitmap);
 						}
-						fal.put(key, newBitmap);
+						ns.fwdAdjLists.put(gn.L_interval.mStart, fal);
+					} else {
+						ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
 					}
-					ns.fwdAdjLists.put(gn.L_interval.mStart, fal);
-				} else {
-					ns.fwdAdjLists = (HashMap<Integer, HashMap<Integer, RoaringBitmap>>) null;
 				}
+				matView.add(ns);
 			}
-			matView.add(ns);
+			qid_Ansgr.put(-1, matView);
+			
+			// since mQuery is the input in, the mapping is the same but is null for nodes not in uncovered edges
+			ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
+			HashMap<Integer, Integer> hom = new HashMap<Integer, Integer>();
+			for (int i = 0; i < mQuery.V; i++) { 
+				if (partialSG.nodesToCompute.contains(i)) {
+					hom.put(i, i);
+				} 
+			}
+			homsList.add(hom);
+			viewHoms.put(-1, homsList);
+			
+			intersectUncovered(); 
+			
+			eInterTime += tt.Stop() / 1000;
 		}
-		qid_Ansgr.put(-1, matView);
-		
-		// since mQuery is the input in, the mapping is the same but is null for nodes not in uncovered edges
-		ArrayList<HashMap<Integer, Integer>> homsList = new ArrayList<HashMap<Integer, Integer>>();
-		HashMap<Integer, Integer> hom = new HashMap<Integer, Integer>();
-		for (int i = 0; i < mQuery.V; i++) { 
-			if (partialSG.nodesToCompute.contains(i)) {
-				hom.put(i, i);
-			} 
-		}
-		homsList.add(hom);
-		viewHoms.put(-1, homsList);
-		
-		intersectUncovered(); 
+		tt.Start();
 		
 		for (int i = 0; i < mQuery.V; i++) { //init fwdadjlist data structure
 			nodeset intersectedNS = intersectedAnsGr.get(i);
@@ -297,21 +297,11 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 			linkOneStep(edge);
 		}
 		
-//		vInterTime += tt.Stop() / 1000;
-//		stat.setvInterTime(vInterTime);
-		double eInterTime = tt.Stop() / 1000;
+		eInterTime += tt.Stop() / 1000;
 		stat.seteInterTime(eInterTime);
 
 		return mPool;
 	}
-	
-//	private void readUncovered(String uncovFileN) {
-//		QueryParser queryParser = new QueryParser(uncovFileN, l2iMap);
-//		Query view = null;
-//		uncov = queryParser.readNextQuery();
-//		TransitiveReduction tr = new TransitiveReduction(uncov);
-//		tr.reduce();
-//	}
 
 	public ArrayList<QEdge> getUncoveredEdges(){
 		return uncoveredEdges;

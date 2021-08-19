@@ -39,7 +39,7 @@ public class PartialViewAnsGrUNCOVprefilt {
 	ArrayList<RoaringBitmap> mBitsByIDArr;
 	boolean rmvEmpty;
 	HybTupleEnumer tenum;
-	boolean simfilter;
+	boolean prefilter;
 	ArrayList<Query> viewsOfQuery;
 	Map<Integer, ArrayList<nodeset>> qid_Ansgr;
 	HashMap<Integer, GraphNode> LintToGN;
@@ -48,7 +48,7 @@ public class PartialViewAnsGrUNCOVprefilt {
 
 	public PartialViewAnsGrUNCOVprefilt(Query INquery, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
-			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INsimfilter, 
+			FilterBuilder fb, BFLIndex bfl, boolean INrmvEmpty, boolean INprefilter, 
 			HashMap<String, Integer> INl2iMap, ArrayList<ArrayList<GraphNode>> INinvLsts) {
 
 		query = INquery;
@@ -57,7 +57,7 @@ public class PartialViewAnsGrUNCOVprefilt {
 		mFB = fb;
 		tt = new TimeTracker();
 		rmvEmpty = INrmvEmpty;
-		simfilter = INsimfilter;
+		prefilter = INprefilter;
 		viewsOfQuery = viewsOfQuery_in;
 		qid_Ansgr = qid_Ansgr_in;
 		LintToGN = INLintToGN;
@@ -73,8 +73,9 @@ public class PartialViewAnsGrUNCOVprefilt {
 		
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
-					mBFL, nodes, mFB, invLsts, stat, simfilter);
+					mBFL, nodes, mFB, invLsts, stat, prefilter);
 			mPool = BuildViews.run();
+
 		} else {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
 		}
@@ -83,7 +84,14 @@ public class PartialViewAnsGrUNCOVprefilt {
 //		stat.setMatchTime(buildtm);
 		stat.calAnsGraphSize(mPool);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
-
+		
+		if (stat.nodesAfterPreFilt == 0) {
+			stat.nodesAfterPreFilt = stat.totNodesBefore;
+		}
+		if (stat.nodesAfterVinter == 0) {
+			stat.nodesAfterVinter = stat.totNodesAfter;
+		}
+		
 		double numOutTuples;
 		tt.Start();
 		tenum = new HybTupleEnumer(query, mPool);

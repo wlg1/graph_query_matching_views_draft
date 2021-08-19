@@ -44,7 +44,7 @@ public class QueryEvalStat {
 		eInterTime = eit;
 		matchTime = mt;
 		enumTime = et;
-		totTime = vt+ mt + et + pt + st;
+		totTime = vt+ mt + et + pt + st + eit;
 		numSolns = solns;
 		numPlans = pls;
 		sizeOfAnsGraph = agsz;
