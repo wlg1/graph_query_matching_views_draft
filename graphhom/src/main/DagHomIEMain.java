@@ -198,7 +198,8 @@ public class DagHomIEMain {
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			stats.printToFile(opw);
+//			stats.printToFile(opw);
+			stats.printToFilePartialViews(opw);
 			opw.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

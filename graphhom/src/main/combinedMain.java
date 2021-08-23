@@ -18,7 +18,7 @@ public class combinedMain {
 		
 		DagHomIEFltSimMain demain = new DagHomIEFltSimMain(dataFileN, queryFileN, true);  //FLTSIM
 //		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, false); //FLT
-//		DagHomIEMain demain3 = new DagHomIEMain(dataFileN, queryFileN); //SIM
+		DagHomIEMain demain3 = new DagHomIEMain(dataFileN, queryFileN); //SIM
 //		ViewAnsGrMain2 demain4 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true); //rmvEmpty
 //		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
 		PartialViewAnsGrMainUNCOVprefilt demain6 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
@@ -28,7 +28,7 @@ public class combinedMain {
 
 		demain.run();
 //		demain2.run();
-//		demain3.run();
+		demain3.run();
 //		demain4.run();
 //		demain5.run();
 		demain6.run();
@@ -44,10 +44,10 @@ public class combinedMain {
 			
 			demain.stats.printToFileCombinedHeaderPartial(opw, viewFileN, partialViewFileN);
 			demain.stats.printToFileCombinedPartial(opw, "FLTSIM");
-//			demain2.stats.printToFileCombined(opw, "FLT");
-//			demain3.stats.printToFileCombined(opw, "SIM");
-//			demain4.stats.printToFileCombined(opw, "View_sim_rmvEmp");
-//			demain5.stats.printToFileCombined(opw, "View_sim");
+//			demain2.stats.printToFileCombinedPartial(opw, "FLT");
+			demain3.stats.printToFileCombinedPartial(opw, "SIM");
+//			demain4.stats.printToFileCombinedPartial(opw, "View_sim_rmvEmp");
+//			demain5.stats.printToFileCombinedPartial(opw, "View_sim");
 			demain6.stats.printToFileCombinedPartial(opw, "View_partial_FLTSIM");
 			demain7.stats.printToFileCombinedPartial(opw, "View_partial_SIM");
 			

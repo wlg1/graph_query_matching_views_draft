@@ -87,6 +87,8 @@ public class DagHomIEFltSim {
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		System.out.println("Answer graph build time:" + buildtm + " sec.");
 
+		stat.nodesAfterVinter = stat.nodesAfterPreFilt;
+		
 		double numOutTuples;
 
 		tt.Start();

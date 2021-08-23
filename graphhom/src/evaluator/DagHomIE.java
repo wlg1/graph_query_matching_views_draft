@@ -82,8 +82,9 @@ public class DagHomIE {
 			// mCandLists = filter.prune();
 
 			double prunetm = tt.Stop() / 1000;
-			stat.setPreTime(prunetm);
-			System.out.println("Prune time:" + prunetm + " sec.");
+			stat.setsimTime(prunetm);
+//			stat.setPreTime(prunetm);
+//			System.out.println("Prune time:" + prunetm + " sec.");
 		} else
 			mCandLists = getCandList();
 
@@ -95,6 +96,9 @@ public class DagHomIE {
 		stat.setMatchTime(buildtm);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		System.out.println("Answer graph build time:" + buildtm + " sec.");
+		
+		stat.nodesAfterPreFilt = stat.totNodesBefore;
+		stat.nodesAfterVinter = stat.nodesAfterPreFilt;
 
 		tt.Start();
 		tenum = new HybTupleEnumer(mQuery, mPool);
