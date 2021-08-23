@@ -564,6 +564,23 @@ public class QueryEvalStats {
 				+  "sizeOfSG" + " " + "#edgesSG" + "\r\n");
 	}
 	
+	public void printToFileCombinedHeaderPartial(PrintWriter opw, String viewFileN, String partialViewFileN) {
+		opw.append("*****************************************************\r\n");
+		opw.append("Dataset:  " + dataFN + "\r\n");
+		opw.append("V:" + V + " " + "E:" + E + " " + "lbs:" + numLbs + "\r\n");
+		opw.append("Queryset:  " + qryFN + "\r\n");
+		opw.append("View_set:  " + viewFileN + "\r\n");
+		opw.append("Partial_View_set:  " + partialViewFileN + "\r\n");
+		opw.append("Num_runs:  " + Flags.REPEATS + "\r\n");
+		
+		opw.append("Average running time: \r\n");
+		opw.append("Algo" + " " + "status" + " " + "vInterTime" + " " + "preFTime" + " " + "simFTime" + " " + "SGbuildTime"
+				+ " " + "eInterTime" + " " + "noJoinTotTime" + " " + "joinTime" 
+				+ " " + "totTime" + " " + "nodesSumInvL" + " " + "nodesAfterPreFilt" + " " + "nodesAfterVinter" + " " 
+				+ "nodesSG" + " " + "numSoln" + " " +  "sizeOfSG" + " " + "numE.SG" + " " + "sizeUncovSG" 
+				+ "\r\n");
+	}
+	
 	public void printToFileCombined(PrintWriter opw, String algo) {
 		DecimalFormat f = new DecimalFormat("##.0000");
 
@@ -612,6 +629,65 @@ public class QueryEvalStats {
 					+ new DecimalFormat(",###").format(stat.numSolns) + " "
 					+ new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + " "
 					+ new DecimalFormat(",###").format(numE) + "\r\n");
+
+		}
+
+	
+	}
+	
+	public void printToFileCombinedPartial(PrintWriter opw, String algo) {
+		DecimalFormat f = new DecimalFormat("##.0000");
+
+        int totQs = qryEvalStats[0].size();
+        int numQs = totQs;
+        double[] evalTimes, matchTimes, enumTimes, preTimes, vInterTimes, simTimes, eInterTimes;
+        evalTimes = new double[numQs];
+        matchTimes = new double[numQs];
+        enumTimes = new double[numQs];
+        preTimes = new double[numQs];
+        vInterTimes = new double[numQs];
+        simTimes = new double[numQs];
+        eInterTimes = new double[numQs];
+
+
+		for (int i = 0; i < Flags.REPEATS; i++) {
+			numQs = totQs;
+			ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[i];
+			for (int q = 0; q < totQs; q++) {
+				QueryEvalStat stat = qryEvalStatList.get(q);
+				matchTimes[q] += stat.matchTime;
+				enumTimes[q] += stat.enumTime;
+				preTimes[q] += stat.preTime;
+				evalTimes[q] += stat.totTime;
+                vInterTimes[q] += stat.vInterTime;
+                eInterTimes[q] += stat.eInterTime;
+                simTimes[q] += stat.simTime;
+
+			}
+		}
+
+		ArrayList<QueryEvalStat> qryEvalStatList = qryEvalStats[0];
+		for (int q = 0; q < totQs; q++) {
+			QueryEvalStat stat = qryEvalStatList.get(q);
+			double numE = stat.sizeOfAnsGraph - stat.totNodesAfter;
+			String noJoinTotTime = f.format(vInterTimes[q] / Flags.REPEATS + preTimes[q] / Flags.REPEATS
+					+ simTimes[q] / Flags.REPEATS + matchTimes[q] / Flags.REPEATS 
+					+ eInterTimes[q] / Flags.REPEATS);
+			opw.append(algo + " " + stat.status + " " 
+                    + f.format(vInterTimes[q] / Flags.REPEATS) + " "
+                    + f.format(preTimes[q] / Flags.REPEATS) + " "
+                    + f.format(simTimes[q] / Flags.REPEATS) + " " + f.format(matchTimes[q] / Flags.REPEATS) + " "
+                    + f.format(eInterTimes[q] / Flags.REPEATS) + " " + noJoinTotTime + " "
+                    + f.format(enumTimes[q] / Flags.REPEATS) + " "
+                    + f.format(evalTimes[q] / Flags.REPEATS) + " "
+                    + new DecimalFormat(",###").format(stat.totNodesBefore) + " "
+                    + new DecimalFormat(",###").format(stat.nodesAfterPreFilt) + " "
+                    + new DecimalFormat(",###").format(stat.nodesAfterVinter) + " "
+                    + new DecimalFormat(",###").format(stat.totNodesAfter) + " "
+                    + new DecimalFormat(",###").format(stat.numSolns) + " "
+                    + new DecimalFormat(",###").format(stat.sizeOfAnsGraph) + " "
+					+ new DecimalFormat(",###").format(numE) + " "
+                    + new DecimalFormat(",###").format(stat.sizeOfUncovAnsGraph) + "\r\n");
 
 		}
 

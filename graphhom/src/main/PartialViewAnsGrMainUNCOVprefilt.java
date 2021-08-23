@@ -78,11 +78,11 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 //			outFileN = outFileN + "_rmvEmpty";
 //		}
 //		
-//		if (simfilter) {
-//			outFileN = outFileN + "_FLTSIM";
-//		} else {
-//			outFileN = outFileN + "_FLT";
-//		}
+		if (prefilter) {
+			outFileN = outFileN + "_FLTSIM";
+		} else {
+			outFileN = outFileN + "_SIM";
+		}
 		outFileN = outFileN + suffix;
 		
 //		uncovFileN = Consts.INDIR + uncovFN; 
@@ -425,127 +425,6 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 			}
 		} // end of while loop to test a new mapping
 	} //end of checkHom()
-	
-
-	private HashMap<Integer, Integer> getHom(Query view, Query query) { 		//this is exhaustive, iterative
-		//1. For each view node, get all query nodes with same labels 
-		ArrayList<ArrayList<Integer>> nodeMatch = new ArrayList<ArrayList<Integer>>();
-		for (int i = 0; i < view.V; i++) {
-			  ArrayList<Integer> vMatches = new ArrayList<Integer>(); //a view's match cand list
-			  for (int j = 0; j < query.V; j++) {
-				  //check if same label as query
-				  if (view.nodes[i].lb == query.nodes[j].lb) {
-					  vMatches.add(query.nodes[j].id);
-				  }
-			  }  //end check qry candmatches for viewnode i
-
-			  nodeMatch.add(vMatches); 
-		} // end checking candmatches for all view nodes
-
-		// 2. Convert query into graph and get Closure. Same for view
-		TransitiveReduction tr = new TransitiveReduction(query);
-		AxisType[][] Qclosure = tr.pathMatrix;  // by comparing closure to compare to orig.edges, see that closure's new edges are desc edges, and doesn't change child edges
-		
-		TransitiveReduction trV = new TransitiveReduction(view);
-		AxisType[][] Vclosure = trV.pathMatrix;
-		
-		//3. Given a node mapping h: for each view child edge, check if (h(x), h(y)) is a child edge
-		// Try an initial mapping using the first query node of every view's cand list. 
-		int[] candHom = new int[nodeMatch.size()]; 
-		for (int i = 0; i < nodeMatch.size(); i++) {
-			candHom[i] = nodeMatch.get(i).get(0);
-		}
-		
-		//one map should be view to query, another is query to view. output latter.
-		
-		//NOTE: ENSURE that 2 view nodes don't map to same query node. If they do, try next mapping.
-		
-		//keep row and col pointers on which match to change in candHom for next mapping.
-		//if fail, move the col pointer right. if col pointer > col size, set cols of all rows below row pointer 
-		//to 0 and move row pointer up (-1) and its col pointer right. then, set row pointer back to lowest row
-		int rowChangeNext = nodeMatch.size() - 1;  //row pointer for view node
-		int colChangeToNext = 0; //col pointer for candidate query nodes for current view row
-		
-		//try various permutations of matches
-		while (true) {
-			//try new mapping: for each edge, make sure matched head+tail nodes so far give consistent edge type
-			boolean passFlag = true;
-			
-			//check if each value in candHom is unique. no 2 view nodes can map to the same query node.
-			ArrayList<Integer> coveringsSoFar = new ArrayList<Integer>(); //use list bc it has .contains()
-			for (int i = 0; i < candHom.length; i++) {
-				if (i > 0) {
-					if (coveringsSoFar.contains(candHom[i])) {
-						passFlag = false;
-						break;
-					}
-				}
-				coveringsSoFar.add(candHom[i]);
-			}
-			
-			for (QEdge edge : view.edges) {  //match the nodes in each edge
-				int viewHnode = edge.from; //head node of view
-				int viewTnode = edge.to; //tail node of view
-//				String vEdgeType = edge.axis.toString();
-				String vEdgeType = Vclosure[viewHnode][viewTnode].toString();
-				int qryHnode = candHom[viewHnode]; // h(head node)
-				int qryTnode = candHom[viewTnode]; // h(tail node)
-				String qEdgeType = Qclosure[qryHnode][qryTnode].toString();
-				
-				if (!vEdgeType.equals(qEdgeType)) {
-					passFlag = false;
-				} //end if (!vEdgeType.equals(qEdgeType)): check edge consistency
-				//else consistent edge type for this edge, so don't change mapping b/c it's good
-			} // end for (QEdge edge : view.edges): check each edge consistency
-			
-			// Found mapping with all edges consistent -> use view for query, add to list of query's views
-			//check if output is a hom that already exists
-			//bc we dont want to delete keys from output (not all query nodes will have a match), re-create output
-			//  for each new candHom instead of updating it alongside candHom
-			HashMap<Integer, Integer> output = new HashMap<Integer, Integer>(); //key is query nodeset, value is view nodeset
-			for (int i = 0; i < candHom.length; i++) {
-				output.put(candHom[i], i);
-			}
-			
-			if (passFlag && !viewHoms.get(view.Qid).contains(output)) {
-				return output; //get out of while loop to test a new mapping
-			}
-			
-			//else: mapping failed,  so try another
-			++colChangeToNext; //try new query node for curr view row
-			//make sure there is next match for curr row. if not, go to row above to move it right
-			if (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1) {
-				while (colChangeToNext > nodeMatch.get(rowChangeNext).size() - 1){
-					//move row pointer up (-1) and its col pointer right
-					--rowChangeNext;
-					
-					if (rowChangeNext < 0) {
-						HashMap<Integer, Integer> noMoreHoms = new HashMap<Integer, Integer>();
-						return noMoreHoms; //'all mappings tried'
-					}
-					
-					//get curr col pointer of new row pointer
-					colChangeToNext = nodeMatch.get(rowChangeNext).indexOf(candHom[rowChangeNext]);
-					++colChangeToNext;
-					
-					//check if col has another match to the right
-					if (colChangeToNext <= nodeMatch.get(rowChangeNext).size() - 1) {
-						//set cols of all rows below row pointer to 0. only do this if -1 to row pointer
-						for (int i = nodeMatch.size() - 1; i > rowChangeNext; i--) {
-							candHom[i] = nodeMatch.get(i).get(0);
-						} //end for: reseting col indices
-						
-						candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
-						rowChangeNext = nodeMatch.size() - 1; //reset col pointer and row pointer
-						colChangeToNext = 0; 
-					} // end if: check col has another match to the right
-					//else: move row pointer down again
-				} //end while: checking if col reached end
-			} else {  //try the next match for this row
-				candHom[rowChangeNext]= nodeMatch.get(rowChangeNext).get(colChangeToNext);
-			}
-		} // end of while loop to test a new mapping
-	} //end of getHom()
 	
 	public static void main(String[] args) throws Exception {
 

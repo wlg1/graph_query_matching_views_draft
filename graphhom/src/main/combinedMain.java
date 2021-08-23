@@ -14,44 +14,42 @@ public class combinedMain {
 	}
 	
 	public void run(String dataFileN, String queryFileN, String viewFileN, String allFileN, String prefix) throws Exception {
-		String partialViewFileN =  prefix + "_partial.vw";
+		String partialViewFileN =  prefix + "_partial_v1.vw";
 		
-		ViewAnsGrMain2 demain = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, true); //answer graph
-		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, true, false);
-		ViewAnsGrMain2 demain6 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true); //rmvEmpty
-		ViewAnsGrMain2 demain7 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
-		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, true);  //FLTSIM
-		DagHomIEFltSimMain demain3 = new DagHomIEFltSimMain(dataFileN, queryFileN, false); //FLT
-		DagHomIEMain demain4 = new DagHomIEMain(dataFileN, queryFileN); //SIM
-//		PartialViewAnsGrMain demain8 = new PartialViewAnsGrMain(dataFileN, queryFileN, partialViewFileN, 
-//				false, true, true);
-		PartialViewAnsGrMainUNCOVprefilt demain8 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
-				false, true, true);
+		DagHomIEFltSimMain demain = new DagHomIEFltSimMain(dataFileN, queryFileN, true);  //FLTSIM
+//		DagHomIEFltSimMain demain2 = new DagHomIEFltSimMain(dataFileN, queryFileN, false); //FLT
+//		DagHomIEMain demain3 = new DagHomIEMain(dataFileN, queryFileN); //SIM
+//		ViewAnsGrMain2 demain4 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true); //rmvEmpty
+//		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
+		PartialViewAnsGrMainUNCOVprefilt demain6 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
+				false, true, true); // FLTSIM
+		PartialViewAnsGrMainUNCOVprefilt demain7 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
+				false, true, false); // SIM
 
-		demain8.run();
-//		demain.run();
-		demain2.run();
+		demain.run();
+//		demain2.run();
 //		demain3.run();
-		demain4.run();
+//		demain4.run();
 //		demain5.run();
 		demain6.run();
-//		demain7.run();
+		demain7.run();
 		
 		PrintWriter opw;
 		String outFileN = Consts.OUTDIR + allFileN + ".csv";
 
 		try {
 			opw = new PrintWriter(new FileOutputStream(outFileN, true));
-			demain2.stats.printToFileCombinedHeader(opw);
-//			demain.stats.printToFileCombined(opw, "View_ans_rmvEmp");
-//			demain5.stats.printToFileCombined(opw, "View_ans");
-			demain6.stats.printToFileCombined(opw, "View_sim_rmvEmp");
-//			demain7.stats.printToFileCombined(opw, "View_sim");
-			demain8.stats.printToFileCombined(opw, "View_partial");
-			demain2.stats.printToFileCombined(opw, "FLTSIM");
-//			demain3.stats.printToFileCombined(opw, "FLT");
-			demain4.stats.printToFileCombined(opw, "SIM");
+//			demain.stats.printToFileCombinedHeader(opw);
+//			demain.stats.printToFileCombined(opw, "FLTSIM");
 			
+			demain.stats.printToFileCombinedHeaderPartial(opw, viewFileN, partialViewFileN);
+			demain.stats.printToFileCombinedPartial(opw, "FLTSIM");
+//			demain2.stats.printToFileCombined(opw, "FLT");
+//			demain3.stats.printToFileCombined(opw, "SIM");
+//			demain4.stats.printToFileCombined(opw, "View_sim_rmvEmp");
+//			demain5.stats.printToFileCombined(opw, "View_sim");
+			demain6.stats.printToFileCombinedPartial(opw, "View_partial_FLTSIM");
+			demain7.stats.printToFileCombinedPartial(opw, "View_partial_SIM");
 			
 			opw.close();
 		} catch (FileNotFoundException e) {

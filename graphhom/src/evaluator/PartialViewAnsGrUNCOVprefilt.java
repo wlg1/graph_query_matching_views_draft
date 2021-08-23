@@ -69,7 +69,6 @@ public class PartialViewAnsGrUNCOVprefilt {
 	public boolean run(QueryEvalStat stat) throws LimitExceededException {
 		
 		tt = new TimeTracker();
-//		tt.Start();
 		
 		if (rmvEmpty) {
 			HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
@@ -80,16 +79,14 @@ public class PartialViewAnsGrUNCOVprefilt {
 			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
 		}
 		
-//		double buildtm = tt.Stop() / 1000;
-//		stat.setMatchTime(buildtm);
 		stat.calAnsGraphSize(mPool);
 		stat.setTotNodesAfter(calTotCandSolnNodes());
 		
-		if (stat.nodesAfterPreFilt == 0) {
+		if (!prefilter) {
 			stat.nodesAfterPreFilt = stat.totNodesBefore;
 		}
-		if (stat.nodesAfterVinter == 0) {
-			stat.nodesAfterVinter = stat.totNodesAfter;
+		if (stat.nodesAfterVinter == 0 && stat.totNodesAfter != 0) {
+			stat.nodesAfterVinter = stat.nodesAfterPreFilt;
 		}
 		
 		double numOutTuples;

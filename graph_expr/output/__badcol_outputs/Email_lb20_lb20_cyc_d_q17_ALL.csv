@@ -1,0 +1,12 @@
+*****************************************************
+Dataset:  D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\Email_lb20.dag
+V:265214 E:345203 lbs:20
+Queryset:  D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_cyc_d_q17.qry
+View_set:  lb20_cyc_d_q17.vw
+Partial_View_set:  lb20_cyc_d_q17_partial_v1.vw
+Num_runs:  1
+Average running time: 
+Algo status vInterTime preFTime simFTime SGbuildTime eInterTime noJoinTotTime joinTime totTime nodesSumInvL nodesAfterPreFilt nodesAfterVinter nodesSG numSoln sizeOfSG numE.SG sizeUncovSG
+FLTSIM success .0000 .4720 .0750 .0230 .0000 .5700 .0470 .6170 79,070 10,456 0 488 13,871 6,994 6,506 0
+View_partial_FLTSIM success .0170 .1620 .0150 .0080 .0100 .2120 .0120 .2240 79,070 10,456 8,660 485 13,871 6,960 6,475 2,233
+View_partial_SIM success .0110 .0000 .1840 .0070 .0080 .2100 .0140 .2240 79,070 79,070 19,498 485 13,871 6,960 6,475 2,233

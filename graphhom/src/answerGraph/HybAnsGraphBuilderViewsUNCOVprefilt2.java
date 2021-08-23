@@ -147,10 +147,16 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 				nodeset ns = intersectedAnsGr.get(i);
 				ArrayList<GraphNode> cand_occ_l = new ArrayList<GraphNode>();
 				
-	//			if (true) { //make COL use only preFilt's output, or the invLists
+//				if (true) { //make COL use only preFilt's output, or the invLists
 				if (ns.gnodesBits.getCardinality() > mInvLstsByID.get(i).size()) {
 					if (prefilter) {
 						cand_occ_l = mInvLstsByID.get(i);  //if using FLT
+						
+//						int removed = Math.round( 4* cand_occ_l.size() / 5); // Setup the variable for removal counting
+//						while (removed > 0 ) {
+//						   cand_occ_l.remove(cand_occ_l.size() - 1);
+//						   removed--;
+//						}
 					} else {
 						cand_occ_l = mInvLstsByID.get(mQuery.getNodes()[i].lb);
 					}
@@ -170,15 +176,15 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 				cand_occ_lsts.add(cand_occ_l);
 			}
 			
-			ArrayList<ArrayList<GraphNode>> newCandOccLsts = cand_occ_lsts;
+			
 			if (prefilter) {
-				newCandOccLsts = interPreFilt(cand_occ_lsts);  //intersect cand occ lists w/ preFilt or invLists
+				cand_occ_lsts = interPreFilt(cand_occ_lsts);  //intersect cand occ lists w/ preFilt or invLists
 			} 
 			
 			ArrayList<RoaringBitmap> bitsByIDArr = new ArrayList<RoaringBitmap>(mQuery.V);
 			for (QNode q : mQuery.getNodes()) {
 				RoaringBitmap bits = new RoaringBitmap();
-				ArrayList<GraphNode> invLst = newCandOccLsts.get(q.id);
+				ArrayList<GraphNode> invLst = cand_occ_lsts.get(q.id);
 				for (GraphNode n : invLst) {
 					bits.add(n.id);
 				}
@@ -189,7 +195,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 			
 			tt.Start();  // filtTime. do it here b/c this is what FLTSIM does; it doesn't count time to construct inputs
 			
-			DagSimGraFilter filter = new DagSimGraFilter(mQuery, Gnodes, newCandOccLsts, bitsByIDArr, mBFL, true);
+			DagSimGraFilter filter = new DagSimGraFilter(mQuery, Gnodes, cand_occ_lsts, bitsByIDArr, mBFL, true);
 			filter.prune();
 			mCandLists = filter.getCandList();
 	
@@ -321,7 +327,6 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 				for (HashMap<Integer, Integer> hom : viewHoms.get(key)) {
 					Integer viewNodesetID = hom.get(i);
 					if (viewNodesetID == null) {  //this view doesn't cover this query's node
-//						intersectedNS.hasNodes = false;
 						continue;
 					}
 					ArrayList<nodeset> viewAnsgr = qid_Ansgr.get(key); //node sets of view
