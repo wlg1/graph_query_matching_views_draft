@@ -70,13 +70,14 @@ public class PartialViewAnsGrUNCOVprefilt {
 		
 		tt = new TimeTracker();
 		
+		HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = null;
 		if (rmvEmpty) {
-			HybAnsGraphBuilderViewsUNCOVprefilt2 BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
+			BuildViews = new HybAnsGraphBuilderViewsUNCOVprefilt2(query, viewsOfQuery, qid_Ansgr, LintToGN,
 					mBFL, nodes, mFB, invLsts, stat, prefilter);
 			mPool = BuildViews.run();
 
 		} else {
-			HybAnsGraphBuilderViews BuildViews = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
+			HybAnsGraphBuilderViews BuildViews0 = new HybAnsGraphBuilderViews(query, viewsOfQuery, qid_Ansgr, LintToGN);
 		}
 		
 		stat.calAnsGraphSize(mPool);
@@ -87,6 +88,9 @@ public class PartialViewAnsGrUNCOVprefilt {
 		}
 		if (stat.nodesAfterVinter == 0 && stat.totNodesAfter != 0) {
 			stat.nodesAfterVinter = stat.nodesAfterPreFilt;
+		}
+		if (BuildViews.uncoveredNodes.isEmpty()) {
+			stat.nodesAfterVinter = stat.totNodesAfter;
 		}
 		
 		double numOutTuples;

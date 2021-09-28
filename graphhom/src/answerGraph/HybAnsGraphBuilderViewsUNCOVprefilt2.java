@@ -48,6 +48,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 	FilterBuilder mFB;
 	QueryEvalStat stat;
 	boolean prefilter;
+	public ArrayList<String> uncoveredNodes;
 	
 	public HybAnsGraphBuilderViewsUNCOVprefilt2(Query query, ArrayList<Query> viewsOfQuery_in,
 			Map<Integer, ArrayList<nodeset>> qid_Ansgr_in, HashMap<Integer, GraphNode> INLintToGN,
@@ -75,7 +76,7 @@ public class HybAnsGraphBuilderViewsUNCOVprefilt2 {
 		tt = new TimeTracker();
 		tt.Start();  // vInterTime
 		
-		ArrayList<String> uncoveredNodes = new ArrayList<String>();  
+		uncoveredNodes = new ArrayList<String>();  
 		for (Integer i = 0; i < mQuery.V ; i++) {
 			uncoveredNodes.add(i.toString()); // b/c rmv by Int rmvs by index by default
 		}

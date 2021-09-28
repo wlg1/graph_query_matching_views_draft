@@ -54,7 +54,7 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 	HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> viewHoms;
 	
 	public PartialViewAnsGrMainUNCOVprefilt(String dataFN, String queryFN, String viewFN, boolean INuseAnsGr, 
-			boolean INrmvEmpty, boolean INprefilter) {
+			boolean INrmvEmpty, boolean INprefilter, boolean usePartial) {
 
 		queryFileN = Consts.INDIR + queryFN;
 		dataFileN = Consts.INDIR + dataFN;
@@ -67,25 +67,28 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 		prefilter = INprefilter;
 		
 		if (useAnsGr) {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS_PARTIAL";
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__ansgrBYVIEWS";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_ansgr");
 		} else {
-			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS_PARTIAL";
+			outFileN = Consts.OUTDIR + datafn + "_" + fn + "__simgrBYVIEWS";
 			stats = new QueryEvalStats(dataFileN, queryFileN, "DagEval_simgr");
+		}
+		
+		if (usePartial) {
+			outFileN = outFileN + "_PARTIAL";
+			
+			if (prefilter) {
+				outFileN = outFileN + "_FLTSIM";
+			} else {
+				outFileN = outFileN + "_SIM";
+			}
 		}
 		
 //		if (rmvEmpty) {
 //			outFileN = outFileN + "_rmvEmpty";
 //		}
-//		
-		if (prefilter) {
-			outFileN = outFileN + "_FLTSIM";
-		} else {
-			outFileN = outFileN + "_SIM";
-		}
+
 		outFileN = outFileN + suffix;
-		
-//		uncovFileN = Consts.INDIR + uncovFN; 
 	}
 
 	public void run() throws Exception {
@@ -431,9 +434,10 @@ public class PartialViewAnsGrMainUNCOVprefilt {
 		String dataFileN = args[0], queryFileN = args[1], viewFileN = args[2];
 		boolean useAnsGr = false;
 		boolean rmvEmpty = true;
-		boolean prefilter = true;
+		boolean prefilter = false;
+		boolean usePartial = true;
 		PartialViewAnsGrMainUNCOVprefilt demain = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, viewFileN, 
-				useAnsGr, rmvEmpty, prefilter);
+				useAnsGr, rmvEmpty, prefilter, usePartial);
 
 		demain.run();
 	}

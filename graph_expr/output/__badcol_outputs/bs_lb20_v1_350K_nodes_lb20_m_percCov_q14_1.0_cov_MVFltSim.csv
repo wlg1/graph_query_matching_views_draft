@@ -1,0 +1,62 @@
+*****************************************************
+Dataset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\bs_lb20_v1_350K_nodes.dag
+V:350000 E:1056632 lbs:20
+Queryset:D:\Documents\_prog\prog_cust\eclipse-workspace\graph_expr\input_files\lb20_m_percCov_q14_1.0_cov.qry
+Algorithm:DagEval_MVFltSim
+id status fltTime simTime pruneTime planTime buildTime enumTime totTime totNodesInv totNodesFlt totNodesMV totNodesSim numOfTuples numPlans sizeOfAG
+0 exceedLimit .1920 .0110 .2030 .0000 .0080 .6290 .8400 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2230 .0120 .2350 .0000 .0090 .6370 .8810 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2060 .0120 .2180 .0000 .0080 .6810 .9070 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2080 .0120 .2200 .0000 .0080 .7230 .9510 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2110 .0110 .2220 .0000 .0100 .6530 .8850 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1960 .0150 .2110 .0000 .0090 .7130 .9330 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2270 .0100 .2370 .0000 .0080 .6250 .8700 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2140 .0210 .2350 .0000 .0130 .7440 .9920 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2020 .0110 .2130 .0000 .0070 .6950 .9150 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2080 .0200 .2280 .0000 .0130 .6550 .8960 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1940 .0120 .2060 .0000 .0100 .6550 .8710 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2110 .0210 .2320 .0000 .0130 .7120 .9570 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2070 .0100 .2170 .0000 .0070 .6160 .8400 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1940 .0170 .2110 .0000 .0080 .6840 .9030 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1850 .0110 .1960 .0000 .0080 .6100 .8140 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1960 .0100 .2060 .0000 .0070 .6110 .8240 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2360 .0170 .2530 .0000 .0120 .6360 .9010 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1890 .0160 .2050 .0000 .0080 .6050 .8180 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2050 .0100 .2150 .0000 .0080 .6230 .8460 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2030 .0130 .2160 .0000 .0120 .6450 .8730 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2020 .0130 .2150 .0000 .0080 .6190 .8420 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2090 .0100 .2190 .0000 .0070 .6690 .8950 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1960 .0110 .2070 .0000 .0080 .5980 .8130 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2150 .0100 .2250 .0000 .0080 .6070 .8400 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2190 .0180 .2370 .0000 .0140 .6390 .8900 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1940 .0110 .2050 .0000 .0080 .6290 .8420 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1980 .0100 .2080 .0000 .0080 .6480 .8640 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2190 .0100 .2290 .0000 .0100 .6420 .8810 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .1870 .0100 .1970 .0000 .0080 .6300 .8350 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+0 exceedLimit .2070 .0120 .2190 .0000 .0130 .6480 .8800 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+Average running time: 
+id status fltTime simTime pruneTime planTime buildTime enumTime totTime totNodesInv totNodesFlt totNodesMV totNodesSim numOfTuples numPlans sizeOfAG
+0 exceedLimit .2051 .0129 .2180 .0000 .0093 .6494 .8766 105,084 15,706 5,040 4,673 10,000,000 0 81,821
+Data loading Time:1.3820
+Index building Time:.2740
+Average Eval Time per run:13.7439
+Average Eval Time per query:13.7439
+Average flting Time per run:3.1911
+Average flting Time per query:3.1911
+Average siming Time per run:.2057
+Average siming Time per query:.2057
+Average pruning Time per run:.0000
+Average pruning Time per query:.0000
+Average Plan Time per run:.0000
+Average Plan Time per query:.0000
+Average building Time per run:.1421
+Average building Time per query:.1421
+Average Enumeration Time per run:10.2050
+Average Enumeration Time per query:10.2050
+Average Nodes inv per query:105084.0000
+Average Nodes flt per query:15706.0000
+Average Nodes views per query:5040.0000
+Average Nodes sim per query:4673.0000
+Average number of solution tuples per query:10000000.0000
+Max Used Memory:1693.0000 MB
+*****************************************************

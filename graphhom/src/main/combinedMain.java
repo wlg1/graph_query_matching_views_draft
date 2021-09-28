@@ -21,15 +21,17 @@ public class combinedMain {
 		DagHomIEMain demain3 = new DagHomIEMain(dataFileN, queryFileN); //SIM
 //		ViewAnsGrMain2 demain4 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, true); //rmvEmpty
 //		ViewAnsGrMain2 demain5 = new ViewAnsGrMain2(dataFileN, queryFileN, viewFileN, false, false);
+		PartialViewAnsGrMainUNCOVprefilt demain4 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, viewFileN, 
+				false, true, false, false); //rmvEmpty; must set prefilter to false
 		PartialViewAnsGrMainUNCOVprefilt demain6 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
-				false, true, true); // FLTSIM
+				false, true, true, true); // FLTSIM
 		PartialViewAnsGrMainUNCOVprefilt demain7 = new PartialViewAnsGrMainUNCOVprefilt(dataFileN, queryFileN, partialViewFileN, 
-				false, true, false); // SIM
+				false, true, false, true); // SIM
 
 		demain.run();
 //		demain2.run();
 		demain3.run();
-//		demain4.run();
+		demain4.run();
 //		demain5.run();
 		demain6.run();
 		demain7.run();
@@ -46,7 +48,7 @@ public class combinedMain {
 			demain.stats.printToFileCombinedPartial(opw, "FLTSIM");
 //			demain2.stats.printToFileCombinedPartial(opw, "FLT");
 			demain3.stats.printToFileCombinedPartial(opw, "SIM");
-//			demain4.stats.printToFileCombinedPartial(opw, "View_sim_rmvEmp");
+			demain4.stats.printToFileCombinedPartial(opw, "View_sim_rmvEmp");
 //			demain5.stats.printToFileCombinedPartial(opw, "View_sim");
 			demain6.stats.printToFileCombinedPartial(opw, "View_partial_FLTSIM");
 			demain7.stats.printToFileCombinedPartial(opw, "View_partial_SIM");
@@ -64,9 +66,9 @@ public class combinedMain {
 //		theMain.run(dataFileN, queryFileN, viewFileN);
 		
 		//loop thru files in input list of inputs or inputs in folder
-		String dataFileN = "Email_lb20.dag";
+		String dataFileN = "Email_lb40_v2.dag";
 		String[] splitDataFileName = dataFileN.split("[.]", 0);
-		String myDirectoryPath = "D:\\Documents\\_prog\\prog_cust\\eclipse-workspace\\graph_expr\\input_files";
+		String myDirectoryPath = Consts.INDIR;
 		  File dir = new File(myDirectoryPath);
 		  File[] directoryListing = dir.listFiles();
 		  if (directoryListing != null) {

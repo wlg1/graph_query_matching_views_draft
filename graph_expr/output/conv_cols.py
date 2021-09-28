@@ -29,4 +29,4 @@ def output_goodcol(fn):
     output_file.close()
 
 for file in os.listdir(directory):
-    output_goodcol(file.split('.')[0])
+    output_goodcol(os.path.splitext(file)[0])
